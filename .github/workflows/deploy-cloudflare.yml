@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release tag to deploy (e.g. v2.1.0). Leave empty for latest.'
+        description: 'Git ref on this repository (branch, tag, or SHA). Leave empty to deploy the current branch.'
         required: false
 
 # Prevent overlapping deployments.
@@ -43,27 +43,24 @@ jobs:
             exit 1
           fi
 
-      - name: Resolve release tag
+      # Deploy this repository (the fork), not the upstream saltbo/zpan release.
+      # Upstream's workflow pins saltbo/zpan tags so forks stay on official builds;
+      # this fork must ship local changes such as ZPAN_UNLOCK_FEATURES.
+      - name: Resolve deploy ref
         id: release
         env:
-          GH_TOKEN: ${{ github.token }}
-          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           if [ -n "$INPUT_VERSION" ]; then
-            TAG="$INPUT_VERSION"
+            REF="$INPUT_VERSION"
           else
-            TAG=$(gh api repos/saltbo/zpan/releases/latest --jq '.tag_name')
+            REF="$GITHUB_SHA"
           fi
-          if [ -z "$TAG" ]; then
-            echo "::error::No release found in saltbo/zpan"
-            exit 1
-          fi
-          echo "version=$TAG" >> "$GITHUB_OUTPUT"
-          echo "### 🚀 Deploying $TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo "version=$REF" >> "$GITHUB_OUTPUT"
+          echo "### 🚀 Deploying $REF from $GITHUB_REPOSITORY" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v6
         with:
-          repository: saltbo/zpan
           ref: ${{ steps.release.outputs.version }}
 
       - uses: pnpm/action-setup@v6
