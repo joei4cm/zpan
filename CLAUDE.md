@@ -16,6 +16,7 @@ Core architecture: clients upload directly to S3-compatible storage via presigne
 ## Docs Index
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — setup, commands, quality gates, migration workflow, deployment
+- [docs/deploy/cloudflare.md](docs/deploy/cloudflare.md) — Cloudflare Workers R2 storage, quotas, and custom domains
 - [docs/architecture.md](docs/architecture.md) — system architecture, tech decisions, platform abstraction
 - [docs/design/admin-form-ui.md](docs/design/admin-form-ui.md) — admin form layout, density, required/help/placeholder rules
 - [docs/design/upload-policies.md](docs/design/upload-policies.md) — proposed selector-based upload placement policies for multiple storage backends
