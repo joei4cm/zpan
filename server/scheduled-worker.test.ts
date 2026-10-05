@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { syncPendingRemoteDownloadUsageReports } from '../server/usecases/downloads/remote-download-usage'
+import { purgeExpiredTrash } from '../server/usecases/object'
 import { reconcileImageDomains } from '../server/usecases/site/image-domain-provider'
 import { INSTANCE_TELEMETRY_CRON, reportInstanceTelemetry } from '../server/usecases/site/instance-telemetry'
 import { runLicensingRefresh } from '../server/usecases/site/licensing'
@@ -61,6 +62,11 @@ vi.mock('../server/usecases/downloads/remote-download-usage', () => ({
   syncPendingRemoteDownloadUsageReports: vi.fn(),
 }))
 
+vi.mock('../server/usecases/object', () => ({
+  purgeExpiredTrash: vi.fn(),
+  resolveTrashRetentionDays: () => 30,
+}))
+
 describe('handleScheduled', () => {
   beforeEach(() => {
     vi.mocked(syncPendingCloudTrafficReports).mockReset()
@@ -68,6 +74,7 @@ describe('handleScheduled', () => {
     vi.mocked(reportInstanceTelemetry).mockReset()
     vi.mocked(runLicensingRefresh).mockReset()
     vi.mocked(reconcileImageDomains).mockReset()
+    vi.mocked(purgeExpiredTrash).mockReset()
     mockResetExpiredTrafficQuotas.mockReset()
     refreshHourlyRollups.mockReset()
     purgeExpiredLocks.mockReset()
@@ -119,6 +126,14 @@ describe('handleScheduled', () => {
     expect(syncPendingCloudTrafficReports).not.toHaveBeenCalled()
     expect(syncPendingRemoteDownloadUsageReports).not.toHaveBeenCalled()
     expect(reportInstanceTelemetry).not.toHaveBeenCalled()
+  })
+
+  it('also resets expired traffic quotas on the daily trash-purge cron for free-tier cron limits', async () => {
+    await handleScheduled({ cron: '0 4 * * *' }, { DB: {} as D1Database, ZPAN_CLOUD_URL: 'https://cloud.example' })
+
+    expect(purgeExpiredTrash).toHaveBeenCalled()
+    expect(mockResetExpiredTrafficQuotas).toHaveBeenCalled()
+    expect(runLicensingRefresh).not.toHaveBeenCalled()
   })
 
   it('reports instance telemetry on the 12-hour telemetry cron only', async () => {
