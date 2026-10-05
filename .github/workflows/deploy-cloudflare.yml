@@ -106,6 +106,26 @@ jobs:
             echo "Created queue: zpan-archive-jobs"
           fi
 
+      - name: Ensure KV namespace exists
+        id: kv
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          KV_ID=$(pnpm exec wrangler kv namespace list | jq -r '.[] | select(.title == "zpan-cache") | .id')
+          if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
+            # wrangler kv namespace create does not support --json; parse the TOML snippet it prints.
+            KV_ID=$(pnpm exec wrangler kv namespace create zpan-cache | awk -F'"' '/id/{print $2; exit}')
+            echo "Created KV namespace: $KV_ID"
+          else
+            echo "Reusing KV namespace: $KV_ID"
+          fi
+          if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
+            echo "::error::Failed to obtain KV namespace ID. Make sure CLOUDFLARE_API_TOKEN has Workers KV:Edit."
+            exit 1
+          fi
+          echo "id=$KV_ID" >> "$GITHUB_OUTPUT"
+
       # Avatars are self-hosted in R2 on Workers (the PUBLIC_IMAGES binding). Provision the
       # bucket so the binding resolves, expose its managed public URL, and pin it to
       # PUBLIC_IMAGES_URL so prod serves avatars straight from R2 (zero Worker egress);
@@ -163,8 +183,11 @@ jobs:
           echo "${{ steps.r2.outputs.url }}" | pnpm exec wrangler secret put PUBLIC_IMAGES_URL
           echo "Set PUBLIC_IMAGES_URL = ${{ steps.r2.outputs.url }}"
 
-      - name: Patch wrangler.toml with D1 database ID
-        run: sed -i "s/database_id = \"[^\"]*\"/database_id = \"${{ steps.d1.outputs.id }}\"/" wrangler.toml
+      - name: Patch wrangler.toml with D1 and KV IDs
+        run: |
+          sed -i "s/database_id = \"[^\"]*\"/database_id = \"${{ steps.d1.outputs.id }}\"/" wrangler.toml
+          # First `id = "..."` is production CACHE_KV; preview KV keeps the stub id.
+          sed -i "0,/^id = \"/{s/^id = \"[^\"]*\"/id = \"${{ steps.kv.outputs.id }}\"/}" wrangler.toml
 
       - name: Set BETTER_AUTH_SECRET (first deploy only)
         env:
