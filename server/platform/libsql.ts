@@ -4,6 +4,7 @@ import { migrate } from 'drizzle-orm/libsql/migrator'
 import * as authSchema from '../db/auth-schema'
 import * as schema from '../db/schema'
 import { registerEnvPublicKeys } from '../domain/license-keys'
+import { registerFeatureUnlock } from '../domain/licensing'
 import type { Platform } from './interface'
 
 interface LibsqlEnv {
@@ -25,6 +26,7 @@ export async function createLibsqlPlatform(env: LibsqlEnv): Promise<Platform> {
   await migrate(db, { migrationsFolder })
 
   registerEnvPublicKeys(envRecord.ZPAN_LICENSE_PUBLIC_KEYS ?? process.env.ZPAN_LICENSE_PUBLIC_KEYS)
+  registerFeatureUnlock(envRecord.ZPAN_UNLOCK_FEATURES ?? process.env.ZPAN_UNLOCK_FEATURES)
 
   return {
     db,

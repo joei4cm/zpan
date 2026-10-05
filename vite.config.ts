@@ -23,6 +23,7 @@ const e2eWorkerVars =
         TRUSTED_ORIGINS: process.env.TRUSTED_ORIGINS!,
         ZPAN_CLOUD_URL: process.env.ZPAN_CLOUD_URL!,
         ZPAN_LICENSE_PUBLIC_KEYS: process.env.ZPAN_LICENSE_PUBLIC_KEYS!,
+        ZPAN_UNLOCK_FEATURES: 'false',
         E2E_STORAGE_ENDPOINT: process.env.E2E_STORAGE_ENDPOINT!,
         E2E_STORAGE_BUCKET: process.env.E2E_STORAGE_BUCKET!,
         E2E_STORAGE_REGION: process.env.E2E_STORAGE_REGION!,

@@ -14,6 +14,9 @@ ZPAN_DEV_ALLOWED_HOSTS=
 # Local ZPan Cloud URL.
 ZPAN_CLOUD_URL=http://localhost:5186
 
+# Open local Pro/Business feature gates without a Cloud certificate.
+ZPAN_UNLOCK_FEATURES=true
+
 # Trusted license signing public keys (PASERK k4.public.*, comma-separated).
 # Dev keys are configured here — NOT hardcoded in source — so a leaked dev key is
 # rotated via config and never trusted by production builds. Pair this with the

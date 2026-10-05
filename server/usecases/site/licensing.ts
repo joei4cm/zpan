@@ -8,7 +8,7 @@ import type { BindingState, LicenseAssertion, LicenseEdition } from '@shared/typ
 import { verify } from 'paseto-ts/v4'
 import { z } from 'zod'
 import { getTrustedPublicKeys } from '../../domain/license-keys'
-import { effectiveFeatures, hasFeature } from '../../domain/licensing'
+import { effectiveFeatures, hasFeature, isFeatureUnlockEnabled, unlockedBindingState } from '../../domain/licensing'
 import {
   AppError,
   type CloudInstanceInfo,
@@ -208,6 +208,8 @@ export async function loadBindingState(
   deps: { licenseBinding: LicenseBindingRepo },
   options: BindingStateOptions = {},
 ): Promise<BindingState> {
+  if (isFeatureUnlockEnabled()) return unlockedBindingState()
+
   const state = await deps.licenseBinding.loadLicenseState()
   if (!state.refreshToken) return { bound: false }
 

@@ -42,6 +42,7 @@ const env = {
   ZPAN_CLOUD_URL: cloudOrigin,
   VITE_ZPAN_CLOUD_URL: cloudOrigin,
   ZPAN_LICENSE_PUBLIC_KEYS: 'k4.public.H2gYKGNtxgWbMuwgPdDuHoM_sOLzFC-khe23pz2IZfM',
+  ZPAN_UNLOCK_FEATURES: 'false',
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET ?? 'e2e-auth-secret-that-is-at-least-32-characters',
   BETTER_AUTH_URL: appOrigin,
   TRUSTED_ORIGINS: appOrigin,
