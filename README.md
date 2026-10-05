@@ -117,7 +117,9 @@ Deploy via GitHub Actions with zero server management. Free tier covers personal
 
 After initial setup, the workflow runs automatically every time you sync your fork with the latest release.
 
-This `CLOUDFLARE_API_TOKEN` is the **deployment token** used only by GitHub Actions/Wrangler to deploy ZPan and manage its D1/R2 resources. It is separate from the zone-scoped Cloudflare token entered later in **Admin Settings → Image custom domains**. The latter lets a running ZPan instance manage Cloudflare for SaaS hostnames and does not need D1 or R2 permissions. See [Image custom domains](docs/image-custom-domains.md).
+The workflow does not create a user-file bucket. After you register the first admin, add Cloudflare R2 (or any S3-compatible bucket) under **Admin → Storages**. The GitHub `CLOUDFLARE_API_TOKEN` is a **deployment token**; Storages needs a separate R2 **S3 API token** (Access Key + Secret). To serve ZPan on a hostname in your Cloudflare zone, attach a Worker Custom Domain and update `BETTER_AUTH_URL` plus bucket CORS. See [Cloudflare Workers and R2](docs/deploy/cloudflare.md).
+
+This `CLOUDFLARE_API_TOKEN` is used only by GitHub Actions/Wrangler to deploy ZPan and manage its D1/R2 resources. It is separate from the zone-scoped Cloudflare token entered later in **Admin Settings → Image custom domains**. The latter lets a running ZPan instance manage Cloudflare for SaaS hostnames and does not need D1 or R2 permissions. See [Image custom domains](docs/image-custom-domains.md).
 
 Dedicated WebDAV domain: enable WebDAV and configure its optional hostname in Admin Settings, then extend the API token with **Transform Rules:Edit**. When the hostname is left blank, a primary Worker Custom Domain such as `files.example.com` produces `dav.files.example.com`; the deployment workflow automatically attaches and verifies that derived hostname, manages the root-to-`/dav` rewrite, and records its readiness. Other deployments can verify their manually configured DNS/proxy from **Admin Settings → WebDAV**. Until verification succeeds, ZPan advertises the original `/dav/` endpoint. See [WebDAV custom domains](docs/webdav-custom-domain.md).
 
@@ -164,6 +166,7 @@ After startup:
 ## Documentation
 
 - [v2 Launch Offers](docs/v2-launch-offers.md) — earn ZPan Pro for free
+- [Cloudflare Workers and R2](docs/deploy/cloudflare.md) — file storage, quotas, and custom domains
 - [Roadmap](V2_ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 

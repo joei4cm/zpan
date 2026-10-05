@@ -113,6 +113,8 @@ ZPan 并不打算成为：
 
 完成初始设置后，每次你将 fork 与最新版本同步时，该工作流都会自动运行。
 
+工作流 **不会** 创建用户文件桶。注册完第一个管理员后，到 **Admin → Storages** 添加 Cloudflare R2（或其 S3 兼容存储）。GitHub 里的 `CLOUDFLARE_API_TOKEN` 只用于部署；Storages 需要单独的 R2 **S3 API Token**（Access Key + Secret）。若要用 Cloudflare 托管的域名访问 ZPan，给 Worker 绑定 Custom Domain，并更新 `BETTER_AUTH_URL` 与桶 CORS。详见 [Cloudflare Workers 与 R2](deploy-cloudflare.zh-CN.md)。
+
 WebDAV 独立域名：先在管理后台启用 WebDAV，并按需配置自定义域名，再为 API Token 增加 **Transform Rules:Edit** 权限。域名留空时，若主站 Worker Custom Domain 为 `files.example.com`，部署流程会自动绑定并验证 `dav.files.example.com`，管理根路径到 `/dav` 的 rewrite，并记录可用状态。其他部署方式可在手动配置 DNS/代理后，通过**管理后台 → 设置 → WebDAV**完成验证。验证成功前，ZPan 会继续公布原有 `/dav/` 入口。详见 [WebDAV 自定义域名](../webdav-custom-domain.md)。
 
 ### AWS Lambda
@@ -157,6 +159,7 @@ docker compose -f docker-compose.rustfs.yml up -d
 
 ## 文档
 
+- [Cloudflare Workers 与 R2](deploy-cloudflare.zh-CN.md) — 文件存储、配额、自定义域名
 - [路线图](../../V2_ROADMAP.md)
 - [贡献指南](../../CONTRIBUTING.md)
 
