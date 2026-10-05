@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import type { BindingState } from '../../shared/types'
-import { hasFeature } from './licensing'
+import { hasFeature, isFeatureUnlockEnabled, registerFeatureUnlock, unlockedBindingState } from './licensing'
 
 describe('hasFeature', () => {
+  afterEach(() => {
+    registerFeatureUnlock(undefined)
+  })
+
   it('returns false when state is null', () => {
     expect(hasFeature('white_label', null)).toBe(false)
   })
@@ -33,5 +37,29 @@ describe('hasFeature', () => {
     expect(hasFeature('site_announcements', state)).toBe(true)
     expect(hasFeature('white_label', state)).toBe(true)
     expect(hasFeature('analytics', state)).toBe(true)
+  })
+
+  it('grants every gate when ZPAN_UNLOCK_FEATURES is enabled, even if unbound', () => {
+    registerFeatureUnlock('true')
+    expect(isFeatureUnlockEnabled()).toBe(true)
+    expect(hasFeature('white_label', null)).toBe(true)
+    expect(hasFeature('quota_store', { bound: false })).toBe(true)
+    expect(hasFeature('analytics', { bound: false })).toBe(true)
+    expect(unlockedBindingState()).toMatchObject({
+      bound: true,
+      active: true,
+      edition: 'business',
+    })
+    expect(unlockedBindingState().features?.includes('quota_store')).toBe(true)
+  })
+
+  it('treats 1/yes as enabled and other values as disabled', () => {
+    registerFeatureUnlock('1')
+    expect(isFeatureUnlockEnabled()).toBe(true)
+    registerFeatureUnlock('yes')
+    expect(isFeatureUnlockEnabled()).toBe(true)
+    registerFeatureUnlock('false')
+    expect(isFeatureUnlockEnabled()).toBe(false)
+    expect(hasFeature('white_label', null)).toBe(false)
   })
 })

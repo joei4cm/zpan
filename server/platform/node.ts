@@ -6,6 +6,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import * as authSchema from '../db/auth-schema'
 import * as schema from '../db/schema'
 import { registerEnvPublicKeys } from '../domain/license-keys'
+import { registerFeatureUnlock } from '../domain/licensing'
 import type { Platform } from './interface'
 
 export function createNodePlatform(): Platform {
@@ -21,6 +22,7 @@ export function createNodePlatform(): Platform {
   migrate(db, { migrationsFolder })
 
   registerEnvPublicKeys(process.env.ZPAN_LICENSE_PUBLIC_KEYS)
+  registerFeatureUnlock(process.env.ZPAN_UNLOCK_FEATURES)
 
   return {
     db,

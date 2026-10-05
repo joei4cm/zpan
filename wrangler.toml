@@ -41,6 +41,9 @@ period = 60
 [vars]
 ZPAN_CLOUD_URL = "https://cloud.zpan.space"
 ZPAN_CACHE_MODE = "distributed"
+# Self-hosted internal fork: open local Pro/Business gates without Cloud pairing.
+# Tests override this to "false" via vitest miniflare bindings.
+ZPAN_UNLOCK_FEATURES = "true"
 
 [[send_email]]
 name = "EMAIL"
@@ -80,6 +83,7 @@ ZPAN_PREVIEW = "true"
 ZPAN_ARCHIVE_JOBS_ENABLED = "false"
 ZPAN_CLOUD_URL = "https://staging-zpan-cloud.saltbo.workers.dev"
 ZPAN_CACHE_MODE = "memory"
+ZPAN_UNLOCK_FEATURES = "true"
 
 [[previews.d1_databases]]
 binding = "DB"

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createLicenseBindingRepo } from '../../adapters/repos/license-binding.js'
 import { cloudTrafficReports } from '../../db/schema.js'
+import { registerFeatureUnlock } from '../../domain/licensing'
 import { adminHeaders, authedHeaders, createTestApp, seedBusinessLicense, seedProLicense } from '../../test/setup.js'
 
 describe('GET /api/site/licensing/binding', () => {
@@ -88,6 +89,20 @@ describe('GET /api/site/licensing/entitlements', () => {
     expect(body.account_email).toBeUndefined()
     expect(body.license_id).toBeUndefined()
     expect(body.last_refresh_error).toBeUndefined()
+  })
+
+  it('returns a synthetic Business entitlement when feature unlock is enabled', async () => {
+    registerFeatureUnlock('true')
+    try {
+      const { app } = await createTestApp()
+      const res = await app.request('/api/site/licensing/entitlements', { headers: await authedHeaders(app) })
+      expect(res.status).toBe(200)
+      const body = (await res.json()) as { bound: boolean; active: boolean; edition: string; features: string[] }
+      expect(body).toMatchObject({ bound: true, active: true, edition: 'business' })
+      expect(body.features).toEqual(expect.arrayContaining(['white_label', 'quota_store', 'analytics']))
+    } finally {
+      registerFeatureUnlock(undefined)
+    }
   })
 })
 
