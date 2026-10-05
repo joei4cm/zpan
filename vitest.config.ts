@@ -65,7 +65,7 @@ function createCloudflarePlugin() {
     return {
       wrangler: { configPath: './wrangler.toml' },
       miniflare: {
-        bindings: { TEST_MIGRATIONS: migrations },
+        bindings: { TEST_MIGRATIONS: migrations, ZPAN_UNLOCK_FEATURES: 'false' },
       },
     }
   })

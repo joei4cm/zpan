@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import * as authSchema from '../db/auth-schema'
 import * as schema from '../db/schema'
+import { registerFeatureUnlock } from '../domain/licensing'
 import type { Platform } from './interface'
 
 export function createNodePlatform(): Platform {
@@ -18,6 +19,8 @@ export function createNodePlatform(): Platform {
   const db = drizzle(sqlite, { schema: { ...schema, ...authSchema } })
 
   migrate(db, { migrationsFolder })
+
+  registerFeatureUnlock(process.env.ZPAN_UNLOCK_FEATURES)
 
   return {
     db,

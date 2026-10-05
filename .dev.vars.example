@@ -17,6 +17,9 @@ ZPAN_DEV_ALLOWED_HOSTS=
 # Local ZPan Cloud URL.
 ZPAN_CLOUD_URL=http://localhost:5186
 
+# Open local Pro/Business feature gates without a Cloud certificate.
+ZPAN_UNLOCK_FEATURES=true
+
 # License signing public keys are hardcoded in server/domain/license-keys.ts and
 # cannot be configured. A local Cloud must sign with the dev key (see CONTRIBUTING.md,
 # "Local Pro testing"); its certificates are accepted only for loopback hosts.

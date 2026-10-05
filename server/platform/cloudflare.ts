@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/d1'
 import * as authSchema from '../db/auth-schema'
 import * as schema from '../db/schema'
+import { registerFeatureUnlock } from '../domain/licensing'
 import type { Platform } from './interface'
 
 interface CloudflareEnv {
@@ -10,6 +11,8 @@ interface CloudflareEnv {
 
 export function createCloudflarePlatform(env: CloudflareEnv): Platform {
   const db = drizzle(env.DB, { schema: { ...schema, ...authSchema } })
+
+  registerFeatureUnlock(typeof env.ZPAN_UNLOCK_FEATURES === 'string' ? env.ZPAN_UNLOCK_FEATURES : undefined)
 
   return {
     db,

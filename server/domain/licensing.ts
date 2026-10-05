@@ -3,6 +3,30 @@ import type { BindingState, LicenseFeature } from '@shared/types'
 
 const BUSINESS_ONLY_FEATURES = new Set<LicenseFeature>(['quota_store', 'site_announcements'])
 
+// Self-hosted fork switch: when ZPAN_UNLOCK_FEATURES=true, local Pro/Business
+// gates open without a ZPan Cloud certificate. Cloud-merchant flows (Stripe
+// checkout, gift cards, hosted processing) still need Cloud and are unchanged.
+let featureUnlockEnabled = false
+
+export function registerFeatureUnlock(raw: string | undefined | null): void {
+  const normalized = (raw ?? '').trim().toLowerCase()
+  featureUnlockEnabled = normalized === 'true' || normalized === '1' || normalized === 'yes'
+}
+
+export function isFeatureUnlockEnabled(): boolean {
+  return featureUnlockEnabled
+}
+
+export function unlockedBindingState(): BindingState {
+  return {
+    bound: true,
+    active: true,
+    edition: 'business',
+    features: effectiveFeatures('business'),
+    account_email: 'internal',
+  }
+}
+
 export function effectiveFeatures(edition: BindingState['edition']): LicenseFeature[] {
   if (edition === 'pro') return PRO_GATE_KEYS.filter((feature) => !BUSINESS_ONLY_FEATURES.has(feature))
   if (edition === 'business') return [...PRO_GATE_KEYS]
@@ -10,5 +34,6 @@ export function effectiveFeatures(edition: BindingState['edition']): LicenseFeat
 }
 
 export function hasFeature(feature: LicenseFeature, state: BindingState | null): boolean {
+  if (featureUnlockEnabled) return Boolean(feature)
   return Boolean(feature && state?.bound && state.active && effectiveFeatures(state.edition).includes(feature))
 }

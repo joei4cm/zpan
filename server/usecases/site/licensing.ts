@@ -13,7 +13,7 @@ import {
   licenseKeyAllowsIssuer,
   type TrustedLicenseKey,
 } from '../../domain/license-keys'
-import { effectiveFeatures, hasFeature } from '../../domain/licensing'
+import { effectiveFeatures, hasFeature, isFeatureUnlockEnabled, unlockedBindingState } from '../../domain/licensing'
 import {
   AppError,
   type CloudInstanceInfo,
@@ -226,6 +226,8 @@ export async function loadBindingState(
   deps: { licenseBinding: LicenseBindingRepo; licenseCloudBaseUrl?: string },
   options: BindingStateOptions = {},
 ): Promise<BindingState> {
+  if (isFeatureUnlockEnabled()) return unlockedBindingState()
+
   const state = await deps.licenseBinding.loadLicenseState()
   if (!state.refreshToken) return { bound: false }
 

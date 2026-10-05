@@ -14,6 +14,7 @@ services:
       - BETTER_AUTH_SECRETS=${BETTER_AUTH_SECRETS:-}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL:-http://localhost:8222}
       - DATABASE_URL=/data/zpan.db
+      - ZPAN_UNLOCK_FEATURES=true
     volumes:
       - zpan-data:/data
     healthcheck:
