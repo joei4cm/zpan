@@ -112,19 +112,22 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          KV_ID=$(pnpm exec wrangler kv namespace list | jq -r '.[] | select(.title == "zpan-cache") | .id')
+          set +e
+          LIST_JSON=$(pnpm exec wrangler kv namespace list 2>/dev/null)
+          KV_ID=$(printf '%s' "$LIST_JSON" | jq -r '.[] | select(.title == "zpan-cache") | .id' 2>/dev/null | head -n1)
           if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
-            # wrangler kv namespace create does not support --json; parse the TOML snippet it prints.
-            KV_ID=$(pnpm exec wrangler kv namespace create zpan-cache | awk -F'"' '/id/{print $2; exit}')
-            echo "Created KV namespace: $KV_ID"
+            CREATE_OUT=$(pnpm exec wrangler kv namespace create zpan-cache 2>&1)
+            KV_ID=$(printf '%s' "$CREATE_OUT" | awk -F'"' '/id/{print $2; exit}')
+          fi
+          set -e
+          if [ -n "$KV_ID" ] && [ "$KV_ID" != "null" ]; then
+            echo "Using KV namespace: $KV_ID"
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+            echo "id=$KV_ID" >> "$GITHUB_OUTPUT"
           else
-            echo "Reusing KV namespace: $KV_ID"
+            echo "::warning::Workers KV is unavailable (CLOUDFLARE_API_TOKEN likely missing Workers KV:Edit). Deploying with in-memory cache."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
-            echo "::error::Failed to obtain KV namespace ID. Make sure CLOUDFLARE_API_TOKEN has Workers KV:Edit."
-            exit 1
-          fi
-          echo "id=$KV_ID" >> "$GITHUB_OUTPUT"
 
       # Avatars are self-hosted in R2 on Workers (the PUBLIC_IMAGES binding). Provision the
       # bucket so the binding resolves, expose its managed public URL, and pin it to
@@ -184,10 +187,24 @@ jobs:
           echo "Set PUBLIC_IMAGES_URL = ${{ steps.r2.outputs.url }}"
 
       - name: Patch wrangler.toml with D1 and KV IDs
+        env:
+          KV_OK: ${{ steps.kv.outputs.ok }}
+          KV_ID: ${{ steps.kv.outputs.id }}
+          D1_ID: ${{ steps.d1.outputs.id }}
         run: |
-          sed -i "s/database_id = \"[^\"]*\"/database_id = \"${{ steps.d1.outputs.id }}\"/" wrangler.toml
-          # First `id = "..."` is production CACHE_KV; preview KV keeps the stub id.
-          sed -i "0,/^id = \"/{s/^id = \"[^\"]*\"/id = \"${{ steps.kv.outputs.id }}\"/}" wrangler.toml
+          sed -i "s/database_id = \"[^\"]*\"/database_id = \"$D1_ID\"/" wrangler.toml
+          if [ "$KV_OK" = "true" ]; then
+            # First `id = "..."` is production CACHE_KV; preview KV keeps the stub id.
+            sed -i "0,/^id = \"/{s/^id = \"[^\"]*\"/id = \"$KV_ID\"/}" wrangler.toml
+          else
+            sed -i 's/ZPAN_CACHE_MODE = "distributed"/ZPAN_CACHE_MODE = "memory"/' wrangler.toml
+            awk '
+              /^\[\[kv_namespaces\]\]$/ { skip=1; next }
+              skip && /^\[/ { skip=0 }
+              !skip
+            ' wrangler.toml > wrangler.toml.tmp && mv wrangler.toml.tmp wrangler.toml
+            echo "Removed CACHE_KV binding; using ZPAN_CACHE_MODE=memory"
+          fi
 
       - name: Set BETTER_AUTH_SECRET (first deploy only)
         env:
