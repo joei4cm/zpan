@@ -116,8 +116,19 @@ jobs:
           LIST_JSON=$(pnpm exec wrangler kv namespace list 2>/tmp/kv-list.err)
           KV_ID=$(printf '%s' "$LIST_JSON" | jq -r '.[]? | select(.title == "zpan-cache") | .id' 2>/dev/null | head -n1)
           if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
+            # Already created in a previous run but list may still fail; also handle
+            # "already exists" / Success! output from wrangler kv namespace create.
             CREATE_OUT=$(pnpm exec wrangler kv namespace create zpan-cache 2>&1)
-            KV_ID=$(printf '%s' "$CREATE_OUT" | awk -F'"' '/[[:space:]]id[[:space:]]*=/{print $2; exit}')
+            # wrangler prints: id = "<32-hex>" (line starts with id, no leading space)
+            KV_ID=$(printf '%s' "$CREATE_OUT" | sed -n 's/^id = "\([^"]*\)"/\1/p' | head -n1)
+            if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
+              KV_ID=$(printf '%s' "$CREATE_OUT" | grep -oE '[0-9a-f]{32}' | head -n1)
+            fi
+            if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
+              # Re-list after a create race / already-exists case.
+              LIST_JSON=$(pnpm exec wrangler kv namespace list 2>/tmp/kv-list.err)
+              KV_ID=$(printf '%s' "$LIST_JSON" | jq -r '.[]? | select(.title == "zpan-cache") | .id' 2>/dev/null | head -n1)
+            fi
             if [ -z "$KV_ID" ] || [ "$KV_ID" = "null" ]; then
               echo "KV list stderr:" >&2
               cat /tmp/kv-list.err >&2 || true
