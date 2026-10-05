@@ -62,7 +62,12 @@ export async function handleScheduled(event: ScheduledTrigger, env: ScheduledEnv
   }
 
   if (event.cron === TRASH_PURGE_CRON) {
-    await purgeExpiredTrash(deps, resolveTrashRetentionDays(env.ZPAN_TRASH_RETENTION_DAYS))
+    // Free-tier accounts can only register 5 crons, so the monthly quota reset
+    // shares this daily trigger. resetExpiredTrafficQuotas is idempotent.
+    await Promise.all([
+      purgeExpiredTrash(deps, resolveTrashRetentionDays(env.ZPAN_TRASH_RETENTION_DAYS)),
+      createQuotaRepo(platform.db).resetExpiredTrafficQuotas(),
+    ])
     return
   }
 
