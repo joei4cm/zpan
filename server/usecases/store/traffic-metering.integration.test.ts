@@ -24,6 +24,7 @@ const hasFeatureMock = vi.hoisted(() => vi.fn(() => true))
 
 vi.mock('../../domain/licensing', () => ({
   hasFeature: hasFeatureMock,
+  isFeatureUnlockEnabled: () => false,
 }))
 vi.mock('./licensing', () => ({
   loadBindingState: vi.fn(async () => ({ bound: true, active: true, edition: 'business', features: ['quota_store'] })),
