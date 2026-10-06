@@ -14,6 +14,7 @@ interface EditableEntitlement {
   bytes: number
   expiresAt: string | null
   metadata: string | null
+  source?: string
 }
 
 // One dialog for both user and team entitlements — only the API calls and the
@@ -37,7 +38,8 @@ const UNIT_BYTES: Record<QuotaUnit, number> = {
   TB: 1024 * 1024 * 1024 * 1024,
 }
 
-type GrantPayload = { bytes: number; expiresAt: string | null; note: string | null }
+type EntitlementKind = 'grant' | 'plan'
+type GrantPayload = { bytes: number; expiresAt: string | null; note: string | null; kind?: EntitlementKind }
 
 // Bind the target to its API calls and the query keys its pages depend on.
 function targetBinding(target: EntitlementTarget) {
@@ -49,6 +51,7 @@ function targetBinding(target: EntitlementTarget) {
         ['admin', 'users'],
         ['admin', 'users', target.id],
         ['admin', 'users', target.id, 'entitlements'],
+        ['admin', 'user-quotas', target.id],
       ],
     }
   }
@@ -96,6 +99,7 @@ export function GrantEntitlementDialog({ open, onOpenChange, target, entitlement
   const [unit, setUnit] = useState<QuotaUnit>('GB')
   const [expiresAt, setExpiresAt] = useState('')
   const [note, setNote] = useState('')
+  const [kind, setKind] = useState<EntitlementKind>('grant')
 
   useEffect(() => {
     if (!open) return
@@ -105,11 +109,13 @@ export function GrantEntitlementDialog({ open, onOpenChange, target, entitlement
       setUnit(prefillUnit)
       setExpiresAt(isoToDatetimeLocal(entitlement.expiresAt))
       setNote(readNote(entitlement.metadata))
+      setKind(entitlement.source === 'local_plan' ? 'plan' : 'grant')
     } else {
       setAmount('')
       setUnit('GB')
       setExpiresAt('')
       setNote('')
+      setKind('grant')
     }
   }, [open, entitlement])
 
@@ -122,6 +128,7 @@ export function GrantEntitlementDialog({ open, onOpenChange, target, entitlement
         bytes: Math.round(value * UNIT_BYTES[unit]),
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
         note: note.trim() || null,
+        ...(isEdit ? {} : { kind }),
       }
       const binding = targetBinding(target)
       return entitlement ? binding.update(entitlement.id, payload) : binding.grant(payload)
@@ -151,7 +158,13 @@ export function GrantEntitlementDialog({ open, onOpenChange, target, entitlement
           ? t('admin.entitlement.editFor', { name: target.name })
           : t('admin.entitlement.grantFor', { name: target.name })
       }
-      description={isEdit ? t('admin.entitlement.editDescription') : t('admin.entitlement.grantDescription')}
+      description={
+        isEdit
+          ? t('admin.entitlement.editDescription')
+          : kind === 'plan'
+            ? t('admin.entitlement.grantDescriptionPlan')
+            : t('admin.entitlement.grantDescription')
+      }
       bodyClassName="grid gap-4"
       formProps={{
         onSubmit: (event) => {
@@ -174,6 +187,23 @@ export function GrantEntitlementDialog({ open, onOpenChange, target, entitlement
         </>
       }
     >
+      {!isEdit && (
+        <AdminFormField
+          id="entitlement-kind"
+          label={t('admin.entitlement.kind')}
+          help={t('admin.entitlement.kindHint')}
+        >
+          <Select value={kind} onValueChange={(value) => setKind(value as EntitlementKind)}>
+            <SelectTrigger id="entitlement-kind">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="grant">{t('admin.entitlement.kindGrant')}</SelectItem>
+              <SelectItem value="plan">{t('admin.entitlement.kindPlan')}</SelectItem>
+            </SelectContent>
+          </Select>
+        </AdminFormField>
+      )}
       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_96px]">
         <AdminFormField id="entitlement-amount" label={t('admin.entitlement.amount')}>
           <Input

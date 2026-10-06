@@ -45,6 +45,9 @@ vi.mock('react-i18next', () => ({
         return 'Audit Logs are a Pro feature. Upgrade to gain full visibility into instance-wide activity.'
       }
       if (key === 'admin.audit.upgradeButton') return 'Upgrade to Pro'
+      if (key === 'admin.users.entitlementSourceAdmin') return 'Admin grant'
+      if (key === 'admin.users.entitlementSourceLocalPlan') return 'Local plan'
+      if (key === 'admin.users.editEntitlement') return 'Edit'
       if (key === 'activity.action.upload') return 'uploaded'
       if (key === 'activity.action.object_copy') return 'copied'
       if (key === 'activity.action.rename') return 'renamed'
@@ -429,5 +432,24 @@ describe('Admin user detail activity', () => {
     expect(screen.getByTestId('upgrade-hint').textContent).toContain('audit_log')
     expect(screen.getByTestId('upgrade-hint').textContent).toContain('Unlock Audit Logs')
     expect(listAdminAuditLogs).not.toHaveBeenCalled()
+  })
+
+  it('lets admins edit a local plan entitlement', async () => {
+    blockAuditLogs()
+    mockBaseQueries([
+      entitlement({
+        id: 'plan-1',
+        entitlementType: 'plan',
+        source: 'local_plan',
+        sourceId: 'local_plan:org-1:storage',
+        bytes: 104857600,
+      }),
+    ])
+    const user = userEvent.setup()
+    renderUserDetailPage()
+
+    await user.click(await screen.findByRole('tab', { name: 'Entitlement' }))
+    expect(await screen.findByText('Local plan')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy()
   })
 })

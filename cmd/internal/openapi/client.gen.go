@@ -4087,6 +4087,24 @@ func (e CancelOrderJSONBodyStatus) Valid() bool {
 	}
 }
 
+// Defines values for GrantTeamEntitlementJSONBodyKind.
+const (
+	GrantTeamEntitlementJSONBodyKindGrant GrantTeamEntitlementJSONBodyKind = "grant"
+	GrantTeamEntitlementJSONBodyKindPlan  GrantTeamEntitlementJSONBodyKind = "plan"
+)
+
+// Valid indicates whether the value is a known member of the GrantTeamEntitlementJSONBodyKind enum.
+func (e GrantTeamEntitlementJSONBodyKind) Valid() bool {
+	switch e {
+	case GrantTeamEntitlementJSONBodyKindGrant:
+		return true
+	case GrantTeamEntitlementJSONBodyKindPlan:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GrantTeamEntitlementJSONBodyResourceType.
 const (
 	GrantTeamEntitlementJSONBodyResourceTypeStorage GrantTeamEntitlementJSONBodyResourceType = "storage"
@@ -4150,6 +4168,24 @@ func (e RestoreObjectJSONBodyOnConflict) Valid() bool {
 	case RestoreObjectJSONBodyOnConflictRename:
 		return true
 	case RestoreObjectJSONBodyOnConflictReplace:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GrantUserEntitlementJSONBodyKind.
+const (
+	GrantUserEntitlementJSONBodyKindGrant GrantUserEntitlementJSONBodyKind = "grant"
+	GrantUserEntitlementJSONBodyKindPlan  GrantUserEntitlementJSONBodyKind = "plan"
+)
+
+// Valid indicates whether the value is a known member of the GrantUserEntitlementJSONBodyKind enum.
+func (e GrantUserEntitlementJSONBodyKind) Valid() bool {
+	switch e {
+	case GrantUserEntitlementJSONBodyKindGrant:
+		return true
+	case GrantUserEntitlementJSONBodyKindPlan:
 		return true
 	default:
 		return false
@@ -7561,9 +7597,13 @@ type ListTeamActivityParams struct {
 type GrantTeamEntitlementJSONBody struct {
 	Bytes        int                                      `json:"bytes"`
 	ExpiresAt    *time.Time                               `json:"expiresAt,omitempty"`
+	Kind         *GrantTeamEntitlementJSONBodyKind        `json:"kind,omitempty"`
 	Note         *string                                  `json:"note,omitempty"`
 	ResourceType GrantTeamEntitlementJSONBodyResourceType `json:"resourceType"`
 }
+
+// GrantTeamEntitlementJSONBodyKind defines parameters for GrantTeamEntitlement.
+type GrantTeamEntitlementJSONBodyKind string
 
 // GrantTeamEntitlementJSONBodyResourceType defines parameters for GrantTeamEntitlement.
 type GrantTeamEntitlementJSONBodyResourceType string
@@ -7610,9 +7650,13 @@ type RestoreObjectJSONBodyOnConflict string
 type GrantUserEntitlementJSONBody struct {
 	Bytes        int                                      `json:"bytes"`
 	ExpiresAt    *time.Time                               `json:"expiresAt,omitempty"`
+	Kind         *GrantUserEntitlementJSONBodyKind        `json:"kind,omitempty"`
 	Note         *string                                  `json:"note,omitempty"`
 	ResourceType GrantUserEntitlementJSONBodyResourceType `json:"resourceType"`
 }
+
+// GrantUserEntitlementJSONBodyKind defines parameters for GrantUserEntitlement.
+type GrantUserEntitlementJSONBodyKind string
 
 // GrantUserEntitlementJSONBodyResourceType defines parameters for GrantUserEntitlement.
 type GrantUserEntitlementJSONBodyResourceType string

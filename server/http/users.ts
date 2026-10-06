@@ -44,6 +44,7 @@ const grantEntitlementSchema = z.object({
   bytes: z.number().int().positive(),
   expiresAt: z.string().datetime().nullable().optional(),
   note: z.string().max(500).nullable().optional(),
+  kind: z.enum(['grant', 'plan']).optional(),
 })
 const updateEntitlementSchema = z.object({
   bytes: z.number().int().positive().optional(),
@@ -254,6 +255,7 @@ export const users = new OpenAPIHono<Env>()
       bytes: body.bytes,
       expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
       note: body.note,
+      kind: body.kind,
     })
     if (!result.ok) throw failureError(result.failure)
     return c.json(toEntitlementResultDTO(result.result), 201)
