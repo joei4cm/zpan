@@ -23,6 +23,7 @@ import type {
   ImageDomainProviderRoute,
   LicensingAdminRoute,
   LicensingRoute,
+  LocalStoreAdminRoute,
   NotificationsRoute,
   OAuthGrantsRoute,
   ObjectsRoute,
@@ -60,6 +61,7 @@ export const adminQuotas = hc<AdminQuotasRoute>('/api/quotas', opts)
 export const adminTeams = hc<AdminTeamsRoute>('/api/teams', opts)
 export const userQuotas = hc<UserQuotasRoute>('/api/quotas', opts)
 export const cloudStoreApi = hc<CloudStoreRoute>('/api/store', opts)
+export const localStoreAdminApi = hc<LocalStoreAdminRoute>('/api/store', opts)
 export const system = hc<SystemRoute>('/api/site', opts)
 export const configzApi = hc<ConfigzRoute>('/api/configz', opts)
 export const siteSettingsApi = hc<SiteSettingsRoute>('/api/site/settings', opts)

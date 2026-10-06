@@ -8,6 +8,7 @@ import {
   uploadAvatar,
 } from 'zpan-cloud-sdk'
 import { ZPAN_CLOUD_URL_DEFAULT } from '../../../shared/constants'
+import { isFeatureUnlockEnabled } from '../../domain/licensing'
 import { type Platform, PUBLIC_IMAGES_BINDING, type R2BucketLike } from '../../platform/interface'
 import {
   AVATAR_PREFIX,
@@ -143,6 +144,7 @@ export function createImageUploadGateway(
       const scope = prefixToScope(prefix)
       const bucket = platform.getBinding<R2BucketLike>(PUBLIC_IMAGES_BINDING)
       if (bucket) return r2Upload(bucket, platform, scope, id, file, contentType)
+      if (isFeatureUnlockEnabled()) return { ok: false, status: 503, error: 'avatars_storage_missing' }
       return cloudUpload(platform, scope, id, file, contentType)
     },
 
@@ -162,7 +164,7 @@ export function createImageUploadGateway(
       }
 
       const binding = await licenseBinding.loadActiveLicenseBinding()
-      if (!binding?.refreshToken) return
+      if (!binding?.refreshToken || isFeatureUnlockEnabled()) return
       const client = licensingCloud.createAvatarUploadClient(cloudBaseUrl(platform), binding.refreshToken)
       try {
         await deleteAvatar(client, { scope, id })

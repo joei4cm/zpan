@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { generateId } from '../../../shared/ids'
-import { hasFeature } from '../../domain/licensing'
+import { hasFeature, isFeatureUnlockEnabled } from '../../domain/licensing'
 import { currentTrafficPeriod } from '../../domain/quota'
 import type {
   CloudTrafficReportRecord,
@@ -57,7 +57,10 @@ export async function reportTrafficEgress(
   const { orgId, bytes, source, sourceId, now = new Date() } = params
   if (bytes < 0) throw new Error('traffic_bytes_invalid')
   const cloudBillingEnabled =
-    bytes > 0 && params.egressCreditBillingEnabled && hasFeature('quota_store', await loadBindingState(deps))
+    bytes > 0 &&
+    Boolean(params.egressCreditBillingEnabled) &&
+    !isFeatureUnlockEnabled() &&
+    hasFeature('quota_store', await loadBindingState(deps))
   if (cloudBillingEnabled && (!params.storageId || !params.egressCreditUnitBytes || !params.egressCreditPerUnit)) {
     throw new Error('storage_egress_pricing_missing')
   }
@@ -121,7 +124,7 @@ export async function syncPendingCloudTrafficReports(
   params: { cloudBaseUrl: string; limit?: number; now?: Date },
 ): Promise<{ attempted: number; reported: number; blocked: number; failed: number; deadLetter: number }> {
   const { cloudBaseUrl, limit = 100, now = new Date() } = params
-  if (!hasFeature('quota_store', await loadBindingState(deps)))
+  if (isFeatureUnlockEnabled() || !hasFeature('quota_store', await loadBindingState(deps)))
     return { attempted: 0, reported: 0, blocked: 0, failed: 0, deadLetter: 0 }
   const binding = await deps.licenseBinding.loadActiveLicenseBinding()
   if (!binding?.refreshToken || !binding.cloudStoreId)

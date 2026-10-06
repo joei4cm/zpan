@@ -218,6 +218,79 @@ export const webhookEvents = sqliteTable(
   ],
 )
 
+export const storeProducts = sqliteTable(
+  'store_products',
+  {
+    id: text('id').primaryKey(),
+    name: text('name').notNull(),
+    description: text('description').notNull().default(''),
+    kind: text('kind').notNull().default('plan'),
+    storageBytes: integer('storage_bytes').notNull(),
+    amountCents: integer('amount_cents').notNull(),
+    currency: text('currency').notNull().default('usd'),
+    interval: text('interval'),
+    active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [index('store_products_active_sort_idx').on(t.active, t.sortOrder, t.createdAt)],
+)
+
+export const storeGiftCards = sqliteTable(
+  'store_gift_cards',
+  {
+    id: text('id').primaryKey(),
+    codeHash: text('code_hash').notNull(),
+    codeLast4: text('code_last4').notNull(),
+    storageBytes: integer('storage_bytes').notNull(),
+    status: text('status').notNull().default('active'),
+    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }),
+    redeemedOrgId: text('redeemed_org_id'),
+    redeemedAt: integer('redeemed_at', { mode: 'timestamp_ms' }),
+    note: text('note'),
+    createdBy: text('created_by').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    uniqueIndex('store_gift_cards_code_hash_uniq').on(t.codeHash),
+    index('store_gift_cards_status_idx').on(t.status, t.createdAt),
+  ],
+)
+
+export const storeOrders = sqliteTable(
+  'store_orders',
+  {
+    id: text('id').primaryKey(),
+    orgId: text('org_id').notNull(),
+    userId: text('user_id').notNull(),
+    productId: text('product_id').notNull(),
+    productName: text('product_name').notNull(),
+    storageBytes: integer('storage_bytes').notNull(),
+    amountCents: integer('amount_cents').notNull(),
+    currency: text('currency').notNull().default('usd'),
+    interval: text('interval'),
+    status: text('status').notNull().default('pending'),
+    stripeSessionId: text('stripe_session_id'),
+    stripeSubscriptionId: text('stripe_subscription_id'),
+    stripeCustomerId: text('stripe_customer_id'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    index('store_orders_org_created_idx').on(t.orgId, t.createdAt),
+    uniqueIndex('store_orders_stripe_session_uniq').on(t.stripeSessionId).where(sql`${t.stripeSessionId} IS NOT NULL`),
+  ],
+)
+
+export const storeCustomers = sqliteTable('store_customers', {
+  orgId: text('org_id').primaryKey(),
+  stripeCustomerId: text('stripe_customer_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+})
+
 export const x402CapacityPurchaseIntents = sqliteTable(
   'x402_capacity_purchase_intents',
   {

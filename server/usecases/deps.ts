@@ -29,6 +29,7 @@ import type {
   InviteRepo,
   LicenseBindingRepo,
   LicensingCloudGateway,
+  LocalStoreRepo,
   MatterRepo,
   MemberCountRepo,
   NotificationRepo,
@@ -46,6 +47,7 @@ import type {
   StorageRepo,
   StorageUsageBreakdownRepo,
   StorageUsageRepo,
+  StripeGateway,
   SystemOptionsRepo,
   TeamInviteRepo,
   TeamRepo,
@@ -85,6 +87,7 @@ export interface Deps {
   instance: InstanceRepo
   licenseBinding: LicenseBindingRepo
   licensingCloud: LicensingCloudGateway
+  localStore: LocalStoreRepo
   matter: MatterRepo
   memberCount: MemberCountRepo
   notifications: NotificationRepo
@@ -98,6 +101,7 @@ export interface Deps {
   shareNotifications: ShareNotificationRepo
   share: ShareRepo
   siteInvitations: SiteInvitationRepo
+  stripe: StripeGateway
   storages: StorageRepo
   storageUsage: StorageUsageRepo
   storageUsageBreakdowns: StorageUsageBreakdownRepo

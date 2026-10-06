@@ -17,6 +17,9 @@ import type {
   DownloadTaskActionInput,
   EmailSettings,
   ImageDomainProviderResponse,
+  LocalStoreGiftCardCreate,
+  LocalStoreProductInput,
+  LocalStoreProductPatch,
   OAuthConsentContext,
   OAuthConsentResult,
   OAuthConsentSubmit,
@@ -120,6 +123,7 @@ import {
   inviteCodes,
   licensingAdminApi,
   licensingApi,
+  localStoreAdminApi,
   notificationsApi,
   oauthGrantsApi,
   objects,
@@ -791,6 +795,64 @@ export function listCloudOrders(options: { limit?: number; offset?: number } = {
     ...(options.offset !== undefined ? { offset: String(options.offset) } : {}),
   }
   return unwrap<{ items: CloudOrder[]; total: number }>(cloudStoreApi.orders.$get({ query }))
+}
+
+export type LocalStoreProduct = {
+  id: string
+  name: string
+  description: string
+  kind: 'plan'
+  storageBytes: number
+  amountCents: number
+  currency: string
+  interval: 'month' | 'year' | null
+  active: boolean
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type LocalStoreGiftCard = {
+  id: string
+  code: string | null
+  codeLast4: string
+  storageBytes: number
+  status: string
+  expiresAt: string | null
+  redeemedOrgId: string | null
+  redeemedAt: string | null
+  note: string | null
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
+export function listLocalStoreProducts() {
+  return unwrap<{ items: LocalStoreProduct[]; total: number }>(localStoreAdminApi.admin.products.$get())
+}
+
+export function createLocalStoreProduct(data: LocalStoreProductInput) {
+  return unwrap<LocalStoreProduct>(localStoreAdminApi.admin.products.$post({ json: data }))
+}
+
+export function updateLocalStoreProduct(id: string, data: LocalStoreProductPatch) {
+  return unwrap<LocalStoreProduct>(localStoreAdminApi.admin.products[':id'].$patch({ param: { id }, json: data }))
+}
+
+export function deleteLocalStoreProduct(id: string) {
+  return discard(localStoreAdminApi.admin.products[':id'].$delete({ param: { id } }))
+}
+
+export function listLocalStoreGiftCards() {
+  return unwrap<{ items: LocalStoreGiftCard[]; total: number }>(localStoreAdminApi.admin['gift-cards'].$get())
+}
+
+export function createLocalStoreGiftCards(data: LocalStoreGiftCardCreate) {
+  return unwrap<{ items: LocalStoreGiftCard[] }>(localStoreAdminApi.admin['gift-cards'].$post({ json: data }))
+}
+
+export function disableLocalStoreGiftCard(id: string) {
+  return unwrap<LocalStoreGiftCard>(localStoreAdminApi.admin['gift-cards'][':id'].disable.$post({ param: { id } }))
 }
 
 // Auth Providers API
