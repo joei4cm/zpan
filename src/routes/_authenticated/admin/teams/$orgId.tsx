@@ -323,16 +323,7 @@ function AdminTeamDetailPage() {
         open={!!editTarget}
         onOpenChange={(open) => !open && setEditTarget(null)}
         target={{ kind: 'team', orgId: team.id, name: team.name }}
-        entitlement={
-          editTarget
-            ? {
-                id: editTarget.id,
-                bytes: editTarget.bytes,
-                expiresAt: editTarget.expiresAt ? String(editTarget.expiresAt) : null,
-                metadata: editTarget.metadata,
-              }
-            : null
-        }
+        entitlement={editTarget}
       />
 
       <Dialog open={!!revokeTarget} onOpenChange={(open) => !open && setRevokeTarget(null)}>
@@ -360,7 +351,7 @@ function AdminTeamDetailPage() {
 }
 
 function isEditable(item: OrgQuotaEntitlement): boolean {
-  return item.source === 'admin_grant' && item.status === 'active'
+  return (item.source === 'admin_grant' || item.source === 'local_plan') && item.status === 'active'
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
@@ -379,6 +370,7 @@ function formatEntitlementType(type: string, t: (key: string) => string): string
 
 function formatSource(source: string, t: (key: string) => string): string {
   if (source === 'admin_grant') return t('admin.teams.entitlementSourceAdmin')
+  if (source === 'local_plan') return t('admin.teams.entitlementSourceLocalPlan')
   if (source === 'free_plan') return t('admin.teams.entitlementSourceFreePlan')
   if (source === 'cloud_order') return t('admin.teams.entitlementSourceOrder')
   return source

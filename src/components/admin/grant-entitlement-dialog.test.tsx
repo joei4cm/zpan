@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { grantUserEntitlement, updateOrgEntitlement } from '@/lib/api'
 import { GrantEntitlementDialog } from './grant-entitlement-dialog'
@@ -59,6 +60,10 @@ function renderGrantEntitlementDialog(props: Partial<Parameters<typeof GrantEnti
 
 beforeEach(() => {
   vi.stubGlobal('ResizeObserver', TestResizeObserver)
+  Element.prototype.scrollIntoView = vi.fn()
+  HTMLElement.prototype.hasPointerCapture = vi.fn(() => false)
+  HTMLElement.prototype.setPointerCapture = vi.fn()
+  HTMLElement.prototype.releasePointerCapture = vi.fn()
 })
 
 afterEach(() => {
@@ -81,12 +86,35 @@ describe('GrantEntitlementDialog', () => {
         bytes: 5 * 1024 * 1024 * 1024,
         expiresAt: null,
         note: null,
+        kind: 'grant',
       }),
     )
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['admin', 'users'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['admin', 'users', 'user-1'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['admin', 'users', 'user-1', 'entitlements'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['admin', 'user-quotas', 'user-1'] })
     expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('grants a local plan that replaces the default quota', async () => {
+    vi.mocked(grantUserEntitlement).mockResolvedValue({} as Awaited<ReturnType<typeof grantUserEntitlement>>)
+    renderGrantEntitlementDialog()
+    const user = userEvent.setup()
+
+    await user.click(screen.getByRole('combobox', { name: 'admin.entitlement.kind' }))
+    await user.click(screen.getByRole('option', { name: 'admin.entitlement.kindPlan' }))
+    fireEvent.change(screen.getByLabelText('admin.entitlement.amount'), { target: { value: '100' } })
+    fireEvent.click(screen.getByRole('button', { name: 'admin.entitlement.grant' }))
+
+    await waitFor(() =>
+      expect(grantUserEntitlement).toHaveBeenCalledWith('user-1', {
+        resourceType: 'storage',
+        bytes: 100 * 1024 * 1024 * 1024,
+        expiresAt: null,
+        note: null,
+        kind: 'plan',
+      }),
+    )
   })
 
   it('prefills and updates a team entitlement from editable metadata', async () => {

@@ -372,7 +372,7 @@ export function AdminUserDetailPage() {
 }
 
 function isEditable(item: OrgQuotaEntitlement): boolean {
-  return item.source === 'admin_grant' && item.status === 'active'
+  return (item.source === 'admin_grant' || item.source === 'local_plan') && item.status === 'active'
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
@@ -395,6 +395,7 @@ function formatEntitlementType(type: string, t: (key: string) => string): string
 
 function formatSource(source: string, t: (key: string) => string): string {
   if (source === 'admin_grant') return t('admin.users.entitlementSourceAdmin')
+  if (source === 'local_plan') return t('admin.users.entitlementSourceLocalPlan')
   if (source === 'free_plan') return t('admin.users.entitlementSourceFreePlan')
   if (source === 'cloud_order') return t('admin.users.entitlementSourceOrder')
   return source

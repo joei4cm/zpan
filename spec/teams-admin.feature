@@ -32,6 +32,12 @@ Feature: Team administration
     When an admin grants, lists, and revokes a storage entitlement
     Then each step succeeds
 
+  @teams-admin/grant-local-plan @api
+  Scenario: Admins set a local plan for a team
+    Given a team org
+    When an admin grants a local plan entitlement
+    Then the team uses that plan instead of the default quota
+
   @teams-admin/update-entitlement @api
   Scenario: Admins update a team entitlement
     Given an existing admin grant

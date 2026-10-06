@@ -208,6 +208,42 @@ describe('effective quota', () => {
     )
   })
 
+  it('uses a local_plan entitlement as the storage plan instead of free_plan', async () => {
+    const { db } = await createTestApp()
+    const orgId = nanoid()
+    const now = new Date('2026-05-06T00:00:00Z')
+    await db.insert(orgQuotas).values({
+      id: nanoid(),
+      orgId,
+      quota: 0,
+      used: 0,
+      trafficQuota: 0,
+      trafficUsed: 0,
+      trafficPeriod: '2026-05',
+    })
+    await db.insert(orgQuotaEntitlements).values([
+      {
+        ...entitlement(orgId, 'storage', `free_plan:${orgId}`, 5000, 'active', now, 'Free'),
+        source: 'free_plan',
+        entitlementType: 'plan',
+      },
+      {
+        ...entitlement(orgId, 'storage', `local_plan:${orgId}:storage`, 8000, 'active', now, 'Local plan'),
+        source: 'local_plan',
+        entitlementType: 'plan',
+      },
+      entitlement(orgId, 'storage', 'admin_grant:bonus', 500, 'active', now, 'Bonus'),
+    ])
+
+    await expect(createQuotaRepo(db).getEffectiveQuota(orgId, now)).resolves.toMatchObject({
+      baseQuota: 8000,
+      entitlementQuota: 500,
+      quota: 8500,
+      storagePlanName: 'Local plan',
+      storageExtraNames: ['Bonus'],
+    })
+  })
+
   it('uses a smaller active subscription plan instead of the larger default quota', async () => {
     const { db } = await createTestApp()
     const orgId = nanoid()

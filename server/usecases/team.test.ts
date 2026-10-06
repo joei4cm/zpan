@@ -374,6 +374,27 @@ describe('team usecase', () => {
       })
     })
 
+    it('forwards a local plan kind', async () => {
+      const grant = vi.fn(async () => sampleResult)
+      const { deps } = makeDeps({ userAdmin: { grantOrgEntitlement: grant } })
+      await grantTeamEntitlement(deps, {
+        adminUserId: 'admin',
+        targetOrgId: 'team-1',
+        resourceType: 'storage',
+        bytes: 4096,
+        kind: 'plan',
+      })
+      expect(grant).toHaveBeenCalledWith({
+        adminUserId: 'admin',
+        orgId: 'team-1',
+        resourceType: 'storage',
+        bytes: 4096,
+        expiresAt: undefined,
+        note: undefined,
+        kind: 'plan',
+      })
+    })
+
     it('threads a repo failure', async () => {
       const { deps } = makeDeps({ userAdmin: { grantOrgEntitlement: async () => failure } })
       const out = await grantTeamEntitlement(deps, {

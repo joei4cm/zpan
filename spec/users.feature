@@ -52,6 +52,13 @@ Feature: User administration
     When an admin grants a storage entitlement
     Then the entitlement is recorded against the personal org
 
+  @users/grant-local-plan @api
+  Scenario: Admins set a local plan that replaces the default quota
+    Given a user with a personal org
+    When an admin grants a local plan entitlement
+    Then the personal org uses that plan instead of the free-plan quota
+    And granting the same plan again updates the existing row
+
   @users/update-entitlement @api
   Scenario: Admins update an admin-granted entitlement
     Given an existing admin grant

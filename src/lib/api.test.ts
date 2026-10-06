@@ -1804,6 +1804,40 @@ describe('api', () => {
       expect(body).toMatchObject({ resourceType: 'storage', bytes: 2048, expiresAt: null })
     })
 
+    it('grants a local plan entitlement', async () => {
+      const payload = {
+        orgId: 'org-1',
+        entitlement: {
+          id: 'ent-plan',
+          orgId: 'org-1',
+          resourceType: 'storage',
+          entitlementType: 'plan',
+          source: 'local_plan',
+          sourceId: 'local_plan:org-1:storage',
+          bytes: 104857600,
+          startsAt: '2026-05-01T00:00:00.000Z',
+          expiresAt: null,
+          status: 'active',
+          metadata: null,
+          createdAt: '2026-05-01T00:00:00.000Z',
+          updatedAt: '2026-05-01T00:00:00.000Z',
+        },
+      }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+
+      const result = await grantUserEntitlement('u1', {
+        resourceType: 'storage',
+        bytes: 104857600,
+        kind: 'plan',
+        note: 'staff',
+      })
+
+      expect(result).toEqual(payload)
+      const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      const body = typeof init.body === 'string' ? JSON.parse(init.body) : null
+      expect(body).toMatchObject({ resourceType: 'storage', bytes: 104857600, kind: 'plan', note: 'staff' })
+    })
+
     it('updates a user quota entitlement', async () => {
       const payload = {
         orgId: 'org-1',
@@ -1964,6 +1998,23 @@ describe('api', () => {
       expect(init.method).toBe('POST')
       const body = typeof init.body === 'string' ? JSON.parse(init.body) : null
       expect(body).toMatchObject({ resourceType: 'storage', bytes: 1024, note: 'starter' })
+    })
+
+    it('grants a local plan entitlement to an org', async () => {
+      const payload = { orgId: 'team-1', entitlement: { id: 'ent-plan', bytes: 104857600, source: 'local_plan' } }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+
+      const result = await grantOrgEntitlement('team-1', {
+        resourceType: 'storage',
+        bytes: 104857600,
+        kind: 'plan',
+        note: 'team plan',
+      })
+
+      expect(result).toEqual(payload)
+      const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      const body = typeof init.body === 'string' ? JSON.parse(init.body) : null
+      expect(body).toMatchObject({ resourceType: 'storage', bytes: 104857600, kind: 'plan', note: 'team plan' })
     })
 
     it('updates an org entitlement', async () => {
