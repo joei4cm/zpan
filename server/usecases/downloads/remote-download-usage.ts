@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { hasFeature } from '../../domain/licensing'
+import { hasFeature, isFeatureUnlockEnabled } from '../../domain/licensing'
 import type {
   LicenseBindingRepo,
   LicensingCloudGateway,
@@ -42,7 +42,8 @@ export async function reportRemoteDownloadUnit(
   },
 ): Promise<{ status: RemoteDownloadUsageStatus; eventId: string }> {
   if (!params.enabled) return { status: 'reported', eventId: '' }
-  if (!hasFeature('quota_store', await loadBindingState(deps))) return { status: 'reported', eventId: '' }
+  if (isFeatureUnlockEnabled() || !hasFeature('quota_store', await loadBindingState(deps)))
+    return { status: 'reported', eventId: '' }
   const eventId = `remote_download:${params.taskId}:${params.unitIndex}`
   const existing = await deps.remoteDownloadUsage.findByEventId(eventId)
   if (existing?.status === 'reported') return { status: 'reported', eventId }
@@ -78,7 +79,7 @@ export async function syncPendingRemoteDownloadUsageReports(
   params: { cloudBaseUrl: string; limit?: number; now?: Date },
 ): Promise<{ attempted: number; reported: number; blocked: number; failed: number }> {
   const { cloudBaseUrl, limit = 100, now = new Date() } = params
-  if (!hasFeature('quota_store', await loadBindingState(deps)))
+  if (isFeatureUnlockEnabled() || !hasFeature('quota_store', await loadBindingState(deps)))
     return { attempted: 0, reported: 0, blocked: 0, failed: 0 }
   const binding = await deps.licenseBinding.loadActiveLicenseBinding()
   if (!binding?.refreshToken || !binding.cloudStoreId) return { attempted: 0, reported: 0, blocked: 0, failed: 0 }

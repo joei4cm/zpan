@@ -44,7 +44,7 @@ import { siteSettings } from './http/site/settings'
 import storages from './http/site/storages'
 import system from './http/site/system'
 import storageUsage from './http/storage-usage'
-import { cloudStore, cloudStoreWebhooks } from './http/store'
+import { cloudStore, cloudStoreWebhooks, localStoreAdmin } from './http/store'
 import { adminTeams, publicTeams, teams } from './http/teams'
 import trash from './http/trash'
 import { users } from './http/users'
@@ -379,6 +379,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.route('/api/quotas', adminQuotas)
   app.route('/api/storage', storageUsage)
   app.route('/api/store', cloudStore)
+  app.route('/api/store', localStoreAdmin)
   app.route('/api/site', system)
   app.route('/api/notifications', notifications)
   app.route('/api/background-jobs', backgroundJobs)
@@ -496,6 +497,7 @@ export type AdminSiteInvitationsRoute = typeof adminSiteInvitations
 export type PublicSiteInvitationsRoute = typeof publicSiteInvitations
 export type AuthProvidersRoute = typeof authProviders
 export type CloudStoreRoute = typeof cloudStore
+export type LocalStoreAdminRoute = typeof localStoreAdmin
 export type CloudStoreWebhooksRoute = typeof cloudStoreWebhooks
 export type TeamsRoute = typeof teams
 export type PublicTeamsRoute = typeof publicTeams

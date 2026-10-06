@@ -1,0 +1,503 @@
+import { isFeatureUnlockEnabled } from '../../domain/licensing'
+import {
+  AppError,
+  badGateway,
+  badRequest,
+  conflict,
+  forbidden,
+  type LocalStoreRepo,
+  notFound,
+  type QuotaRepo,
+  type StoreOrder,
+  type StoreProduct,
+  type StripeGateway,
+} from '../ports'
+
+export type LocalCommerceDeps = {
+  localStore: LocalStoreRepo
+  quota: QuotaRepo
+  stripe: StripeGateway
+}
+
+type StorefrontReadOutcome<T> = { ok: true; value: T } | { ok: false; error: AppError }
+
+type StripeEvent = { id: string; type: string; data: { object: Record<string, unknown> } }
+
+export function usesLocalCommerce(): boolean {
+  return isFeatureUnlockEnabled()
+}
+
+function priceIdFor(product: StoreProduct): string {
+  return `price_${product.id}`
+}
+
+function toStoreProductDto(product: StoreProduct) {
+  return {
+    id: product.id,
+    storeId: 'local',
+    type: 'store_item',
+    name: product.name,
+    description: product.description,
+    metadata: {
+      deliverable: { type: 'zpan.plan' as const, storageBytes: product.storageBytes, includedCredits: 0 },
+    },
+    prices: [
+      {
+        id: priceIdFor(product),
+        currency: product.currency,
+        amount: product.amountCents,
+        recurring: product.interval ? { interval: product.interval, intervalCount: 1 } : undefined,
+      },
+    ],
+    active: product.active,
+    sortOrder: product.sortOrder,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+  }
+}
+
+function toOrderDto(order: StoreOrder) {
+  return {
+    id: order.id,
+    storeId: 'local',
+    status: order.status === 'paid' ? 'paid' : order.status === 'canceled' ? 'canceled' : 'open',
+    paymentStatus: order.status === 'paid' ? 'paid' : order.status === 'canceled' ? 'canceled' : 'unpaid',
+    fulfillmentStatus: order.status === 'paid' ? 'fulfilled' : 'unfulfilled',
+    subtotalAmount: order.amountCents,
+    discountAmount: 0,
+    totalAmount: order.amountCents,
+    currency: order.currency,
+    target: { orgId: order.orgId, customerId: order.orgId },
+    items: [
+      {
+        id: order.id,
+        orderId: order.id,
+        productId: order.productId,
+        productType: 'store_item',
+        name: order.productName,
+        quantity: 1,
+        unitAmount: order.amountCents,
+        totalAmount: order.amountCents,
+        fulfillmentPayload: {
+          deliverable: { type: 'zpan.plan', storageBytes: order.storageBytes, includedCredits: 0 },
+        },
+      },
+    ],
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: order.updatedAt.toISOString(),
+  }
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+function giftCodeAlphabet(): string {
+  return 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+}
+
+function randomGiftCode(): string {
+  const alphabet = giftCodeAlphabet()
+  const bytes = crypto.getRandomValues(new Uint8Array(8))
+  const chars = [...bytes].map((byte) => alphabet[byte % alphabet.length])
+  return `ZS-${chars.slice(0, 4).join('')}-${chars.slice(4).join('')}`
+}
+
+function missingStripeSecret(): AppError {
+  return new AppError(503, 'Stripe is not configured', { reason: 'STRIPE_NOT_CONFIGURED' })
+}
+
+async function openStripeCheckout(
+  deps: LocalCommerceDeps,
+  params: {
+    order: StoreOrder
+    origin: string
+    customerLabel: string | null
+    secretKey: string
+  },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const { order } = params
+  let customerId = order.stripeCustomerId ?? (await deps.localStore.getCustomer(order.orgId))?.stripeCustomerId ?? null
+  if (!customerId) {
+    try {
+      const customer = await deps.stripe.createCustomer(params.secretKey, {
+        name: params.customerLabel ?? order.orgId,
+        metadata: { orgId: order.orgId },
+      })
+      customerId = customer.id
+      await deps.localStore.upsertCustomer(order.orgId, customerId)
+    } catch (error) {
+      return { ok: false, error: badGateway((error as Error).message) }
+    }
+  }
+  if (order.stripeSessionId) {
+    await deps.stripe.expireCheckoutSession(params.secretKey, order.stripeSessionId).catch(() => undefined)
+  }
+  const metadata = {
+    orgId: order.orgId,
+    orderId: order.id,
+    productId: order.productId,
+    storageBytes: String(order.storageBytes),
+  }
+  try {
+    const session = await deps.stripe.createCheckoutSession(params.secretKey, {
+      mode: order.interval ? 'subscription' : 'payment',
+      success_url: `${params.origin}/storage`,
+      cancel_url: `${params.origin}/storage`,
+      client_reference_id: order.orgId,
+      customer: customerId,
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: order.currency,
+            unit_amount: order.amountCents,
+            product_data: { name: order.productName, metadata },
+            ...(order.interval ? { recurring: { interval: order.interval } } : {}),
+          },
+        },
+      ],
+      metadata,
+      ...(order.interval ? { subscription_data: { metadata } } : {}),
+    })
+    if (!session.url) return { ok: false, error: badGateway('Stripe checkout URL missing') }
+    await deps.localStore.updateOrder(order.id, { stripeSessionId: session.id, stripeCustomerId: customerId })
+    return { ok: true, value: { orderId: order.id, url: session.url, paymentId: session.id } }
+  } catch (error) {
+    return { ok: false, error: badGateway((error as Error).message) }
+  }
+}
+
+export async function listLocalPackages(
+  deps: LocalCommerceDeps,
+): Promise<StorefrontReadOutcome<{ items: unknown[]; total: number }>> {
+  const items = (await deps.localStore.listProducts({ activeOnly: true })).map(toStoreProductDto)
+  return { ok: true, value: { items, total: items.length } }
+}
+
+export async function listLocalOrders(
+  deps: LocalCommerceDeps,
+  orgId: string,
+): Promise<StorefrontReadOutcome<{ items: unknown[]; total: number }>> {
+  const items = (await deps.localStore.listOrders(orgId)).map(toOrderDto)
+  return { ok: true, value: { items, total: items.length } }
+}
+
+export async function createLocalCheckout(
+  deps: LocalCommerceDeps,
+  params: {
+    userId: string
+    orgId: string
+    origin: string
+    packageId: string
+    priceId?: string
+    customerLabel: string | null
+    stripe: { secretKey: string | null }
+  },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const product = await deps.localStore.getProduct(params.packageId)
+  if (!product?.active) return { ok: false, error: notFound('Package not found') }
+  if (params.priceId && params.priceId !== priceIdFor(product)) {
+    return { ok: false, error: badRequest('Package price missing', 'PACKAGE_PRICE_MISSING') }
+  }
+  if (product.interval) {
+    const quota = await deps.quota.getEffectiveQuota(params.orgId)
+    if (quota.currentPlan?.subscription) {
+      return { ok: false, error: conflict('Workspace plan already exists', 'WORKSPACE_PLAN_EXISTS') }
+    }
+  }
+  if (!params.stripe.secretKey) return { ok: false, error: missingStripeSecret() }
+  const order = await deps.localStore.createOrder({
+    orgId: params.orgId,
+    userId: params.userId,
+    productId: product.id,
+    productName: product.name,
+    storageBytes: product.storageBytes,
+    amountCents: product.amountCents,
+    currency: product.currency,
+    interval: product.interval,
+    stripeSessionId: null,
+    stripeCustomerId: (await deps.localStore.getCustomer(params.orgId))?.stripeCustomerId ?? null,
+  })
+  return openStripeCheckout(deps, {
+    order,
+    origin: params.origin,
+    customerLabel: params.customerLabel,
+    secretKey: params.stripe.secretKey,
+  })
+}
+
+export async function continueLocalOrderPayment(
+  deps: LocalCommerceDeps,
+  params: {
+    orgId: string
+    orderId: string
+    origin: string
+    customerLabel: string | null
+    stripe: { secretKey: string | null }
+  },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const order = await deps.localStore.getOrder(params.orderId)
+  if (!order) return { ok: false, error: notFound('Order not found') }
+  if (order.orgId !== params.orgId) return { ok: false, error: forbidden() }
+  if (order.status !== 'pending') return { ok: false, error: conflict('Order is not payable', 'ORDER_NOT_PAYABLE') }
+  if (!params.stripe.secretKey) return { ok: false, error: missingStripeSecret() }
+  return openStripeCheckout(deps, {
+    order,
+    origin: params.origin,
+    customerLabel: params.customerLabel,
+    secretKey: params.stripe.secretKey,
+  })
+}
+
+export async function cancelLocalOrder(
+  deps: LocalCommerceDeps,
+  params: { orgId: string; orderId: string; stripe: { secretKey: string | null } },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const order = await deps.localStore.getOrder(params.orderId)
+  if (!order) return { ok: false, error: notFound('Order not found') }
+  if (order.orgId !== params.orgId) return { ok: false, error: forbidden() }
+  if (order.status !== 'pending')
+    return { ok: false, error: conflict('Order cannot be canceled', 'ORDER_NOT_CANCELABLE') }
+  if (order.stripeSessionId && params.stripe.secretKey) {
+    await deps.stripe.expireCheckoutSession(params.stripe.secretKey, order.stripeSessionId).catch(() => undefined)
+  }
+  const updated = await deps.localStore.updateOrder(order.id, { status: 'canceled' })
+  return { ok: true, value: updated ? toOrderDto(updated) : toOrderDto(order) }
+}
+
+export async function createLocalBillingPortalSession(
+  deps: LocalCommerceDeps,
+  params: { orgId: string; origin: string; stripe: { secretKey: string | null } },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const customer = await deps.localStore.getCustomer(params.orgId)
+  if (!customer) return { ok: false, error: notFound('No Stripe customer for this workspace') }
+  if (!params.stripe.secretKey) return { ok: false, error: missingStripeSecret() }
+  try {
+    const session = await deps.stripe.createPortalSession(params.stripe.secretKey, {
+      customer: customer.stripeCustomerId,
+      return_url: `${params.origin}/storage`,
+    })
+    return { ok: true, value: { url: session.url, stripeSubscriptionId: '' } }
+  } catch (error) {
+    return { ok: false, error: badGateway((error as Error).message) }
+  }
+}
+
+export async function redeemLocalGiftCard(
+  deps: LocalCommerceDeps,
+  params: { orgId: string; code: string },
+): Promise<StorefrontReadOutcome<unknown>> {
+  const normalized = params.code.trim().toUpperCase()
+  const codeHash = await sha256Hex(normalized)
+  const card = await deps.localStore.findGiftCardByCodeHash(codeHash)
+  if (!card) {
+    return {
+      ok: true,
+      value: {
+        redeemedCredits: 0,
+        redeemedStorageBytes: 0,
+        entries: [],
+        failures: [{ code: params.code, error: 'invalid_code' }],
+      },
+    }
+  }
+  if (card.status !== 'active' || (card.expiresAt && card.expiresAt.getTime() <= Date.now())) {
+    return {
+      ok: true,
+      value: {
+        redeemedCredits: 0,
+        redeemedStorageBytes: 0,
+        entries: [],
+        failures: [{ code: params.code, error: card.status === 'redeemed' ? 'already_redeemed' : 'inactive' }],
+      },
+    }
+  }
+  const redeemed = await deps.localStore.redeemGiftCard(card.id, params.orgId)
+  if (!redeemed) {
+    return {
+      ok: true,
+      value: {
+        redeemedCredits: 0,
+        redeemedStorageBytes: 0,
+        entries: [],
+        failures: [{ code: params.code, error: 'already_redeemed' }],
+      },
+    }
+  }
+  await deps.localStore.grantStorage({
+    orgId: params.orgId,
+    bytes: card.storageBytes,
+    entitlementType: 'grant',
+    source: 'gift_card',
+    sourceId: `gift_card:${card.id}`,
+    packageName: 'Gift card',
+  })
+  return {
+    ok: true,
+    value: {
+      redeemedCredits: 0,
+      redeemedStorageBytes: card.storageBytes,
+      entries: [],
+      failures: [],
+    },
+  }
+}
+
+export async function processStripeWebhook(
+  deps: LocalCommerceDeps,
+  params: { rawPayload: string; signature: string; webhookSecret: string | null },
+): Promise<{ ok: true; duplicate: boolean; eventId: string } | { ok: false; error: AppError }> {
+  if (!params.webhookSecret) {
+    return {
+      ok: false,
+      error: new AppError(503, 'Stripe webhook secret is not configured', { reason: 'STRIPE_NOT_CONFIGURED' }),
+    }
+  }
+  const valid = await deps.stripe.verifySignature(params.rawPayload, params.signature, params.webhookSecret)
+  if (!valid) return { ok: false, error: forbidden('Invalid Stripe signature') }
+  let event: StripeEvent
+  try {
+    event = JSON.parse(params.rawPayload) as StripeEvent
+  } catch {
+    return { ok: false, error: badRequest('Invalid payload', 'INVALID_PAYLOAD') }
+  }
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object
+    const sessionId = String(session.id ?? '')
+    const metadata = (session.metadata ?? {}) as Record<string, string>
+    const order =
+      (await deps.localStore.getOrderByStripeSessionId(sessionId)) ??
+      (metadata.orderId ? await deps.localStore.getOrder(metadata.orderId) : null)
+    if (!order) return { ok: true, duplicate: true, eventId: event.id }
+    if (order.status === 'paid') return { ok: true, duplicate: true, eventId: event.id }
+    const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
+    await deps.localStore.updateOrder(order.id, {
+      status: 'paid',
+      stripeSessionId: sessionId,
+      stripeSubscriptionId: subscriptionId,
+      stripeCustomerId: typeof session.customer === 'string' ? session.customer : order.stripeCustomerId,
+    })
+    const sourceId = subscriptionId ? `stripe_subscription:${subscriptionId}:${order.orgId}` : `stripe:${order.id}`
+    await deps.localStore.grantStorage({
+      orgId: order.orgId,
+      bytes: order.storageBytes,
+      entitlementType: subscriptionId ? 'plan' : 'grant',
+      source: 'stripe',
+      sourceId,
+      packageName: order.productName,
+    })
+    return { ok: true, duplicate: false, eventId: event.id }
+  }
+  if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
+    const subscription = event.data.object
+    const subscriptionId = String(subscription.id ?? '')
+    const order = await deps.localStore.getOrderByStripeSubscriptionId(subscriptionId)
+    if (!order) return { ok: true, duplicate: true, eventId: event.id }
+    const sourceId = `stripe_subscription:${subscriptionId}:${order.orgId}`
+    const status = String(subscription.status ?? '')
+    if (event.type === 'customer.subscription.deleted' || status === 'canceled' || status === 'unpaid') {
+      await deps.localStore.revokeStorage('stripe', sourceId)
+      return { ok: true, duplicate: false, eventId: event.id }
+    }
+    return { ok: true, duplicate: false, eventId: event.id }
+  }
+  return { ok: true, duplicate: true, eventId: event.id }
+}
+
+export async function listAdminStoreProducts(deps: LocalCommerceDeps) {
+  return deps.localStore.listProducts()
+}
+
+export async function createAdminStoreProduct(
+  deps: LocalCommerceDeps,
+  input: {
+    name: string
+    description?: string
+    storageBytes: number
+    amountCents: number
+    currency?: string
+    interval?: 'month' | 'year' | null
+    active?: boolean
+  },
+) {
+  return deps.localStore.createProduct({
+    name: input.name,
+    description: input.description ?? '',
+    storageBytes: input.storageBytes,
+    amountCents: input.amountCents,
+    currency: input.currency ?? 'usd',
+    interval: input.interval ?? null,
+    active: input.active ?? true,
+    sortOrder: 0,
+  })
+}
+
+export async function updateAdminStoreProduct(
+  deps: LocalCommerceDeps,
+  id: string,
+  patch: Partial<{
+    name: string
+    description: string
+    storageBytes: number
+    amountCents: number
+    interval: 'month' | 'year' | null
+    active: boolean
+  }>,
+) {
+  const updated = await deps.localStore.updateProduct(id, patch)
+  if (!updated) throw notFound('Product not found')
+  return updated
+}
+
+export async function deleteAdminStoreProduct(deps: LocalCommerceDeps, id: string) {
+  const deleted = await deps.localStore.deleteProduct(id)
+  if (!deleted) throw notFound('Product not found')
+}
+
+export async function listAdminGiftCards(deps: LocalCommerceDeps) {
+  return deps.localStore.listGiftCards()
+}
+
+export async function createAdminGiftCards(
+  deps: LocalCommerceDeps,
+  input: { storageBytes: number; count: number; expiresAt?: string | null; note?: string | null; createdBy: string },
+) {
+  const count = Math.min(Math.max(input.count, 1), 100)
+  const codes = Array.from({ length: count }, () => randomGiftCode())
+  const hashed = await Promise.all(
+    codes.map(async (code) => ({
+      code,
+      codeHash: await sha256Hex(code),
+      codeLast4: code.slice(-4),
+    })),
+  )
+  const cards = await deps.localStore.createGiftCards({
+    storageBytes: input.storageBytes,
+    count,
+    expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+    note: input.note ?? null,
+    createdBy: input.createdBy,
+    codes: hashed.map(({ codeHash, codeLast4 }) => ({ codeHash, codeLast4 })),
+  })
+  return cards.map((card, index) => ({ ...card, code: hashed[index]?.code ?? null }))
+}
+
+export async function disableAdminGiftCard(deps: LocalCommerceDeps, id: string) {
+  const card = await deps.localStore.disableGiftCard(id)
+  if (!card) throw notFound('Gift card not found')
+  return card
+}
+
+export function emptyLocalCredits() {
+  return { ok: true as const, value: { balance: 0 } }
+}
+
+export function emptyLocalCreditLedger() {
+  return { ok: true as const, value: { items: [], total: 0, limit: 50, offset: 0 } }
+}
+
+export function emptyLocalCreditProducts() {
+  return { ok: true as const, value: { items: [], total: 0 } }
+}

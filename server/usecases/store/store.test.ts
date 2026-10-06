@@ -25,6 +25,7 @@ function expectError(
   expect(error.message).toBe(expected.message)
 }
 
+import { registerFeatureUnlock } from '../../domain/licensing'
 import { verifyCloudEventToken } from '../site/licensing'
 import {
   type CloudStoreDeps,
@@ -288,6 +289,19 @@ function makeDeps(
   const createBoundCloudClient = vi.fn(() => fake.client)
   const licensingCloud = { createBoundCloudClient } as unknown as LicensingCloudGateway
   const quota = { getEffectiveQuota: async () => options.quota ?? noPlanQuota } as unknown as QuotaRepo
+  const localStore = {
+    listProducts: async () => [],
+    getProduct: async () => null,
+    listOrders: async () => [],
+    getOrder: async () => null,
+  } as unknown as CloudStoreDeps['localStore']
+  const stripe = {
+    createCustomer: vi.fn(),
+    createCheckoutSession: vi.fn(),
+    createPortalSession: vi.fn(),
+    expireCheckoutSession: vi.fn(),
+    verifySignature: vi.fn(),
+  } as CloudStoreDeps['stripe']
   let purchaseIntent: X402CapacityPurchaseIntent | null = null
   const x402CapacityPurchases: X402CapacityPurchaseRepo = {
     get: async () => purchaseIntent,
@@ -317,7 +331,9 @@ function makeDeps(
   const deps: CloudStoreDeps & { x402CapacityPurchases: X402CapacityPurchaseRepo } = {
     cloudStore,
     licensingCloud,
+    localStore,
     quota,
+    stripe,
     x402CapacityPurchases,
   }
   return { deps, getCloudStoreBinding, processCloudOrderQuotaChange, createBoundCloudClient, requests: fake.requests }
@@ -325,7 +341,10 @@ function makeDeps(
 
 const CLOUD = 'https://cloud.example'
 
-beforeEach(() => vi.clearAllMocks())
+beforeEach(() => {
+  vi.clearAllMocks()
+  registerFeatureUnlock(undefined)
+})
 
 describe('cloud-store usecase', () => {
   describe('getStoreReadiness', () => {

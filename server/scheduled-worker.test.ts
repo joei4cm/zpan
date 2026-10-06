@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { registerFeatureUnlock } from '../server/domain/licensing'
 import { syncPendingRemoteDownloadUsageReports } from '../server/usecases/downloads/remote-download-usage'
 import { purgeExpiredTrash } from '../server/usecases/object'
 import { reconcileImageDomains } from '../server/usecases/site/image-domain-provider'
@@ -69,6 +70,7 @@ vi.mock('../server/usecases/object', () => ({
 
 describe('handleScheduled', () => {
   beforeEach(() => {
+    registerFeatureUnlock(undefined)
     vi.mocked(syncPendingCloudTrafficReports).mockReset()
     vi.mocked(syncPendingRemoteDownloadUsageReports).mockReset()
     vi.mocked(reportInstanceTelemetry).mockReset()
@@ -160,5 +162,16 @@ describe('handleScheduled', () => {
     expect(runLicensingRefresh).not.toHaveBeenCalled()
     expect(syncPendingCloudTrafficReports).not.toHaveBeenCalled()
     expect(syncPendingRemoteDownloadUsageReports).not.toHaveBeenCalled()
+  })
+
+  it('skips Cloud traffic sync and licensing refresh when features are unlocked [spec: local-commerce/disconnect-cloud]', async () => {
+    registerFeatureUnlock('true')
+    await handleScheduled({ cron: '*/10 * * * *' }, { DB: {} as D1Database, ZPAN_CLOUD_URL: 'https://cloud.example' })
+    expect(reconcileFreePlanBaselines).toHaveBeenCalledOnce()
+    expect(syncPendingCloudTrafficReports).not.toHaveBeenCalled()
+    expect(syncPendingRemoteDownloadUsageReports).not.toHaveBeenCalled()
+
+    await handleScheduled({ cron: '0 */6 * * *' }, { DB: {} as D1Database, ZPAN_CLOUD_URL: 'https://cloud.example' })
+    expect(runLicensingRefresh).not.toHaveBeenCalled()
   })
 })

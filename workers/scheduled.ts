@@ -2,6 +2,7 @@
 
 import { createQuotaRepo } from '../server/adapters/repos/quota'
 import { createDeps } from '../server/composition'
+import { isFeatureUnlockEnabled } from '../server/domain/licensing'
 import { createCloudflarePlatform } from '../server/platform/cloudflare'
 import { syncPendingRemoteDownloadUsageReports } from '../server/usecases/downloads/remote-download-usage'
 import { purgeExpiredTrash, resolveTrashRetentionDays } from '../server/usecases/object'
@@ -38,10 +39,12 @@ export async function handleScheduled(event: ScheduledTrigger, env: ScheduledEnv
   const cloudBaseUrl = env.ZPAN_CLOUD_URL ?? ZPAN_CLOUD_URL_DEFAULT
   if (event.cron === TRAFFIC_SYNC_CRON) {
     await deps.quota.reconcileFreePlanBaselines()
-    await Promise.all([
-      syncPendingCloudTrafficReports(deps, { cloudBaseUrl }),
-      syncPendingRemoteDownloadUsageReports(deps, { cloudBaseUrl }),
-    ])
+    if (!isFeatureUnlockEnabled()) {
+      await Promise.all([
+        syncPendingCloudTrafficReports(deps, { cloudBaseUrl }),
+        syncPendingRemoteDownloadUsageReports(deps, { cloudBaseUrl }),
+      ])
+    }
     return
   }
 
@@ -86,5 +89,6 @@ export async function handleScheduled(event: ScheduledTrigger, env: ScheduledEnv
     return
   }
 
+  if (isFeatureUnlockEnabled()) return
   await runLicensingRefresh(deps, cloudBaseUrl)
 }

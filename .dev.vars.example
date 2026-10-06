@@ -17,6 +17,10 @@ ZPAN_CLOUD_URL=http://localhost:5186
 # Open local Pro/Business feature gates without a Cloud certificate.
 ZPAN_UNLOCK_FEATURES=true
 
+# Direct Stripe keys for the local store (Checkout + webhooks). Unused when Cloud is the merchant.
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
 # Trusted license signing public keys (PASERK k4.public.*, comma-separated).
 # Dev keys are configured here — NOT hardcoded in source — so a leaked dev key is
 # rotated via config and never trusted by production builds. Pair this with the

@@ -292,6 +292,25 @@ describe('runLicensingRefresh', () => {
     }
   }
 
+  it('is a no-op (never calls cloud) when features are unlocked [spec: local-commerce/disconnect-cloud]', async () => {
+    const { registerFeatureUnlock } = await import('../../domain/licensing')
+    registerFeatureUnlock('true')
+    try {
+      const db = makeDb()
+      await seedBinding(db, { lastRefreshAt: nowSec() - 3600 })
+      const refresh = vi.fn(async () => successPayload())
+      await expect(
+        runLicensingRefresh(
+          { licenseBinding: createLicenseBindingRepo(db), licensingCloud: fakeCloud(refresh) },
+          CLOUD_URL,
+        ),
+      ).resolves.toBeUndefined()
+      expect(refresh).not.toHaveBeenCalled()
+    } finally {
+      registerFeatureUnlock(undefined)
+    }
+  })
+
   it('is a no-op (never calls cloud) when no binding exists', async () => {
     const db = makeDb()
     const refresh = vi.fn(async () => successPayload())

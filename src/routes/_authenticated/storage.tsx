@@ -1,16 +1,18 @@
 import type { StorageUsageCategory, StorageUsageItem } from '@shared/types'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ChevronRight, Cloud } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { STORAGE_CATEGORY_META, StorageCleanupDialog } from '@/components/storage/storage-cleanup-dialog'
 import { CheckoutConfirmDialog, type CheckoutSelection } from '@/components/store/checkout-confirm-dialog'
 import { openCheckoutTab, resolveCheckoutSelection } from '@/components/store/checkout-navigation'
+import { StorageActions } from '@/components/store/storage-dialogs'
 import { StoragePackages } from '@/components/store/storage-panels'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { getStorageUsage, getUserQuota, listCloudProducts, listCloudStoreTargets } from '@/lib/api'
+import { getStorageUsage, getUserQuota, listCloudProducts, listCloudStoreTargets, redeemCloudGiftCard } from '@/lib/api'
 import { useActiveOrganization } from '@/lib/auth-client'
 import { formatSize } from '@/lib/format'
 
@@ -21,6 +23,7 @@ export const Route = createFileRoute('/_authenticated/storage')({
 export function StoragePage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data: activeOrg } = useActiveOrganization()
   const orgId = activeOrg?.id ?? ''
   const [selectedCategory, setSelectedCategory] = useState<StorageUsageCategory | null>(null)
@@ -48,6 +51,23 @@ export function StoragePage() {
 
   const currentTarget = targetsQuery.data?.items.find((item) => item.orgId === orgId)
   const canManageBilling = targetsQuery.isSuccess && (currentTarget?.type !== 'team' || currentTarget?.role === 'owner')
+  const redeemMutation = useMutation({
+    mutationFn: (code: string) => redeemCloudGiftCard(code),
+    onSuccess: (result) => {
+      if (result.failures?.length) {
+        toast.error(result.failures[0]?.error ?? t('common.error'))
+        return
+      }
+      if (result.redeemedStorageBytes) {
+        toast.success(t('storage.redeemStorageSuccess', { size: formatSize(result.redeemedStorageBytes) }))
+        queryClient.invalidateQueries({ queryKey: ['user', 'quota'] })
+        queryClient.invalidateQueries({ queryKey: ['storage-usage'] })
+        return
+      }
+      toast.success(t('storage.redeemSuccess', { amount: result.redeemedCredits }))
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
   const displayBreakdowns = usageQuery.data?.breakdowns ?? []
   const categoryBytes = displayBreakdowns.reduce((sum, row) => sum + row.bytes, 0)
@@ -91,9 +111,12 @@ export function StoragePage() {
           <h1 className="text-2xl font-semibold tracking-tight">{t('storage.title')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t('storage.managementSubtitle')}</p>
         </div>
-        <Button onClick={() => setPlansOpen(true)} disabled={!canManageBilling}>
-          {t('storage.expandStorage')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <StorageActions onRedeem={(code) => redeemMutation.mutate(code)} isRedeeming={redeemMutation.isPending} />
+          <Button onClick={() => setPlansOpen(true)} disabled={!canManageBilling}>
+            {t('storage.expandStorage')}
+          </Button>
+        </div>
       </header>
 
       <section className="rounded-2xl border bg-card p-6 shadow-sm">

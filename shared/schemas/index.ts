@@ -152,6 +152,16 @@ export {
   errorResponseSchema,
 } from './errors'
 export { base62IdSchema, imageTokenSchema, opaqueIdSchema, opaqueTokenSchema, shareTokenSchema } from './id'
+export type {
+  LocalStoreGiftCardCreate,
+  LocalStoreProductInput,
+  LocalStoreProductPatch,
+} from './local-store'
+export {
+  localStoreGiftCardCreateSchema,
+  localStoreProductInputSchema,
+  localStoreProductPatchSchema,
+} from './local-store'
 export type { ListNotificationsQuery } from './notification'
 export { listNotificationsQuerySchema } from './notification'
 export type { WorkspaceAuthorizationDetail } from './oauth-authorization'

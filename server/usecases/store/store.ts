@@ -56,11 +56,27 @@ import {
   conflict,
   forbidden,
   type LicensingCloudGateway,
+  type LocalStoreRepo,
   notFound,
   type QuotaRepo,
   rateLimited,
+  type StripeGateway,
 } from '../ports'
 import { verifyCloudEventToken } from '../site/licensing'
+import {
+  cancelLocalOrder,
+  continueLocalOrderPayment,
+  createLocalBillingPortalSession,
+  createLocalCheckout,
+  emptyLocalCreditLedger,
+  emptyLocalCreditProducts,
+  emptyLocalCredits,
+  listLocalOrders,
+  listLocalPackages,
+  processStripeWebhook,
+  redeemLocalGiftCard,
+  usesLocalCommerce,
+} from './local-commerce'
 
 // The Cloud commerce response schemas. Aliased to keep call sites readable; the
 // matching aliases in cloud-store-helpers serve the orders helper + tests.
@@ -74,10 +90,14 @@ const cloudDiscountQuoteResponseSchema = discountQuoteSchema
 const CLOUD_STORE_REQUEST_TIMEOUT_MS = 10_000
 const X402_ORDER_CLAIM_TIMEOUT_MS = 30_000
 
+export type StripeCheckoutConfig = { secretKey: string | null; webhookSecret?: string | null }
+
 export type CloudStoreDeps = {
   cloudStore: CloudStoreRepo
   licensingCloud: LicensingCloudGateway
+  localStore: LocalStoreRepo
   quota: QuotaRepo
+  stripe: StripeGateway
 }
 
 // A bound Cloud commerce client plus the store it targets. Every storefront
@@ -120,6 +140,7 @@ export async function buildBoundCloudClient(
 export async function getStoreReadiness(
   deps: Pick<CloudStoreDeps, 'cloudStore'>,
 ): Promise<{ ready: true } | { ready: false; error: 'quota_store_binding_missing' }> {
+  if (usesLocalCommerce()) return { ready: true }
   try {
     await deps.cloudStore.getCloudStoreBinding()
     return { ready: true }
@@ -249,6 +270,7 @@ export async function listCapacityOffers(
   cloudBaseUrl: string,
   params: { orgId: string; requestedBytes: number },
 ): Promise<StorefrontReadOutcome<CapacityOffer[]>> {
+  if (usesLocalCommerce()) return { ok: true, value: [] }
   const packages = await listPackages(deps, cloudBaseUrl)
   if (!packages.ok) return packages
   const publication = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -363,6 +385,9 @@ export async function purchaseCapacity(
     paymentSignature: string | null
   },
 ): Promise<CapacityPurchaseOutcome> {
+  if (usesLocalCommerce()) {
+    return { ok: false, error: badRequest('x402 capacity purchase is not available', 'X402_NOT_AVAILABLE') }
+  }
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
 
@@ -635,11 +660,13 @@ function terminalCapacityPurchaseOutcome(attempt: z.infer<typeof x402PaymentAtte
   }
 }
 
-export function listPackages(deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>, cloudBaseUrl: string) {
+export function listPackages(deps: CloudStoreDeps, cloudBaseUrl: string) {
+  if (usesLocalCommerce()) return listLocalPackages(deps)
   return listDeliverables(deps, cloudBaseUrl, 'zpan.plan')
 }
 
-export function listCreditProducts(deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>, cloudBaseUrl: string) {
+export function listCreditProducts(deps: CloudStoreDeps, cloudBaseUrl: string) {
+  if (usesLocalCommerce()) return Promise.resolve(emptyLocalCreditProducts())
   return listDeliverables(deps, cloudBaseUrl, 'zpan.credits')
 }
 
@@ -653,6 +680,17 @@ export async function listTargets(
   return { ok: true, value: { items, total: items.length } }
 }
 
+export async function listStoreOrders(
+  deps: CloudStoreDeps,
+  _cloudBaseUrl: string,
+  orgId: string,
+): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) return listLocalOrders(deps, orgId)
+  const ready = await getStoreReadiness(deps)
+  if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
+  return { ok: false, error: badGateway('use_cloud_orders') }
+}
+
 // Credit balance / ledger / redemptions / discount quotes / billing portal are
 // owner-scoped or org-scoped proxies whose only org guard (no active org) is
 // enforced by the handler before calling. They share the binding→cloud shape.
@@ -662,6 +700,7 @@ export async function getCreditBalance(
   cloudBaseUrl: string,
   orgId: string,
 ): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) return emptyLocalCredits()
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -681,6 +720,7 @@ export async function getCreditLedger(
   cloudBaseUrl: string,
   orgId: string,
 ): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) return emptyLocalCreditLedger()
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -697,10 +737,11 @@ export async function getCreditLedger(
 }
 
 export async function redeemGiftCard(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: CloudStoreDeps,
   cloudBaseUrl: string,
   params: { orgId: string; input: RedeemGiftCardInput },
 ): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) return redeemLocalGiftCard(deps, { orgId: params.orgId, code: params.input.code })
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -721,6 +762,9 @@ export async function getDiscountQuote(
   cloudBaseUrl: string,
   input: DiscountQuoteInput,
 ): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) {
+    return { ok: false, error: badRequest('Promotion codes are not supported', 'PROMOTION_NOT_SUPPORTED') }
+  }
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -734,10 +778,17 @@ export async function getDiscountQuote(
 }
 
 export async function createBillingPortalSession(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: CloudStoreDeps,
   cloudBaseUrl: string,
-  params: { orgId: string; origin: string },
+  params: { orgId: string; origin: string; stripe?: StripeCheckoutConfig },
 ): Promise<StorefrontReadOutcome<unknown>> {
+  if (usesLocalCommerce()) {
+    return createLocalBillingPortalSession(deps, {
+      orgId: params.orgId,
+      origin: params.origin,
+      stripe: { secretKey: params.stripe?.secretKey ?? null },
+    })
+  }
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -766,8 +817,20 @@ const CHECKOUT_CURRENCY = 'usd'
 export async function createCheckout(
   deps: CloudStoreDeps,
   cloudBaseUrl: string,
-  params: { userId: string; orgId: string; origin: string; input: CheckoutInput },
+  params: { userId: string; orgId: string; origin: string; input: CheckoutInput; stripe?: StripeCheckoutConfig },
 ): Promise<CheckoutOutcome> {
+  if (usesLocalCommerce()) {
+    const customerLabel = await deps.cloudStore.getCustomerLabel(params.userId, params.orgId)
+    return createLocalCheckout(deps, {
+      userId: params.userId,
+      orgId: params.orgId,
+      origin: params.origin,
+      packageId: params.input.packageId,
+      priceId: params.input.priceId,
+      customerLabel,
+      stripe: { secretKey: params.stripe?.secretKey ?? null },
+    })
+  }
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const { userId, orgId, origin, input } = params
@@ -857,11 +920,22 @@ function orderBelongsToTarget(target: Record<string, unknown> | null, orgId: str
 // Continues payment on an existing order, after confirming the order belongs to
 // the caller's org. Empty `orderId` → not_found (404).
 export async function continueOrderPayment(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: CloudStoreDeps,
   cloudBaseUrl: string,
-  params: { orgId: string; orderId: string | undefined; origin: string },
+  params: { orgId: string; orderId: string | undefined; origin: string; stripe?: StripeCheckoutConfig },
 ): Promise<OrderActionOutcome> {
   if (!params.orderId) return { ok: false, error: notFound('Order not found') }
+  if (usesLocalCommerce()) {
+    const order = await deps.localStore.getOrder(params.orderId)
+    const customerLabel = order ? await deps.cloudStore.getCustomerLabel(order.userId, params.orgId) : null
+    return continueLocalOrderPayment(deps, {
+      orgId: params.orgId,
+      orderId: params.orderId,
+      origin: params.origin,
+      customerLabel,
+      stripe: { secretKey: params.stripe?.secretKey ?? null },
+    })
+  }
   const orderId = params.orderId
 
   const order = await fetchOrder(deps, cloudBaseUrl, orderId)
@@ -882,11 +956,18 @@ export async function continueOrderPayment(
 }
 
 export async function cancelOrder(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: CloudStoreDeps,
   cloudBaseUrl: string,
-  params: { orgId: string; orderId: string | undefined; status: 'canceled' },
+  params: { orgId: string; orderId: string | undefined; status: 'canceled'; stripe?: StripeCheckoutConfig },
 ): Promise<OrderActionOutcome> {
   if (!params.orderId) return { ok: false, error: notFound('Order not found') }
+  if (usesLocalCommerce()) {
+    return cancelLocalOrder(deps, {
+      orgId: params.orgId,
+      orderId: params.orderId,
+      stripe: { secretKey: params.stripe?.secretKey ?? null },
+    })
+  }
   const orderId = params.orderId
 
   const order = await fetchOrder(deps, cloudBaseUrl, orderId)
@@ -922,15 +1003,26 @@ const invalidEventToken = () => new AppError(401, 'Invalid event token', { reaso
 // the event token, validates the parsed body, cross-checks the body eventId
 // against the token, then defers to the repo for idempotent fulfillment.
 export async function processDeliveryWebhook(
-  deps: Pick<CloudStoreDeps, 'cloudStore'>,
+  deps: CloudStoreDeps,
   params: {
     cloudBaseUrl: string
     eventToken: string
     rawPayload: string
     payloadHash: string
     body: unknown
+    stripeSignature?: string
+    stripeWebhookSecret?: string | null
   },
-): Promise<WebhookOutcome> {
+): Promise<WebhookOutcome | { ok: true; duplicate: boolean; eventId: string; receipt: null }> {
+  if (usesLocalCommerce()) {
+    const outcome = await processStripeWebhook(deps, {
+      rawPayload: params.rawPayload,
+      signature: params.stripeSignature ?? '',
+      webhookSecret: params.stripeWebhookSecret ?? null,
+    })
+    if (!outcome.ok) return outcome
+    return { ok: true, duplicate: outcome.duplicate, eventId: outcome.eventId, receipt: null }
+  }
   const binding = await deps.cloudStore.getCloudStoreBinding()
   const eventAuth = verifyCloudEventToken(params.eventToken, {
     cloudBaseUrl: params.cloudBaseUrl,

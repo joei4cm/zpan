@@ -8,6 +8,7 @@ import { ZPAN_CLOUD_URL_DEFAULT } from '../shared/constants'
 import { createQuotaRepo } from './adapters/repos/quota'
 import { createBootstrap } from './bootstrap'
 import { createDeps } from './composition'
+import { isFeatureUnlockEnabled } from './domain/licensing'
 import { createLibsqlPlatform } from './platform/libsql'
 import { createNodePlatform } from './platform/node'
 import { type DeployPlatform, setDeployPlatform } from './runtime-platform'
@@ -82,26 +83,28 @@ function isGitHubActionsE2E(): boolean {
   return process.env.GITHUB_ACTIONS === 'true' && process.env.BETTER_AUTH_URL === 'http://localhost:5185'
 }
 
-console.log('licensing.refresh.scheduler.started interval=6h')
-setInterval(() => {
-  // runLicensingRefresh handles all errors internally and never rejects.
-  void (async () => {
-    const instanceUrl = await getSitePublicOrigin(deps)
-    const instance = instanceUrl
-      ? await buildCloudInstanceInfo(deps, {
-          url: instanceUrl,
-          runtime: runtimeInfo(platform),
-        })
-      : undefined
-    await runLicensingRefresh(deps, cloudBaseUrl, instance)
-  })()
-}, REFRESH_INTERVAL_MS)
+if (!isFeatureUnlockEnabled()) {
+  console.log('licensing.refresh.scheduler.started interval=6h')
+  setInterval(() => {
+    // runLicensingRefresh handles all errors internally and never rejects.
+    void (async () => {
+      const instanceUrl = await getSitePublicOrigin(deps)
+      const instance = instanceUrl
+        ? await buildCloudInstanceInfo(deps, {
+            url: instanceUrl,
+            runtime: runtimeInfo(platform),
+          })
+        : undefined
+      await runLicensingRefresh(deps, cloudBaseUrl, instance)
+    })()
+  }, REFRESH_INTERVAL_MS)
 
-console.log('traffic.sync.scheduler.started interval=10m')
-setInterval(() => {
-  void syncPendingCloudTrafficReports(deps, { cloudBaseUrl })
-  void syncPendingRemoteDownloadUsageReports(deps, { cloudBaseUrl })
-}, TRAFFIC_SYNC_INTERVAL_MS)
+  console.log('traffic.sync.scheduler.started interval=10m')
+  setInterval(() => {
+    void syncPendingCloudTrafficReports(deps, { cloudBaseUrl })
+    void syncPendingRemoteDownloadUsageReports(deps, { cloudBaseUrl })
+  }, TRAFFIC_SYNC_INTERVAL_MS)
+}
 
 function reportNodeInstanceTelemetry(): void {
   if (isGitHubActionsE2E()) return

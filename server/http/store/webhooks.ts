@@ -2,26 +2,33 @@ import { Hono } from 'hono'
 import type { Env } from '../../middleware/platform'
 import { requireFeature } from '../../middleware/require-feature'
 import type { RecordAuditEventInput } from '../../usecases/ports'
+import { usesLocalCommerce } from '../../usecases/store/local-commerce'
 import { processDeliveryWebhook } from '../../usecases/store/store'
 import { recordAuditEventOnce } from '../../usecases/transfer-activity'
-import { getCloudBaseUrl, parseJson, sha256Hex } from './helpers'
+import { getCloudBaseUrl, getStripeConfig, parseJson, sha256Hex } from './helpers'
 
 export const cloudStoreWebhooks = new Hono<Env>().use(requireFeature('quota_store')).post('/webhook', async (c) => {
   const rawPayload = await c.req.text()
+  const stripe = getStripeConfig(c)
   const outcome = await processDeliveryWebhook(c.get('deps'), {
     cloudBaseUrl: getCloudBaseUrl(c),
     eventToken: c.req.header('x-commerce-event-token') ?? '',
     rawPayload,
     payloadHash: await sha256Hex(rawPayload),
     body: parseJson(rawPayload),
+    stripeSignature: c.req.header('stripe-signature') ?? '',
+    stripeWebhookSecret: stripe.webhookSecret,
   })
   if (!outcome.ok) throw outcome.error
+  if (!outcome.receipt) {
+    return c.json({ success: true, duplicate: outcome.duplicate, eventId: outcome.eventId })
+  }
   const event = outcome.receipt
   const auditEvent: RecordAuditEventInput = {
     orgId: event.targetOrgId,
     userId: null,
     actorType: 'system',
-    actorRef: 'cloud-store',
+    actorRef: usesLocalCommerce() ? 'local-store' : 'cloud-store',
     action: `quota_order_${event.direction}`,
     targetType: 'quota',
     targetId: event.targetOrgId,
