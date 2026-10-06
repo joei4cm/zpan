@@ -652,7 +652,13 @@ export function listUserEntitlements(userId: string) {
 
 export function grantUserEntitlement(
   userId: string,
-  data: { resourceType: 'storage'; bytes: number; expiresAt?: string | null; note?: string | null },
+  data: {
+    resourceType: 'storage'
+    bytes: number
+    expiresAt?: string | null
+    note?: string | null
+    kind?: 'grant' | 'plan'
+  },
 ) {
   return unwrap<{ orgId: string; entitlement: OrgQuotaEntitlement }>(
     users[':userId'].entitlements.$post({ param: { userId }, json: data }),
@@ -735,7 +741,13 @@ export function listOrgEntitlements(orgId: string) {
 
 export function grantOrgEntitlement(
   orgId: string,
-  data: { resourceType: 'storage'; bytes: number; expiresAt?: string | null; note?: string | null },
+  data: {
+    resourceType: 'storage'
+    bytes: number
+    expiresAt?: string | null
+    note?: string | null
+    kind?: 'grant' | 'plan'
+  },
 ) {
   return unwrap<{ orgId: string; entitlement: OrgQuotaEntitlement }>(
     adminTeams[':teamId'].entitlements.$post({ param: { teamId: orgId }, json: data }),

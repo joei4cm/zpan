@@ -19,6 +19,8 @@ export interface UserOperationFailure {
   status: 400 | 404
 }
 
+export type EntitlementKind = 'grant' | 'plan'
+
 export interface GrantEntitlementInput {
   adminUserId: string
   orgId: string
@@ -26,6 +28,7 @@ export interface GrantEntitlementInput {
   bytes: number
   expiresAt?: Date | null
   note?: string | null
+  kind?: EntitlementKind
 }
 
 export interface UpdateEntitlementInput {
@@ -65,6 +68,7 @@ export interface UserAdminRepo {
     bytes: number
     expiresAt?: Date | null
     note?: string | null
+    kind?: EntitlementKind
   }): Promise<EntitlementResult | UserOperationFailure>
   updateUserPersonalEntitlement(input: {
     adminUserId: string

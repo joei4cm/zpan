@@ -42,6 +42,8 @@ vi.mock('react-i18next', () => ({
       if (key === 'admin.teams.entitlementActions') return 'Actions'
       if (key === 'admin.teams.entitlementTypeGrant') return 'Grant'
       if (key === 'admin.teams.entitlementSourceAdmin') return 'Admin grant'
+      if (key === 'admin.teams.entitlementSourceLocalPlan') return 'Local plan'
+      if (key === 'admin.teams.editEntitlement') return 'Edit'
       if (key === 'admin.teams.noExpiry') return 'No expiry'
       if (key === 'admin.teams.active') return 'Active'
       if (key === 'admin.teams.teamDetails') return 'Team details'
@@ -403,5 +405,24 @@ describe('Admin team detail activity', () => {
     })
     await user.click(screen.getByRole('tab', { name: 'Activity' }))
     expect(await screen.findByText(/after-revoke\.pdf/)).toBeTruthy()
+  })
+
+  it('lets admins edit a local plan entitlement', async () => {
+    blockAuditLogs()
+    mockBaseQueries([
+      entitlement({
+        id: 'plan-1',
+        entitlementType: 'plan',
+        source: 'local_plan',
+        sourceId: 'local_plan:route-org-1:storage',
+        bytes: 104857600,
+      }),
+    ])
+    const user = userEvent.setup()
+    renderTeamDetailPage()
+
+    await user.click(await screen.findByRole('tab', { name: 'Entitlement' }))
+    expect(await screen.findByText('Local plan')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy()
   })
 })

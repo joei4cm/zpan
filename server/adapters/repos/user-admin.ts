@@ -55,6 +55,7 @@ async function grantUserPersonalEntitlement(
     bytes: number
     expiresAt?: Date | null
     note?: string | null
+    kind?: 'grant' | 'plan'
   },
 ): Promise<{ orgId: string; entitlement: QuotaEntitlementItem } | UserOperationFailure> {
   const org = await findUserPersonalOrg(db, input.targetUserId)
@@ -141,18 +142,54 @@ async function grantOrgEntitlement(
   const org = await requireOrg(db, input.orgId)
   if ('error' in org) return org
   const now = new Date()
+  const kind = input.kind ?? 'grant'
+  const isPlan = kind === 'plan'
+  const source = isPlan ? 'local_plan' : 'admin_grant'
+  const sourceId = isPlan ? `local_plan:${input.orgId}:${input.resourceType}` : `admin_grant:${generateId()}`
+  const metadata = grantMetadata(input.adminUserId, input.note, isPlan)
+
+  if (isPlan) {
+    const existing = await db
+      .select()
+      .from(orgQuotaEntitlements)
+      .where(
+        and(
+          eq(orgQuotaEntitlements.source, source),
+          eq(orgQuotaEntitlements.sourceId, sourceId),
+          eq(orgQuotaEntitlements.resourceType, input.resourceType),
+        ),
+      )
+      .limit(1)
+    const current = existing[0]
+    if (current) {
+      const rows = await db
+        .update(orgQuotaEntitlements)
+        .set({
+          bytes: input.bytes,
+          startsAt: now,
+          expiresAt: input.expiresAt ?? null,
+          status: 'active',
+          metadata,
+          updatedAt: now,
+        })
+        .where(eq(orgQuotaEntitlements.id, current.id))
+        .returning()
+      return { orgId: input.orgId, entitlement: rows[0] }
+    }
+  }
+
   const entitlement = {
     id: generateId(),
     orgId: input.orgId,
     resourceType: input.resourceType,
-    entitlementType: 'grant',
-    source: 'admin_grant',
-    sourceId: `admin_grant:${generateId()}`,
+    entitlementType: isPlan ? 'plan' : 'grant',
+    source,
+    sourceId,
     bytes: input.bytes,
     startsAt: now,
     expiresAt: input.expiresAt ?? null,
     status: 'active',
-    metadata: JSON.stringify({ note: input.note ?? null, grantedBy: input.adminUserId }),
+    metadata,
     createdAt: now,
     updatedAt: now,
   } satisfies typeof orgQuotaEntitlements.$inferInsert
@@ -170,7 +207,11 @@ async function updateOrgEntitlement(
   const metadata =
     input.note === undefined
       ? existing.metadata
-      : mergeGrantMetadata(existing.metadata, { note: input.note, updatedBy: input.adminUserId })
+      : mergeGrantMetadata(existing.metadata, {
+          note: input.note,
+          updatedBy: input.adminUserId,
+          ...(existing.source === 'local_plan' ? { packageName: planPackageName(input.note) } : {}),
+        })
   const rows = await db
     .update(orgQuotaEntitlements)
     .set({
@@ -215,10 +256,23 @@ async function findAdminGrant(
     .limit(1)
   const row = rows[0]
   if (!row) return { error: `Entitlement not found: ${entitlementId}`, status: 404 }
-  if (row.source !== 'admin_grant') {
+  if (row.source !== 'admin_grant' && row.source !== 'local_plan') {
     return { error: 'Only admin-granted entitlements can be modified', status: 400 }
   }
   return row
+}
+
+function grantMetadata(adminUserId: string, note: string | null | undefined, isPlan: boolean): string {
+  return JSON.stringify({
+    note: note ?? null,
+    grantedBy: adminUserId,
+    ...(isPlan ? { packageName: planPackageName(note), source: 'local_plan' } : {}),
+  })
+}
+
+function planPackageName(note: string | null | undefined): string {
+  const trimmed = note?.trim()
+  return trimmed || 'Local plan'
 }
 
 function mergeGrantMetadata(existing: string | null, patch: Record<string, unknown>): string {
