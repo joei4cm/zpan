@@ -12,6 +12,7 @@ import { createEmailGateway } from './adapters/gateways/email'
 import { createImageUploadGateway } from './adapters/gateways/image-upload'
 import { createLicensingCloudGateway } from './adapters/gateways/licensing-cloud'
 import { S3Service } from './adapters/gateways/s3'
+import { createStripeGateway } from './adapters/gateways/stripe'
 import { createZipGateway } from './adapters/gateways/zip'
 import { createChangelogProvider } from './adapters/providers/changelog'
 import { createImageDomainProviderGateway } from './adapters/providers/image-domain-provider'
@@ -33,6 +34,7 @@ import { createImageHostingConfigRepo } from './adapters/repos/image-hosting-con
 import { createInstanceRepo } from './adapters/repos/instance'
 import { createInviteRepo } from './adapters/repos/invite'
 import { createLicenseBindingRepo } from './adapters/repos/license-binding'
+import { createLocalStoreRepo } from './adapters/repos/local-store'
 import { createMatterRepo } from './adapters/repos/matter'
 import { createMediaLibraryRepo } from './adapters/repos/media-library'
 import { createMemberCountRepo } from './adapters/repos/member-count'
@@ -112,6 +114,7 @@ export function createDeps(platform: Platform, options: CreateDepsOptions = {}):
     licenseBinding,
     licenseCloudBaseUrl: platform.getEnv('ZPAN_CLOUD_URL'),
     licensingCloud,
+    localStore: createLocalStoreRepo(db),
     matter: createMatterRepo(db),
     mediaLibraries: createMediaLibraryRepo(db),
     memberCount: createMemberCountRepo(db),
@@ -126,6 +129,7 @@ export function createDeps(platform: Platform, options: CreateDepsOptions = {}):
     shareNotifications: createShareNotificationRepo(db),
     share: createShareRepo(db),
     siteInvitations: createSiteInvitationRepo(db),
+    stripe: createStripeGateway(),
     storages,
     storageUsage: createStorageUsageRepo(db),
     storageUsageBreakdowns: createStorageUsageBreakdownRepo(db),

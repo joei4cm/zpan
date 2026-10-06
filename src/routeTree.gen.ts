@@ -34,6 +34,7 @@ import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 import { Route as AuthenticatedAdminDownloadersRouteImport } from './routes/_authenticated/admin/downloaders'
 import { Route as AuthenticatedAdminLicensingRouteImport } from './routes/_authenticated/admin/licensing'
+import { Route as AuthenticatedAdminStoreRouteImport } from './routes/_authenticated/admin/store'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedFilesIndexRouteImport } from './routes/_authenticated/files/index'
 import { Route as AuthenticatedImageHostIndexRouteImport } from './routes/_authenticated/image-host/index'
@@ -195,6 +196,11 @@ const AuthenticatedAdminLicensingRoute =
     path: '/licensing',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminStoreRoute = AuthenticatedAdminStoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedDownloadsIndexRoute =
   AuthenticatedDownloadsIndexRouteImport.update({
     id: '/downloads/',
@@ -397,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/admin/store': typeof AuthenticatedAdminStoreRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -450,6 +457,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/admin/store': typeof AuthenticatedAdminStoreRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -508,6 +516,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/_authenticated/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/_authenticated/admin/store': typeof AuthenticatedAdminStoreRoute
   '/_authenticated/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/_authenticated/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/_authenticated/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -566,6 +575,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
+    | '/admin/store'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -619,6 +629,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
+    | '/admin/store'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -676,6 +687,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/downloaders'
     | '/_authenticated/admin/licensing'
+    | '/_authenticated/admin/store'
     | '/_authenticated/settings/api-keys'
     | '/_authenticated/settings/oauth-apps'
     | '/_authenticated/settings/password'
@@ -896,6 +908,13 @@ declare module '@tanstack/react-router' {
       path: '/licensing'
       fullPath: '/admin/licensing'
       preLoaderRoute: typeof AuthenticatedAdminLicensingRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/store': {
+      id: '/_authenticated/admin/store'
+      path: '/store'
+      fullPath: '/admin/store'
+      preLoaderRoute: typeof AuthenticatedAdminStoreRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/downloads/': {
@@ -1119,6 +1138,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminDownloadersRoute: typeof AuthenticatedAdminDownloadersRoute
   AuthenticatedAdminLicensingRoute: typeof AuthenticatedAdminLicensingRoute
+  AuthenticatedAdminStoreRoute: typeof AuthenticatedAdminStoreRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminSettingsEmailRoute: typeof AuthenticatedAdminSettingsEmailRoute
   AuthenticatedAdminSettingsOauthRoute: typeof AuthenticatedAdminSettingsOauthRoute
@@ -1139,6 +1159,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
     AuthenticatedAdminDownloadersRoute: AuthenticatedAdminDownloadersRoute,
     AuthenticatedAdminLicensingRoute: AuthenticatedAdminLicensingRoute,
+    AuthenticatedAdminStoreRoute: AuthenticatedAdminStoreRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminSettingsEmailRoute: AuthenticatedAdminSettingsEmailRoute,
     AuthenticatedAdminSettingsOauthRoute: AuthenticatedAdminSettingsOauthRoute,

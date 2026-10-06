@@ -12,6 +12,7 @@ import {
   Megaphone,
   Settings,
   ShieldCheck,
+  Store,
   Users,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +37,7 @@ const adminNavItems = [
   { titleKey: 'admin.nav.teams', url: '/admin/teams', icon: Building2 },
   { titleKey: 'admin.nav.storages', url: '/admin/storages', icon: Database },
   { titleKey: 'admin.nav.downloaders', url: '/admin/downloaders', icon: HardDriveDownload },
+  { titleKey: 'admin.nav.cloudStore', url: '/admin/store', icon: Store },
   { titleKey: 'admin.nav.auth', url: '/admin/settings/oauth', icon: KeyRound },
   { titleKey: 'admin.nav.settings', url: '/admin/settings', icon: Settings },
   { titleKey: 'admin.nav.announcement', url: '/admin/announcement', icon: Megaphone },

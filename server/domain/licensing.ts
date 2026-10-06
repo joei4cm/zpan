@@ -4,8 +4,8 @@ import type { BindingState, LicenseFeature } from '@shared/types'
 const BUSINESS_ONLY_FEATURES = new Set<LicenseFeature>(['quota_store', 'site_announcements'])
 
 // Self-hosted fork switch: when ZPAN_UNLOCK_FEATURES=true, local Pro/Business
-// gates open without a ZPan Cloud certificate. Cloud-merchant flows (Stripe
-// checkout, gift cards, hosted processing) still need Cloud and are unchanged.
+// gates open without a ZPan Cloud certificate. Store, traffic billing, and
+// licensing refresh stay on this instance — they do not call Cloud.
 let featureUnlockEnabled = false
 
 export function registerFeatureUnlock(raw: string | undefined | null): void {

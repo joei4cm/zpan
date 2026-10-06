@@ -320,6 +320,7 @@ export type RedeemGiftCardInput = z.infer<typeof redeemGiftCardInputSchema>
 
 export const redeemGiftCardResponseSchema = z.object({
   redeemedCredits: z.number().int().min(0),
+  redeemedStorageBytes: z.number().int().min(0).optional(),
   entries: z.array(cloudCreditLedgerEntrySchema),
   failures: z.array(
     z.object({
