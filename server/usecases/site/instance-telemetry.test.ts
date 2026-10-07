@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { registerFeatureUnlock } from '../../domain/licensing'
 import type { InstanceRepo, SystemOptionsRepo } from '../ports'
 import {
   INSTANCE_TELEMETRY_CRON,
@@ -38,6 +39,7 @@ function makeDeps(): InstanceTelemetryDeps {
 
 describe('instance telemetry', () => {
   beforeEach(() => {
+    registerFeatureUnlock(undefined)
     getOrCreateInstanceId.mockReset()
     getInstanceDisplayName.mockReset()
     getValue.mockReset()
@@ -48,6 +50,24 @@ describe('instance telemetry', () => {
     posthogMocks.captureImmediate.mockResolvedValue(undefined)
     posthogMocks.shutdown.mockResolvedValue(undefined)
     getInstanceDisplayName.mockResolvedValue('Test Instance')
+  })
+
+  afterEach(() => {
+    registerFeatureUnlock(undefined)
+  })
+
+  it('does not call the telemetry endpoint when features are unlocked', async () => {
+    registerFeatureUnlock('true')
+
+    const result = await reportInstanceTelemetry(makeDeps(), {
+      config: {},
+      cron: INSTANCE_TELEMETRY_CRON,
+      runtime: { runtime: 'workerd', platform: 'cloudflare-workers' },
+    })
+
+    expect(result).toEqual({ reported: false, reason: 'unlocked' })
+    expect(posthogMocks.PostHog).not.toHaveBeenCalled()
+    expect(getOrCreateInstanceId).not.toHaveBeenCalled()
   })
 
   it('does not call the telemetry endpoint when PostHog project token is disabled', async () => {

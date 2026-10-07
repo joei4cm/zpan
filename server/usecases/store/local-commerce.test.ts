@@ -49,6 +49,8 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
   const orders = options.orders ?? []
   const giftCards = options.giftCards ?? []
   const grants: Array<{ orgId: string; bytes: number; source: string; sourceId: string }> = []
+  const revokes: Array<{ source: string; sourceId: string }> = []
+  const webhookEvents = new Map<string, { id: string; status: string; payloadHash: string }>()
   const localStore: LocalStoreRepo = {
     listProducts: async ({ activeOnly } = {}) => products.filter((item) => (activeOnly ? item.active : true)),
     getProduct: async (id) => products.find((item) => item.id === id) ?? null,
@@ -88,7 +90,28 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     grantStorage: async (input) => {
       grants.push({ orgId: input.orgId, bytes: input.bytes, source: input.source, sourceId: input.sourceId })
     },
-    revokeStorage: async () => undefined,
+    revokeStorage: async (source, sourceId) => {
+      revokes.push({ source, sourceId })
+    },
+    beginStripeWebhookEvent: async (input) => {
+      const existing = webhookEvents.get(input.eventId)
+      if (!existing) {
+        const id = `wh_${webhookEvents.size + 1}`
+        webhookEvents.set(input.eventId, { id, status: 'processing', payloadHash: input.payloadHash })
+        return { id, duplicate: false }
+      }
+      if (existing.payloadHash !== input.payloadHash) throw new Error('webhook_payload_conflict')
+      if (existing.status === 'processed' || existing.status === 'duplicate') {
+        return { id: existing.id, duplicate: true }
+      }
+      existing.status = 'processing'
+      return { id: existing.id, duplicate: false }
+    },
+    markStripeWebhookEvent: async (id, status) => {
+      for (const event of webhookEvents.values()) {
+        if (event.id === id) event.status = status
+      }
+    },
   }
   const quota = {
     getEffectiveQuota: async () => ({ currentPlan: null }),
@@ -100,7 +123,7 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     expireCheckoutSession: vi.fn(),
     verifySignature: vi.fn(async () => true),
   } as unknown as StripeGateway
-  return { deps: { localStore, quota, stripe }, grants, orders, stripe }
+  return { deps: { localStore, quota, stripe }, grants, revokes, orders, stripe, webhookEvents }
 }
 
 describe('local commerce', () => {
@@ -169,7 +192,15 @@ describe('local commerce', () => {
     const payload = JSON.stringify({
       id: 'evt_1',
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_test_1', subscription: 'sub_1', customer: 'cus_1', metadata: { orderId: 'ord-1' } } },
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
     })
     const result = await processStripeWebhook(deps, {
       rawPayload: payload,
@@ -183,5 +214,203 @@ describe('local commerce', () => {
       source: 'stripe',
       sourceId: 'stripe_subscription:sub_1:org-1',
     })
+  })
+
+  it('does not grant storage when checkout.session.completed is unpaid', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_unpaid',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'unpaid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: true, eventId: 'evt_unpaid' })
+    expect(pending.status).toBe('pending')
+    expect(grants).toEqual([])
+  })
+
+  it('grants storage on async_payment_succeeded when payment_status is paid', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_async',
+      type: 'checkout.session.async_payment_succeeded',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_async' })
+    expect(pending.status).toBe('paid')
+    expect(grants).toHaveLength(1)
+  })
+
+  it('retries fulfillment after a failed grant using durable webhook event status', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    let failOnce = true
+    const originalGrant = deps.localStore.grantStorage.bind(deps.localStore)
+    deps.localStore.grantStorage = async (input) => {
+      if (failOnce) {
+        failOnce = false
+        throw new Error('grant_failed')
+      }
+      return originalGrant(input)
+    }
+
+    const payload = JSON.stringify({
+      id: 'evt_retry',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const first = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(first.ok).toBe(false)
+    expect(grants).toEqual([])
+
+    const second = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(second).toEqual({ ok: true, duplicate: false, eventId: 'evt_retry' })
+    expect(pending.status).toBe('paid')
+    expect(grants).toHaveLength(1)
+
+    const third = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(third).toEqual({ ok: true, duplicate: true, eventId: 'evt_retry' })
+    expect(grants).toHaveLength(1)
+  })
+
+  it('revokes storage when subscription becomes past_due', async () => {
+    const paid = order({
+      status: 'paid',
+      stripeSubscriptionId: 'sub_1',
+    })
+    const { deps, revokes } = makeStore({ orders: [paid] })
+    const payload = JSON.stringify({
+      id: 'evt_past_due',
+      type: 'customer.subscription.updated',
+      data: {
+        object: {
+          id: 'sub_1',
+          status: 'past_due',
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_past_due' })
+    expect(revokes).toEqual([{ source: 'stripe', sourceId: 'stripe_subscription:sub_1:org-1' }])
+    expect(paid.status).toBe('paid')
+  })
+
+  it('re-grants storage when a past_due subscription becomes active again', async () => {
+    const paid = order({
+      status: 'paid',
+      stripeSubscriptionId: 'sub_1',
+    })
+    const { deps, grants, revokes } = makeStore({ orders: [paid] })
+    const pastDue = JSON.stringify({
+      id: 'evt_past_due_2',
+      type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'past_due' } },
+    })
+    const active = JSON.stringify({
+      id: 'evt_active_again',
+      type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'active' } },
+    })
+    await processStripeWebhook(deps, {
+      rawPayload: pastDue,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: active,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_active_again' })
+    expect(revokes).toHaveLength(1)
+    expect(grants).toEqual([
+      {
+        orgId: 'org-1',
+        bytes: paid.storageBytes,
+        source: 'stripe',
+        sourceId: 'stripe_subscription:sub_1:org-1',
+      },
+    ])
+  })
+
+  it('dedupes Stripe webhook redelivery by event.id', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_dupe',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const first = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    const second = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(first).toEqual({ ok: true, duplicate: false, eventId: 'evt_dupe' })
+    expect(second).toEqual({ ok: true, duplicate: true, eventId: 'evt_dupe' })
+    expect(grants).toHaveLength(1)
   })
 })

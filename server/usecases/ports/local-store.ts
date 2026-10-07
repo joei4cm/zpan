@@ -131,4 +131,12 @@ export interface LocalStoreRepo {
     expiresAt?: Date | null
   }): Promise<void>
   revokeStorage(source: string, sourceId: string): Promise<void>
+
+  beginStripeWebhookEvent(input: {
+    eventId: string
+    eventType: string
+    rawPayload: string
+    payloadHash: string
+  }): Promise<{ id: string; duplicate: boolean }>
+  markStripeWebhookEvent(id: string, status: 'processed' | 'failed', error?: string | null): Promise<void>
 }
