@@ -54,6 +54,7 @@ import { createStorageUsageBreakdownRepo } from './adapters/repos/storage-usage-
 import { createSystemOptionsRepo } from './adapters/repos/system-options'
 import { createTeamRepo } from './adapters/repos/team'
 import { createTeamInviteRepo } from './adapters/repos/team-invite'
+import { createUploadPolicyRepo } from './adapters/repos/upload-policy'
 import { createUserAdminRepo } from './adapters/repos/user-admin'
 import { createWebDavPathRepo } from './adapters/repos/webdav-path'
 import { createWebDavStateRepo } from './adapters/repos/webdav-state'
@@ -130,6 +131,7 @@ export function createDeps(platform: Platform, options: CreateDepsOptions = {}):
     storageUsage: createStorageUsageRepo(db),
     storageUsageBreakdowns: createStorageUsageBreakdownRepo(db),
     systemOptions,
+    uploadPolicies: createUploadPolicyRepo(db),
     teams: createTeamRepo(db),
     teamInvites: createTeamInviteRepo(db),
     userAdmin: createUserAdminRepo(db),

@@ -112,6 +112,22 @@ export const storages = sqliteTable('storages', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 })
 
+export const uploadPolicies = sqliteTable(
+  'upload_policies',
+  {
+    id: text('id').primaryKey(),
+    name: text('name').notNull(),
+    enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+    priority: integer('priority').notNull().default(0),
+    selectorJson: text('selector_json').notNull().default('{}'),
+    storageIdsJson: text('storage_ids_json').notNull().default('[]'),
+    selectionMode: text('selection_mode').notNull().default('ordered'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [index('upload_policies_enabled_priority_idx').on(t.enabled, t.priority)],
+)
+
 export const orgQuotas = sqliteTable(
   'org_quotas',
   {

@@ -51,6 +51,7 @@ import type {
   SystemOptionsRepo,
   TeamInviteRepo,
   TeamRepo,
+  UploadPolicyRepo,
   UserAdminRepo,
   WebDavPathRepo,
   WebDavStateRepo,
@@ -106,6 +107,7 @@ export interface Deps {
   storageUsage: StorageUsageRepo
   storageUsageBreakdowns: StorageUsageBreakdownRepo
   systemOptions: SystemOptionsRepo
+  uploadPolicies: UploadPolicyRepo
   teams: TeamRepo
   teamInvites: TeamInviteRepo
   userAdmin: UserAdminRepo
