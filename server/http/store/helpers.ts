@@ -92,6 +92,13 @@ export function getCloudBaseUrl(c: { get(key: 'platform'): { getEnv(k: string): 
   return c.get('platform').getEnv('ZPAN_CLOUD_URL') ?? ZPAN_CLOUD_URL_DEFAULT
 }
 
+export function getStripeConfig(c: { get(key: 'platform'): { getEnv(k: string): string | undefined } }) {
+  return {
+    secretKey: c.get('platform').getEnv('STRIPE_SECRET_KEY')?.trim() || null,
+    webhookSecret: c.get('platform').getEnv('STRIPE_WEBHOOK_SECRET')?.trim() || null,
+  }
+}
+
 function hex(buffer: ArrayBuffer): string {
   return [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, '0')).join('')
 }

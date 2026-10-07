@@ -467,6 +467,62 @@ const APP_SCHEMA_SQL = `
   CREATE UNIQUE INDEX IF NOT EXISTS webhook_events_source_event_uniq ON webhook_events(source, event_id);
   CREATE INDEX IF NOT EXISTS webhook_events_source_created_idx ON webhook_events(source, created_at);
   CREATE INDEX IF NOT EXISTS webhook_events_status_idx ON webhook_events(status);
+  CREATE TABLE IF NOT EXISTS store_products (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    kind TEXT NOT NULL DEFAULT 'plan',
+    storage_bytes INTEGER NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'usd',
+    interval TEXT,
+    active INTEGER NOT NULL DEFAULT 1,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS store_products_active_sort_idx ON store_products(active, sort_order, created_at);
+  CREATE TABLE IF NOT EXISTS store_gift_cards (
+    id TEXT PRIMARY KEY,
+    code_hash TEXT NOT NULL,
+    code_last4 TEXT NOT NULL,
+    storage_bytes INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'active',
+    expires_at INTEGER,
+    redeemed_org_id TEXT,
+    redeemed_at INTEGER,
+    note TEXT,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS store_gift_cards_code_hash_uniq ON store_gift_cards(code_hash);
+  CREATE INDEX IF NOT EXISTS store_gift_cards_status_idx ON store_gift_cards(status, created_at);
+  CREATE TABLE IF NOT EXISTS store_orders (
+    id TEXT PRIMARY KEY,
+    org_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    product_name TEXT NOT NULL,
+    storage_bytes INTEGER NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'usd',
+    interval TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    stripe_session_id TEXT,
+    stripe_subscription_id TEXT,
+    stripe_customer_id TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS store_orders_org_created_idx ON store_orders(org_id, created_at);
+  CREATE UNIQUE INDEX IF NOT EXISTS store_orders_stripe_session_uniq ON store_orders(stripe_session_id) WHERE stripe_session_id IS NOT NULL;
+  CREATE TABLE IF NOT EXISTS store_customers (
+    org_id TEXT PRIMARY KEY,
+    stripe_customer_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
   CREATE TABLE IF NOT EXISTS system_options (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL DEFAULT ''

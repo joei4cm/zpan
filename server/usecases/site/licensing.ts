@@ -15,6 +15,7 @@ import {
   CloudInvalidResponseError,
   CloudNetworkError,
   CloudUnboundError,
+  conflict,
   type InstanceRepo,
   type LicenseBindingRepo,
   type LicensingCloudGateway,
@@ -259,6 +260,7 @@ export async function performRefresh(
   baseUrl: string,
   instance?: CloudInstanceInfo,
 ): Promise<void> {
+  if (isFeatureUnlockEnabled()) return
   const state = await deps.licenseBinding.loadLicenseState()
   if (!state.refreshToken || !state.instanceId) return
 
@@ -311,6 +313,7 @@ export async function runLicensingRefresh(
   cloudBaseUrl: string,
   instance?: CloudInstanceInfo,
 ): Promise<void> {
+  if (isFeatureUnlockEnabled()) return
   const state = await deps.licenseBinding.loadLicenseState()
   if (!state.refreshToken) return // unbound — no-op
 
@@ -412,6 +415,9 @@ export interface InitiatePairingParams {
 // Starts a pairing handshake with the cloud. The cloud gateway may throw
 // (network/invalid response) — those propagate to the handler unchanged.
 export async function initiatePairing(deps: PairingDeps, params: InitiatePairingParams): Promise<PairingResponse> {
+  if (isFeatureUnlockEnabled()) {
+    throw conflict('Cloud licensing is disabled', 'LOCAL_COMMERCE_ENABLED')
+  }
   const instance = await buildCloudInstanceInfo(deps, { url: params.instanceUrl, runtime: params.runtime })
   return deps.licensingCloud.createPairing(params.baseUrl, instance)
 }
@@ -452,6 +458,9 @@ function invalidCertificate(
 // mismatch, missing/incomplete fields) it best-effort rolls back the orphaned
 // cloud binding and reports the rejection — ZPan stores nothing.
 export async function pollPairing(deps: PollPairingDeps, params: PollPairingParams): Promise<PollPairingOutcome> {
+  if (isFeatureUnlockEnabled()) {
+    return { ok: false, error: conflict('Cloud licensing is disabled', 'LOCAL_COMMERCE_ENABLED') }
+  }
   const { baseUrl, code } = params
   const result = await deps.licensingCloud.pollPairing(baseUrl, code)
 
@@ -545,6 +554,10 @@ export async function unbindLicense(
   deps: UnbindLicenseDeps,
   params: UnbindLicenseParams,
 ): Promise<{ ok: true } | { ok: false; error: AppError }> {
+  if (isFeatureUnlockEnabled()) {
+    await deps.licenseBinding.clearLicenseBinding()
+    return { ok: true }
+  }
   const state = await deps.licenseBinding.loadLicenseState()
   let cloudUnbindError: string | null = null
 

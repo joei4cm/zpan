@@ -11,6 +11,7 @@ import {
 import type { Env } from '../../middleware/platform'
 import { requireFeature } from '../../middleware/require-feature'
 import { badGateway, badRequest, forbidden } from '../../usecases/ports'
+import { usesLocalCommerce } from '../../usecases/store/local-commerce'
 import {
   cancelOrder,
   continueOrderPayment,
@@ -22,12 +23,13 @@ import {
   getStoreReadiness,
   listCreditProducts,
   listPackages,
+  listStoreOrders,
   listTargets,
   purchaseCapacity,
   redeemGiftCard,
 } from '../../usecases/store/store'
 import { authRoute, errorResponse, jsonBody, jsonContent } from '../openapi'
-import { cloudStoreOrdersQuerySchema, getCloudBaseUrl } from './helpers'
+import { cloudStoreOrdersQuerySchema, getCloudBaseUrl, getStripeConfig } from './helpers'
 import { getCloudOrders, getInstanceOrigin } from './shared'
 
 // Storefront responses are passed through verbatim from the upstream cloud
@@ -365,6 +367,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       origin: await getInstanceOrigin(c),
       input: c.req.valid('json'),
+      stripe: getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -402,6 +405,7 @@ export const cloudStore = app
     const result = await createBillingPortalSession(c.get('deps'), getCloudBaseUrl(c), {
       orgId: targetOrgId,
       origin: await getInstanceOrigin(c),
+      stripe: getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -412,6 +416,11 @@ export const cloudStore = app
     const targetOrgId = c.get('orgId')
     if (!targetOrgId) throw badRequest('No active organization')
     const query = c.req.valid('query')
+    if (usesLocalCommerce()) {
+      const result = await listStoreOrders(c.get('deps'), getCloudBaseUrl(c), targetOrgId)
+      if (!result.ok) throw result.error
+      return c.json(result.value, 200)
+    }
     const result = await getCloudOrders(c, { limit: query.limit, offset: query.offset, customerId: targetOrgId })
     if ('error' in result) throw badGateway(result.error)
     return c.json(result, 200)
@@ -425,6 +434,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       orderId: c.req.valid('param').orderId,
       origin: await getInstanceOrigin(c),
+      stripe: getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -438,6 +448,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       orderId: c.req.valid('param').orderId,
       status: c.req.valid('json').status,
+      stripe: getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)

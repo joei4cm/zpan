@@ -1,6 +1,7 @@
 import { release as osRelease } from 'node:os'
 import { type Context, Hono } from 'hono'
 import { ZPAN_CLOUD_URL_DEFAULT } from '../../shared/constants'
+import { isFeatureUnlockEnabled } from '../domain/licensing'
 import { originFromRequestUrl } from '../domain/site-public-origin'
 import { constantTimeEqual } from '../lib/constant-time'
 import type { Env } from '../middleware/platform'
@@ -64,6 +65,7 @@ internal.post('/instance-telemetry/report', async (c) => {
 
 internal.post('/licensing/refresh-runs', async (c) => {
   requireBearerToken(c, REFRESH_TOKEN_ENV)
+  if (isFeatureUnlockEnabled()) return c.json({ ok: true, skipped: true })
   const cloudBaseUrl = c.get('platform').getEnv('ZPAN_CLOUD_URL') ?? ZPAN_CLOUD_URL_DEFAULT
   const origin = (await getSitePublicOrigin(c.get('deps'))) ?? originFromRequestUrl(c.req.url)
   const instance = origin
@@ -75,6 +77,18 @@ internal.post('/licensing/refresh-runs', async (c) => {
 
 internal.post('/traffic-sync-runs', async (c) => {
   requireBearerToken(c, REFRESH_TOKEN_ENV)
+  if (isFeatureUnlockEnabled()) {
+    return c.json({
+      ok: true,
+      skipped: true,
+      attempted: 0,
+      reported: 0,
+      blocked: 0,
+      failed: 0,
+      deadLetter: 0,
+      remoteDownload: { attempted: 0, reported: 0, failed: 0, deadLetter: 0 },
+    })
+  }
   const cloudBaseUrl = c.get('platform').getEnv('ZPAN_CLOUD_URL') ?? ZPAN_CLOUD_URL_DEFAULT
   const [traffic, remoteDownload] = await Promise.all([
     syncPendingCloudTrafficReports(c.get('deps'), { cloudBaseUrl }),

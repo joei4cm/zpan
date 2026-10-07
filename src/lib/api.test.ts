@@ -20,6 +20,8 @@ import {
   createDownloadTask,
   createIhostApiKey,
   createIhostImagePresign,
+  createLocalStoreGiftCards,
+  createLocalStoreProduct,
   createObject,
   createRemoteDownloadApiKey,
   createShare,
@@ -33,9 +35,11 @@ import {
   deleteIhostConfig,
   deleteIhostImage,
   deleteInviteCode,
+  deleteLocalStoreProduct,
   deleteObject,
   deleteStorage,
   deleteTeamLogo,
+  disableLocalStoreGiftCard,
   disconnectCloud,
   enableIhostFeature,
   generateInviteCodes,
@@ -95,6 +99,8 @@ import {
   listDownloadTasks,
   listIhostImages,
   listInviteCodes,
+  listLocalStoreGiftCards,
+  listLocalStoreProducts,
   listNotifications,
   listOAuthGrants,
   listObjectsByPath,
@@ -148,6 +154,7 @@ import {
   updateDownloaderCreditBilling,
   updateDownloadTask,
   updateIhostConfig,
+  updateLocalStoreProduct,
   updateObject,
   updateOrgEntitlement,
   updateSiteCaptcha,
@@ -526,6 +533,137 @@ describe('api', () => {
       vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'quota store failed' }, false, 400))
 
       await expect(call()).rejects.toThrow('quota store failed')
+    })
+  })
+
+  describe('local store admin api', () => {
+    it('calls local store catalog endpoints', async () => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(makeResponse({ items: [], total: 0 }))
+        .mockResolvedValueOnce(
+          makeResponse({
+            id: 'pkg-1',
+            name: 'Pro',
+            description: '',
+            kind: 'plan',
+            storageBytes: 1024,
+            amountCents: 500,
+            currency: 'usd',
+            interval: 'month',
+            active: true,
+            sortOrder: 0,
+            createdAt: '2026-10-06T00:00:00.000Z',
+            updatedAt: '2026-10-06T00:00:00.000Z',
+          }),
+        )
+        .mockResolvedValueOnce(
+          makeResponse({
+            id: 'pkg-1',
+            name: 'Pro+',
+            description: '',
+            kind: 'plan',
+            storageBytes: 2048,
+            amountCents: 900,
+            currency: 'usd',
+            interval: 'year',
+            active: false,
+            sortOrder: 0,
+            createdAt: '2026-10-06T00:00:00.000Z',
+            updatedAt: '2026-10-06T00:00:00.000Z',
+          }),
+        )
+        .mockResolvedValueOnce(makeResponse(null, true, 204))
+
+      await listLocalStoreProducts()
+      await createLocalStoreProduct({
+        name: 'Pro',
+        storageBytes: 1024,
+        amountCents: 500,
+        interval: 'month',
+      })
+      await updateLocalStoreProduct('pkg-1', { name: 'Pro+', active: false })
+      await deleteLocalStoreProduct('pkg-1')
+
+      const calls = vi.mocked(fetch).mock.calls as Array<[string, RequestInit]>
+      expect(calls[0][0]).toBe('/api/store/admin/products')
+      expect(calls[1][0]).toBe('/api/store/admin/products')
+      expect(calls[1][1].method).toBe('POST')
+      expect(JSON.parse(calls[1][1].body as string)).toEqual({
+        name: 'Pro',
+        storageBytes: 1024,
+        amountCents: 500,
+        interval: 'month',
+      })
+      expect(calls[2][0]).toBe('/api/store/admin/products/pkg-1')
+      expect(calls[2][1].method).toBe('PATCH')
+      expect(calls[3][0]).toBe('/api/store/admin/products/pkg-1')
+      expect(calls[3][1].method).toBe('DELETE')
+    })
+
+    it('calls local gift-card endpoints', async () => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(makeResponse({ items: [], total: 0 }))
+        .mockResolvedValueOnce(
+          makeResponse({
+            items: [
+              {
+                id: 'gc-1',
+                code: 'ZS-ABCD-EFGH',
+                codeLast4: 'EFGH',
+                storageBytes: 1024,
+                status: 'active',
+                expiresAt: null,
+                redeemedOrgId: null,
+                redeemedAt: null,
+                note: null,
+                createdBy: 'admin-1',
+                createdAt: '2026-10-06T00:00:00.000Z',
+                updatedAt: '2026-10-06T00:00:00.000Z',
+              },
+            ],
+          }),
+        )
+        .mockResolvedValueOnce(
+          makeResponse({
+            id: 'gc-1',
+            code: null,
+            codeLast4: 'EFGH',
+            storageBytes: 1024,
+            status: 'disabled',
+            expiresAt: null,
+            redeemedOrgId: null,
+            redeemedAt: null,
+            note: null,
+            createdBy: 'admin-1',
+            createdAt: '2026-10-06T00:00:00.000Z',
+            updatedAt: '2026-10-06T00:00:00.000Z',
+          }),
+        )
+
+      await listLocalStoreGiftCards()
+      await createLocalStoreGiftCards({ storageBytes: 1024, count: 1 })
+      await disableLocalStoreGiftCard('gc-1')
+
+      const calls = vi.mocked(fetch).mock.calls as Array<[string, RequestInit]>
+      expect(calls[0][0]).toBe('/api/store/admin/gift-cards')
+      expect(calls[1][0]).toBe('/api/store/admin/gift-cards')
+      expect(calls[1][1].method).toBe('POST')
+      expect(JSON.parse(calls[1][1].body as string)).toEqual({ storageBytes: 1024, count: 1 })
+      expect(calls[2][0]).toBe('/api/store/admin/gift-cards/gc-1/disable')
+      expect(calls[2][1].method).toBe('POST')
+    })
+
+    it.each([
+      ['listLocalStoreProducts', () => listLocalStoreProducts()],
+      ['createLocalStoreProduct', () => createLocalStoreProduct({ name: 'Pro', storageBytes: 1, amountCents: 1 })],
+      ['updateLocalStoreProduct', () => updateLocalStoreProduct('pkg-1', { active: false })],
+      ['deleteLocalStoreProduct', () => deleteLocalStoreProduct('pkg-1')],
+      ['listLocalStoreGiftCards', () => listLocalStoreGiftCards()],
+      ['createLocalStoreGiftCards', () => createLocalStoreGiftCards({ storageBytes: 1, count: 1 })],
+      ['disableLocalStoreGiftCard', () => disableLocalStoreGiftCard('gc-1')],
+    ])('throws ApiError for %s failures', async (_name, call) => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'local store failed' }, false, 400))
+      await expect(call()).rejects.toThrow('local store failed')
     })
   })
 

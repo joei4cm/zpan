@@ -31,6 +31,7 @@ import {
   redeemCloudGiftCard,
 } from '@/lib/api'
 import { useActiveOrganization } from '@/lib/auth-client'
+import { formatSize } from '@/lib/format'
 
 export const Route = createFileRoute('/_authenticated/teams/$teamId/billing')({
   component: WorkspaceBillingPage,
@@ -101,6 +102,15 @@ export function WorkspaceBillingPage() {
   const redeemMutation = useMutation({
     mutationFn: (code: string) => redeemCloudGiftCard(code),
     onSuccess: (result) => {
+      if (result.failures?.length) {
+        toast.error(result.failures[0]?.error ?? t('common.error'))
+        return
+      }
+      if (result.redeemedStorageBytes) {
+        toast.success(t('storage.redeemStorageSuccess', { size: formatSize(result.redeemedStorageBytes) }))
+        queryClient.invalidateQueries({ queryKey: ['user', 'quota'] })
+        return
+      }
       toast.success(t('storage.redeemSuccess', { amount: result.redeemedCredits }))
       queryClient.invalidateQueries({ queryKey: ['cloud-store', 'credits'] })
     },
