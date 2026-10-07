@@ -378,6 +378,18 @@ const APP_SCHEMA_SQL = `
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS upload_policies (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    enabled INTEGER NOT NULL DEFAULT 1,
+    priority INTEGER NOT NULL DEFAULT 0,
+    selector_json TEXT NOT NULL DEFAULT '{}',
+    storage_ids_json TEXT NOT NULL DEFAULT '[]',
+    selection_mode TEXT NOT NULL DEFAULT 'ordered',
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS upload_policies_enabled_priority_idx ON upload_policies(enabled, priority);
   CREATE TABLE IF NOT EXISTS org_quotas (
     id TEXT PRIMARY KEY,
     org_id TEXT NOT NULL,

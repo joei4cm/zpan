@@ -42,6 +42,7 @@ import {
   type StorageRecord,
   type StorageRepo,
   type StorageUsageRepo,
+  type UploadPolicyRepo,
 } from './ports'
 import { confirmDownloadTraffic, meterDownloadTraffic } from './store/traffic-metering'
 
@@ -57,6 +58,11 @@ vi.mock('./store/traffic-metering', () => ({
 
 const storage = {
   id: 'st-1',
+  enabled: true,
+  capacity: 0,
+  used: 0,
+  status: 'healthy',
+  createdAt: new Date('2024-01-01T00:00:00.000Z'),
   egressCreditBillingEnabled: false,
   egressCreditUnitBytes: 0,
   egressCreditPerUnit: 0,
@@ -108,6 +114,7 @@ function makeDeps(
     objectUploadSessions?: Partial<ObjectUploadSessionRepo>
     downloaders?: Partial<DownloaderRepo>
     downloadTasks?: Partial<DownloadTaskRepo>
+    uploadPolicies?: Partial<UploadPolicyRepo>
   } = {},
 ) {
   const record = vi.fn(async () => {})
@@ -135,9 +142,38 @@ function makeDeps(
     } as unknown as MatterRepo,
     storages: {
       get: async () => storage,
+      list: async () => ({ items: [storage], total: 1 }),
       select: async () => storage,
       ...overrides.storages,
     } as unknown as StorageRepo,
+    uploadPolicies: {
+      list: async () => [
+        {
+          id: 'default',
+          name: 'Default',
+          enabled: true,
+          priority: 0,
+          selector: {},
+          storageIds: [storage.id],
+          selectionMode: 'ordered' as const,
+        },
+      ],
+      get: async () => null,
+      ensureDefault: async (ids: string[]) => ({
+        id: 'default',
+        name: 'Default',
+        enabled: true,
+        priority: 0,
+        selector: {},
+        storageIds: ids,
+        selectionMode: 'ordered' as const,
+      }),
+      upsert: async () => {
+        throw new Error('not used')
+      },
+      delete: async () => false,
+      ...overrides.uploadPolicies,
+    } as unknown as UploadPolicyRepo,
     s3: {
       presignUpload: async () => 'https://upload.example',
       presignDownload: async () => 'https://download.example',
@@ -632,9 +668,32 @@ describe('object usecase', () => {
     it('returns no_storage when no storage is configured', async () => {
       const { deps } = makeDeps({
         storages: {
+          list: async () => ({ items: [], total: 0 }),
           select: async () => {
             throw new Error('No available storage')
           },
+        },
+        uploadPolicies: {
+          ensureDefault: async () => ({
+            id: 'default',
+            name: 'Default',
+            enabled: true,
+            priority: 0,
+            selector: {},
+            storageIds: [],
+            selectionMode: 'ordered',
+          }),
+          list: async () => [
+            {
+              id: 'default',
+              name: 'Default',
+              enabled: true,
+              priority: 0,
+              selector: {},
+              storageIds: [],
+              selectionMode: 'ordered',
+            },
+          ],
         },
       })
       const out = await createObject(deps, {
