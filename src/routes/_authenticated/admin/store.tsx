@@ -40,8 +40,13 @@ function bytesToUnitValue(bytes: number, unit: ByteUnit) {
 
 function parseBytes(value: string, unit: ByteUnit) {
   const amount = Number(value)
-  if (!Number.isFinite(amount) || amount <= 0) return null
+  if (!Number.isFinite(amount) || amount < 0) return null
   return Math.round(amount * BYTE_UNITS[unit])
+}
+
+function parseOptionalBytes(value: string, unit: ByteUnit) {
+  if (!value.trim()) return 0
+  return parseBytes(value, unit)
 }
 
 function parseCents(value: string) {
@@ -96,6 +101,7 @@ export function AdminStorePage() {
               <TableRow>
                 <TableHead>{t('admin.store.colName')}</TableHead>
                 <TableHead>{t('admin.store.colStorage')}</TableHead>
+                <TableHead>{t('admin.store.colTraffic')}</TableHead>
                 <TableHead>{t('admin.store.colPrice')}</TableHead>
                 <TableHead>{t('admin.store.colInterval')}</TableHead>
                 <TableHead>{t('admin.store.colStatus')}</TableHead>
@@ -106,7 +112,8 @@ export function AdminStorePage() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{formatSize(product.storageBytes)}</TableCell>
+                  <TableCell>{product.storageBytes > 0 ? formatSize(product.storageBytes) : '—'}</TableCell>
+                  <TableCell>{product.trafficBytes > 0 ? formatSize(product.trafficBytes) : '—'}</TableCell>
                   <TableCell>{formatCurrency(product.amountCents, product.currency, i18n.resolvedLanguage)}</TableCell>
                   <TableCell>
                     {product.interval ? t(`admin.store.interval.${product.interval}`) : t('admin.store.interval.once')}
@@ -166,6 +173,7 @@ export function AdminStorePage() {
               <TableRow>
                 <TableHead>{t('admin.store.colCode')}</TableHead>
                 <TableHead>{t('admin.store.colStorage')}</TableHead>
+                <TableHead>{t('admin.store.colTraffic')}</TableHead>
                 <TableHead>{t('admin.store.colStatus')}</TableHead>
                 <TableHead>{t('admin.store.colNote')}</TableHead>
                 <TableHead className="text-right">{t('admin.storages.colActions')}</TableHead>
@@ -214,7 +222,8 @@ function GiftCardRow({ card, onDisabled }: { card: LocalStoreGiftCard; onDisable
   return (
     <TableRow>
       <TableCell className="font-mono">****{card.codeLast4}</TableCell>
-      <TableCell>{formatSize(card.storageBytes)}</TableCell>
+      <TableCell>{card.storageBytes > 0 ? formatSize(card.storageBytes) : '—'}</TableCell>
+      <TableCell>{card.trafficBytes > 0 ? formatSize(card.trafficBytes) : '—'}</TableCell>
       <TableCell>{t(`admin.store.giftStatus.${card.status}`, { defaultValue: card.status })}</TableCell>
       <TableCell className="max-w-48 truncate">{card.note ?? '—'}</TableCell>
       <TableCell className="text-right">
@@ -252,7 +261,17 @@ function ProductDrawer({
   const [description, setDescription] = useState(product?.description ?? '')
   const [unit, setUnit] = useState<ByteUnit>(product && product.storageBytes >= BYTE_UNITS.GB ? 'GB' : 'MB')
   const [storageValue, setStorageValue] = useState(
-    product ? bytesToUnitValue(product.storageBytes, product.storageBytes >= BYTE_UNITS.GB ? 'GB' : 'MB') : '10',
+    product && product.storageBytes > 0
+      ? bytesToUnitValue(product.storageBytes, product.storageBytes >= BYTE_UNITS.GB ? 'GB' : 'MB')
+      : '10',
+  )
+  const [trafficUnit, setTrafficUnit] = useState<ByteUnit>(
+    product && product.trafficBytes >= BYTE_UNITS.GB ? 'GB' : 'MB',
+  )
+  const [trafficValue, setTrafficValue] = useState(
+    product && product.trafficBytes > 0
+      ? bytesToUnitValue(product.trafficBytes, product.trafficBytes >= BYTE_UNITS.GB ? 'GB' : 'MB')
+      : '0',
   )
   const [price, setPrice] = useState(product ? String(product.amountCents / 100) : '9.99')
   const [interval, setInterval] = useState<'once' | 'month' | 'year'>(product?.interval ?? 'once')
@@ -260,15 +279,18 @@ function ProductDrawer({
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const storageBytes = parseBytes(storageValue, unit)
+      const storageBytes = parseOptionalBytes(storageValue, unit)
+      const trafficBytes = parseOptionalBytes(trafficValue, trafficUnit)
       const amountCents = parseCents(price)
       if (!name.trim()) throw new Error(t('admin.store.nameRequired'))
-      if (!storageBytes) throw new Error(t('admin.store.storageRequired'))
+      if (storageBytes === null || trafficBytes === null) throw new Error(t('admin.store.storageRequired'))
+      if (storageBytes <= 0 && trafficBytes <= 0) throw new Error(t('admin.store.quotaRequired'))
       if (!amountCents) throw new Error(t('admin.store.priceRequired'))
       const payload = {
         name: name.trim(),
         description,
         storageBytes,
+        trafficBytes,
         amountCents,
         interval: interval === 'once' ? null : interval,
         active,
@@ -321,17 +343,38 @@ function ProductDrawer({
           placeholder={t('admin.store.descriptionPlaceholder')}
         />
       </AdminFormField>
-      <AdminFormField label={t('admin.store.fieldStorage')} required>
+      <AdminFormField label={t('admin.store.fieldStorage')} help={t('admin.store.storageOrTrafficHelp')}>
         <div className="flex gap-2">
           <Input
             type="number"
-            min={1}
+            min={0}
             step="any"
             value={storageValue}
             onChange={(event) => setStorageValue(event.target.value)}
             placeholder="10"
           />
           <Select value={unit} onValueChange={(value) => setUnit(value as ByteUnit)}>
+            <SelectTrigger className="w-24">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="MB">MB</SelectItem>
+              <SelectItem value="GB">GB</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </AdminFormField>
+      <AdminFormField label={t('admin.store.fieldTraffic')} help={t('admin.store.storageOrTrafficHelp')}>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            min={0}
+            step="any"
+            value={trafficValue}
+            onChange={(event) => setTrafficValue(event.target.value)}
+            placeholder="0"
+          />
+          <Select value={trafficUnit} onValueChange={(value) => setTrafficUnit(value as ByteUnit)}>
             <SelectTrigger className="w-24">
               <SelectValue />
             </SelectTrigger>
@@ -386,17 +429,22 @@ function GiftCardDrawer({
   const { t } = useTranslation()
   const [unit, setUnit] = useState<ByteUnit>('GB')
   const [storageValue, setStorageValue] = useState('10')
+  const [trafficUnit, setTrafficUnit] = useState<ByteUnit>('GB')
+  const [trafficValue, setTrafficValue] = useState('0')
   const [count, setCount] = useState('1')
   const [note, setNote] = useState('')
 
   const issueMutation = useMutation({
     mutationFn: async () => {
-      const storageBytes = parseBytes(storageValue, unit)
+      const storageBytes = parseOptionalBytes(storageValue, unit)
+      const trafficBytes = parseOptionalBytes(trafficValue, trafficUnit)
       const parsedCount = Number(count)
-      if (!storageBytes) throw new Error(t('admin.store.storageRequired'))
+      if (storageBytes === null || trafficBytes === null) throw new Error(t('admin.store.storageRequired'))
+      if (storageBytes <= 0 && trafficBytes <= 0) throw new Error(t('admin.store.quotaRequired'))
       if (!Number.isInteger(parsedCount) || parsedCount < 1) throw new Error(t('admin.store.countRequired'))
       return createLocalStoreGiftCards({
         storageBytes,
+        trafficBytes,
         count: parsedCount,
         note: note.trim() || null,
       })
@@ -432,16 +480,36 @@ function GiftCardDrawer({
         },
       }}
     >
-      <AdminFormField label={t('admin.store.fieldStorage')} required>
+      <AdminFormField label={t('admin.store.fieldStorage')} help={t('admin.store.storageOrTrafficHelp')}>
         <div className="flex gap-2">
           <Input
             type="number"
-            min={1}
+            min={0}
             value={storageValue}
             onChange={(event) => setStorageValue(event.target.value)}
             placeholder="10"
           />
           <Select value={unit} onValueChange={(value) => setUnit(value as ByteUnit)}>
+            <SelectTrigger className="w-24">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="MB">MB</SelectItem>
+              <SelectItem value="GB">GB</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </AdminFormField>
+      <AdminFormField label={t('admin.store.fieldTraffic')} help={t('admin.store.storageOrTrafficHelp')}>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            min={0}
+            value={trafficValue}
+            onChange={(event) => setTrafficValue(event.target.value)}
+            placeholder="0"
+          />
+          <Select value={trafficUnit} onValueChange={(value) => setTrafficUnit(value as ByteUnit)}>
             <SelectTrigger className="w-24">
               <SelectValue />
             </SelectTrigger>

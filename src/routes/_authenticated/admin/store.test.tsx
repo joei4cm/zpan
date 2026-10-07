@@ -46,6 +46,7 @@ describe('AdminStorePage', () => {
           description: '',
           kind: 'plan',
           storageBytes: 10 * 1024 ** 3,
+          trafficBytes: 0,
           amountCents: 999,
           currency: 'usd',
           interval: 'month',
