@@ -50,7 +50,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEntitlement } from '@/hooks/useEntitlement'
 import {
   ApiError,
@@ -352,13 +351,29 @@ export function StoragesPage() {
         }
       />
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'backends' | 'policies')}>
-        <TabsList>
-          <TabsTrigger value="backends">{t('admin.storages.tab.backends')}</TabsTrigger>
-          <TabsTrigger value="policies">{t('admin.storages.tab.policies')}</TabsTrigger>
-        </TabsList>
+      <div className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-lg border bg-card p-1">
+        <Button
+          type="button"
+          variant={activeTab === 'backends' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-7 rounded-md px-2.5 text-[11px]"
+          onClick={() => setActiveTab('backends')}
+        >
+          {t('admin.storages.tab.backends')}
+        </Button>
+        <Button
+          type="button"
+          variant={activeTab === 'policies' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-7 rounded-md px-2.5 text-[11px]"
+          onClick={() => setActiveTab('policies')}
+        >
+          {t('admin.storages.tab.policies')}
+        </Button>
+      </div>
 
-        <TabsContent value="backends" className="mt-4 space-y-4">
+      {activeTab === 'backends' ? (
+        <div className="space-y-4">
           {storagesLimitReached && <UpgradeHint feature="storages_unlimited" />}
 
           <StorageOverview storages={storages} />
@@ -428,12 +443,10 @@ export function StoragesPage() {
               <p>{storages.length === 0 ? t('admin.storages.noStorages') : t('admin.storages.noMatches')}</p>
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="policies" className="mt-4">
-          <UploadPoliciesPanel storages={storages} />
-        </TabsContent>
-      </Tabs>
+        </div>
+      ) : (
+        <UploadPoliciesPanel storages={storages} />
+      )}
 
       <StorageFormDrawer
         open={formOpen}
