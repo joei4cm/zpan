@@ -666,6 +666,13 @@
       "when": 1791384425516,
       "tag": "0095_upload-policies",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "6",
+      "when": 1791392851377,
+      "tag": "0096_local-store-traffic-bytes",
+      "breakpoints": true
     }
   ]
 }
