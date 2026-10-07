@@ -4,6 +4,8 @@ import {
   localStoreGiftCardCreateSchema,
   localStoreProductInputSchema,
   localStoreProductPatchSchema,
+  stripeConfigSettingsSchema,
+  updateStripeConfigSchema,
 } from '@shared/schemas'
 import type { Env } from '../../middleware/platform'
 import { requireFeature } from '../../middleware/require-feature'
@@ -18,6 +20,7 @@ import {
   updateAdminStoreProduct,
   usesLocalCommerce,
 } from '../../usecases/store/local-commerce'
+import { getStripeConfigSettings, saveStripeConfig } from '../../usecases/store/stripe-config'
 import { authRoute, errorResponse, jsonBody, jsonContent } from '../openapi'
 
 const storeProductSchema = z
@@ -212,6 +215,39 @@ const disableGiftCardRoute = authRoute(
   },
 )
 
+const getStripeConfigRoute = authRoute(
+  { scopes: [AuthorizationScope.STORE_READ], siteRole: 'admin' },
+  {
+    operationId: 'getLocalStoreStripeConfig',
+    summary: 'Get local store Stripe configuration',
+    tags: ['Store Admin'],
+    method: 'get',
+    path: '/admin/settings/stripe',
+    middleware: [requireFeature('quota_store')] as const,
+    responses: {
+      200: jsonContent(stripeConfigSettingsSchema, 'Stripe settings'),
+      403: errorResponse('Forbidden'),
+    },
+  },
+)
+
+const saveStripeConfigRoute = authRoute(
+  { scopes: [AuthorizationScope.STORE_UPDATE], siteRole: 'admin' },
+  {
+    operationId: 'saveLocalStoreStripeConfig',
+    summary: 'Save local store Stripe configuration',
+    tags: ['Store Admin'],
+    method: 'put',
+    path: '/admin/settings/stripe',
+    middleware: [requireFeature('quota_store')] as const,
+    request: jsonBody(updateStripeConfigSchema),
+    responses: {
+      200: jsonContent(z.object({ success: z.boolean() }), 'Saved'),
+      403: errorResponse('Forbidden'),
+    },
+  },
+)
+
 export const localStoreAdmin = new OpenAPIHono<Env>()
   .openapi(listProductsRoute, async (c) => {
     requireLocalStore()
@@ -251,4 +287,13 @@ export const localStoreAdmin = new OpenAPIHono<Env>()
     requireLocalStore()
     const card = await disableAdminGiftCard(c.get('deps'), c.req.valid('param').id)
     return c.json(toGiftCardDTO(card), 200)
+  })
+  .openapi(getStripeConfigRoute, async (c) => {
+    requireLocalStore()
+    return c.json(await getStripeConfigSettings(c.get('deps'), c.get('platform')), 200)
+  })
+  .openapi(saveStripeConfigRoute, async (c) => {
+    requireLocalStore()
+    await saveStripeConfig(c.get('deps'), c.req.valid('json'))
+    return c.json({ success: true }, 200)
   })

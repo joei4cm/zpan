@@ -64,6 +64,7 @@ import {
   getInstanceInfo,
   getLicenseEntitlements,
   getLicensingStatus,
+  getLocalStoreStripeConfig,
   getOAuthConsentContext,
   getObject,
   getObjectCreator,
@@ -144,6 +145,7 @@ import {
   saveBranding,
   saveEmailConfig,
   saveImageDomainProvider,
+  saveLocalStoreStripeConfig,
   saveShareToDrive,
   scanMediaLibrary,
   sendDownloaderHeartbeat,
@@ -657,6 +659,34 @@ describe('api', () => {
       expect(calls[2][1].method).toBe('POST')
     })
 
+    it('calls local Stripe config endpoints', async () => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(
+          makeResponse({
+            secretKey: '****efgh',
+            webhookSecret: '****1234',
+            secretKeyConfigured: true,
+            webhookSecretConfigured: true,
+            secretKeySource: 'database',
+            webhookSecretSource: 'database',
+          }),
+        )
+        .mockResolvedValueOnce(makeResponse({ success: true }))
+
+      await getLocalStoreStripeConfig()
+      await saveLocalStoreStripeConfig({ secretKey: 'sk_test_1', webhookSecret: 'whsec_1' })
+
+      const calls = vi.mocked(fetch).mock.calls as Array<[string, RequestInit]>
+      expect(calls[0][0]).toBe('/api/store/admin/settings/stripe')
+      expect(calls[0][1].method).toBe('GET')
+      expect(calls[1][0]).toBe('/api/store/admin/settings/stripe')
+      expect(calls[1][1].method).toBe('PUT')
+      expect(JSON.parse(calls[1][1].body as string)).toEqual({
+        secretKey: 'sk_test_1',
+        webhookSecret: 'whsec_1',
+      })
+    })
+
     it.each([
       ['listLocalStoreProducts', () => listLocalStoreProducts()],
       ['createLocalStoreProduct', () => createLocalStoreProduct({ name: 'Pro', storageBytes: 1, amountCents: 1 })],
@@ -665,6 +695,11 @@ describe('api', () => {
       ['listLocalStoreGiftCards', () => listLocalStoreGiftCards()],
       ['createLocalStoreGiftCards', () => createLocalStoreGiftCards({ storageBytes: 1, count: 1 })],
       ['disableLocalStoreGiftCard', () => disableLocalStoreGiftCard('gc-1')],
+      ['getLocalStoreStripeConfig', () => getLocalStoreStripeConfig()],
+      [
+        'saveLocalStoreStripeConfig',
+        () => saveLocalStoreStripeConfig({ secretKey: 'sk_test_1', webhookSecret: 'whsec_1' }),
+      ],
     ])('throws ApiError for %s failures', async (_name, call) => {
       vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'local store failed' }, false, 400))
       await expect(call()).rejects.toThrow('local store failed')

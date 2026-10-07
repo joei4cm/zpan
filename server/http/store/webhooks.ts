@@ -9,7 +9,7 @@ import { getCloudBaseUrl, getStripeConfig, parseJson, sha256Hex } from './helper
 
 export const cloudStoreWebhooks = new Hono<Env>().use(requireFeature('quota_store')).post('/webhook', async (c) => {
   const rawPayload = await c.req.text()
-  const stripe = getStripeConfig(c)
+  const stripe = await getStripeConfig(c)
   const outcome = await processDeliveryWebhook(c.get('deps'), {
     cloudBaseUrl: getCloudBaseUrl(c),
     eventToken: c.req.header('x-commerce-event-token') ?? '',

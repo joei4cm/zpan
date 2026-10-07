@@ -34,6 +34,29 @@ export const localStoreGiftCardCreateSchema = z
   })
   .strict()
 
+export const stripeConfigSourceSchema = z.enum(['env', 'database', 'none']).openapi('StripeConfigSource')
+
+export const stripeConfigSettingsSchema = z
+  .object({
+    secretKey: z.string(),
+    webhookSecret: z.string(),
+    secretKeyConfigured: z.boolean(),
+    webhookSecretConfigured: z.boolean(),
+    secretKeySource: stripeConfigSourceSchema,
+    webhookSecretSource: stripeConfigSourceSchema,
+  })
+  .openapi('StripeConfigSettings')
+
+export const updateStripeConfigSchema = z
+  .object({
+    secretKey: z.string().trim().min(1).max(256),
+    webhookSecret: z.string().trim().min(1).max(256),
+  })
+  .strict()
+  .openapi('UpdateStripeConfig')
+
 export type LocalStoreProductInput = z.input<typeof localStoreProductInputSchema>
 export type LocalStoreProductPatch = z.input<typeof localStoreProductPatchSchema>
 export type LocalStoreGiftCardCreate = z.input<typeof localStoreGiftCardCreateSchema>
+export type StripeConfigSettings = z.infer<typeof stripeConfigSettingsSchema>
+export type UpdateStripeConfigInput = z.input<typeof updateStripeConfigSchema>
