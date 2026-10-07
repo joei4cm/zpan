@@ -363,8 +363,15 @@ export async function processStripeWebhook(
   } catch {
     return { ok: false, error: badRequest('Invalid payload', 'INVALID_PAYLOAD') }
   }
-  if (event.type === 'checkout.session.completed') {
+  // Only fulfill when Stripe reports the session paid. `checkout.session.completed`
+  // can fire for async methods while payment_status is still unpaid; those wait for
+  // `checkout.session.async_payment_succeeded`.
+  if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
     const session = event.data.object
+    const paymentStatus = String(session.payment_status ?? '')
+    if (paymentStatus !== 'paid') {
+      return { ok: true, duplicate: true, eventId: event.id }
+    }
     const sessionId = String(session.id ?? '')
     const metadata = (session.metadata ?? {}) as Record<string, string>
     const order =
