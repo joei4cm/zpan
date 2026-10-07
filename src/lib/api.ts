@@ -36,6 +36,7 @@ import type {
   ShareReadmeResponse,
   SiteConfig,
   SiteSettings,
+  StripeConfigSettings,
   UpdateDownloaderCreditBillingInput,
   UpdateDownloaderInput,
   UpdateDownloadTaskInput,
@@ -47,6 +48,7 @@ import type {
   UpdateSiteRegistrationInput,
   UpdateSiteWebDavInput,
   UpdateStorageEgressBillingInput,
+  UpdateStripeConfigInput,
 } from '@shared/schemas'
 import type {
   AdminAuditEvent,
@@ -865,6 +867,16 @@ export function createLocalStoreGiftCards(data: LocalStoreGiftCardCreate) {
 
 export function disableLocalStoreGiftCard(id: string) {
   return unwrap<LocalStoreGiftCard>(localStoreAdminApi.admin['gift-cards'][':id'].disable.$post({ param: { id } }))
+}
+
+export type { StripeConfigSettings, UpdateStripeConfigInput }
+
+export function getLocalStoreStripeConfig() {
+  return unwrap<StripeConfigSettings>(localStoreAdminApi.admin.settings.stripe.$get())
+}
+
+export function saveLocalStoreStripeConfig(data: UpdateStripeConfigInput) {
+  return unwrap<{ success: boolean }>(localStoreAdminApi.admin.settings.stripe.$put({ json: data }))
 }
 
 // Auth Providers API
