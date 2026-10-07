@@ -23,6 +23,7 @@ import {
   createLocalStoreGiftCards,
   createLocalStoreProduct,
   createObject,
+  createOutboundWebhookEndpoint,
   createRemoteDownloadApiKey,
   createShare,
   createSiteInvitation,
@@ -38,6 +39,7 @@ import {
   deleteInviteCode,
   deleteLocalStoreProduct,
   deleteObject,
+  deleteOutboundWebhookEndpoint,
   deleteStorage,
   deleteTeamLogo,
   deleteUploadPolicy,
@@ -68,6 +70,7 @@ import {
   getOAuthConsentContext,
   getObject,
   getObjectCreator,
+  getOutboundWebhookEndpoint,
   getProfile,
   getSession,
   getShare,
@@ -110,6 +113,8 @@ import {
   listOAuthGrants,
   listObjectsByPath,
   listOrgEntitlements,
+  listOutboundWebhookDeliveries,
+  listOutboundWebhookEndpoints,
   listQuotas,
   listReceivedShares,
   listShareObjects,
@@ -144,6 +149,7 @@ import {
   revokeSiteInvitation,
   revokeUserEntitlement,
   revokeWebDavAppPassword,
+  rotateOutboundWebhookSecret,
   runDownloadTaskAction,
   saveBranding,
   saveEmailConfig,
@@ -156,6 +162,7 @@ import {
   submitOAuthConsent,
   testEmail,
   testImageDomainProvider,
+  testOutboundWebhookEndpoint,
   transferObject,
   updateAnnouncement,
   updateDownloader,
@@ -165,6 +172,7 @@ import {
   updateLocalStoreProduct,
   updateObject,
   updateOrgEntitlement,
+  updateOutboundWebhookEndpoint,
   updateSiteCaptcha,
   updateSiteIdentity,
   updateSiteQuotas,
@@ -3047,6 +3055,107 @@ describe('api', () => {
       vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'Invalid announcement' }, false, 400))
 
       await expect(createAnnouncement(input)).rejects.toThrow('Invalid announcement')
+    })
+  })
+
+  describe('outbound webhook wrappers', () => {
+    const endpoint = {
+      id: 'wh-1',
+      url: 'https://hooks.example.com/zpan',
+      description: 'CI',
+      enabled: true,
+      eventTypes: ['share.created'],
+      secretMasked: '****abcd',
+      createdBy: 'admin',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    }
+    const input = {
+      url: 'https://hooks.example.com/zpan',
+      description: 'CI',
+      enabled: true,
+      eventTypes: ['share.created' as const],
+    }
+
+    it('lists outbound webhook endpoints', async () => {
+      const payload = { items: [endpoint], total: 1, page: 1, pageSize: 20 }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+
+      const result = await listOutboundWebhookEndpoints(1, 20)
+      expect(result).toEqual(payload)
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string]
+      expect(url).toContain('/api/site/outbound-webhooks')
+      expect(url).toContain('page=1')
+    })
+
+    it('throws ApiError when listing endpoints fails', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'Forbidden' }, false, 403))
+      await expect(listOutboundWebhookEndpoints()).rejects.toThrow('Forbidden')
+    })
+
+    it('creates an outbound webhook endpoint', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ ...endpoint, secret: 'whsec_test' }))
+      const result = await createOutboundWebhookEndpoint(input)
+      expect(result.secret).toBe('whsec_test')
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks')
+      expect(init.method).toBe('POST')
+      expect(JSON.parse(init.body as string)).toEqual(input)
+    })
+
+    it('gets an outbound webhook endpoint', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(endpoint))
+      await getOutboundWebhookEndpoint('wh-1')
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks/wh-1')
+      expect(init.method).toBe('GET')
+    })
+
+    it('updates an outbound webhook endpoint', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(endpoint))
+      await updateOutboundWebhookEndpoint('wh-1', { enabled: false })
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks/wh-1')
+      expect(init.method).toBe('PATCH')
+      expect(JSON.parse(init.body as string)).toEqual({ enabled: false })
+    })
+
+    it('rotates an outbound webhook secret', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ ...endpoint, secret: 'whsec_new' }))
+      await rotateOutboundWebhookSecret('wh-1')
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks/wh-1/secret-rotations')
+      expect(init.method).toBe('POST')
+    })
+
+    it('sends a test outbound webhook event', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ ok: true }))
+      await testOutboundWebhookEndpoint('wh-1')
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks/wh-1/tests')
+      expect(init.method).toBe('POST')
+    })
+
+    it('lists outbound webhook deliveries', async () => {
+      const payload = { items: [], total: 0, page: 1, pageSize: 20 }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+      await listOutboundWebhookDeliveries('wh-1', 1, 20, 'failed')
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string]
+      expect(url).toContain('/api/site/outbound-webhooks/wh-1/deliveries')
+      expect(url).toContain('status=failed')
+    })
+
+    it('deletes an outbound webhook endpoint', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(null, true, 204))
+      await deleteOutboundWebhookEndpoint('wh-1')
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/site/outbound-webhooks/wh-1')
+      expect(init.method).toBe('DELETE')
+    })
+
+    it('throws ApiError when create fails', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'Invalid webhook' }, false, 400))
+      await expect(createOutboundWebhookEndpoint(input)).rejects.toThrow('Invalid webhook')
     })
   })
 

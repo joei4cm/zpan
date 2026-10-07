@@ -26,6 +26,8 @@ import type {
   OAuthConsentSubmit,
   OAuthGrant,
   OAuthGrantList,
+  OutboundWebhookEndpointInput,
+  OutboundWebhookEndpointPatch,
   PatchStorageInput,
   PatchUploadPolicyInput,
   PresignObjectUploadPartsInput,
@@ -92,6 +94,8 @@ import type {
   ObjectUploadInstructions,
   OrgQuota,
   OrgQuotaEntitlement,
+  OutboundWebhookDelivery,
+  OutboundWebhookEndpoint,
   PaginatedResponse,
   ShareListItem,
   ShareView,
@@ -133,6 +137,7 @@ import {
   notificationsApi,
   oauthGrantsApi,
   objects,
+  outboundWebhooksApi,
   publicSharesApi,
   publicSiteInvitations,
   siteSettingsApi,
@@ -1123,6 +1128,73 @@ export function updateAnnouncement(id: string, data: AnnouncementInput) {
 
 export function deleteAnnouncement(id: string) {
   return discard(announcementsApi[':id'].$delete({ param: { id } }))
+}
+
+// Outbound webhooks API
+
+export type {
+  OutboundWebhookDelivery,
+  OutboundWebhookEndpoint,
+  OutboundWebhookEndpointInput,
+  OutboundWebhookEndpointPatch,
+}
+
+export type OutboundWebhookEndpointListResult = {
+  items: OutboundWebhookEndpoint[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export type OutboundWebhookDeliveryListResult = {
+  items: OutboundWebhookDelivery[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export function listOutboundWebhookEndpoints(page = 1, pageSize = 20) {
+  return unwrap<OutboundWebhookEndpointListResult>(
+    outboundWebhooksApi.index.$get({ query: { page: String(page), pageSize: String(pageSize) } }),
+  )
+}
+
+export function createOutboundWebhookEndpoint(data: OutboundWebhookEndpointInput) {
+  return unwrap<OutboundWebhookEndpoint>(outboundWebhooksApi.index.$post({ json: data }))
+}
+
+export function getOutboundWebhookEndpoint(id: string) {
+  return unwrap<OutboundWebhookEndpoint>(outboundWebhooksApi[':id'].$get({ param: { id } }))
+}
+
+export function updateOutboundWebhookEndpoint(id: string, data: OutboundWebhookEndpointPatch) {
+  return unwrap<OutboundWebhookEndpoint>(outboundWebhooksApi[':id'].$patch({ param: { id }, json: data }))
+}
+
+export function rotateOutboundWebhookSecret(id: string) {
+  return unwrap<OutboundWebhookEndpoint>(outboundWebhooksApi[':id']['secret-rotations'].$post({ param: { id } }))
+}
+
+export function testOutboundWebhookEndpoint(id: string) {
+  return unwrap<{ ok: true }>(outboundWebhooksApi[':id'].tests.$post({ param: { id } }))
+}
+
+export function deleteOutboundWebhookEndpoint(id: string) {
+  return discard(outboundWebhooksApi[':id'].$delete({ param: { id } }))
+}
+
+export function listOutboundWebhookDeliveries(
+  id: string,
+  page = 1,
+  pageSize = 20,
+  status?: OutboundWebhookDelivery['status'],
+) {
+  const query: { page: string; pageSize: string; status?: OutboundWebhookDelivery['status'] } = {
+    page: String(page),
+    pageSize: String(pageSize),
+  }
+  if (status) query.status = status
+  return unwrap<OutboundWebhookDeliveryListResult>(outboundWebhooksApi[':id'].deliveries.$get({ param: { id }, query }))
 }
 
 // Shares API

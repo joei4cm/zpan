@@ -191,6 +191,19 @@ export {
 } from './oauth-grants'
 export type { OAuthGrantScope, OAuthResourceScope } from './oauth-resource'
 export { oauthGrantScopeSchema, oauthResourceScopeSchema } from './oauth-resource'
+export type {
+  ListOutboundWebhookDeliveriesQuery,
+  OutboundWebhookEndpointInput,
+  OutboundWebhookEndpointPatch,
+  OutboundWebhookEventType,
+} from './outbound-webhooks'
+export {
+  listOutboundWebhookDeliveriesQuerySchema,
+  OUTBOUND_WEBHOOK_EVENT_TYPES,
+  outboundWebhookEndpointInputSchema,
+  outboundWebhookEndpointPatchSchema,
+  outboundWebhookEventTypeSchema,
+} from './outbound-webhooks'
 export type { CursorPage, CursorPageQuery, Page, PageQuery } from './pagination'
 export { cursorPageQuerySchema, cursorPageSchema, pageQuerySchema, pageSchema } from './pagination'
 export type { PublicProfile, PublicProfileShare, PublicUser } from './profile'

@@ -650,6 +650,45 @@ export const announcements = sqliteTable(
   ],
 )
 
+export const outboundWebhookEndpoints = sqliteTable(
+  'outbound_webhook_endpoints',
+  {
+    id: text('id').primaryKey(),
+    url: text('url').notNull(),
+    description: text('description').notNull().default(''),
+    secret: text('secret').notNull(),
+    enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+    eventTypes: text('event_types').notNull(),
+    createdBy: text('created_by').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [index('outbound_webhook_endpoints_enabled_idx').on(t.enabled)],
+)
+
+export const outboundWebhookDeliveries = sqliteTable(
+  'outbound_webhook_deliveries',
+  {
+    id: text('id').primaryKey(),
+    endpointId: text('endpoint_id').notNull(),
+    eventType: text('event_type').notNull(),
+    idempotencyKey: text('idempotency_key').notNull(),
+    payloadJson: text('payload_json').notNull(),
+    status: text('status').notNull().default('pending'),
+    attemptCount: integer('attempt_count').notNull().default(0),
+    nextAttemptAt: integer('next_attempt_at', { mode: 'timestamp_ms' }),
+    lastStatusCode: integer('last_status_code'),
+    lastError: text('last_error'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    deliveredAt: integer('delivered_at', { mode: 'timestamp_ms' }),
+  },
+  (t) => [
+    uniqueIndex('outbound_webhook_deliveries_endpoint_key_uniq').on(t.endpointId, t.idempotencyKey),
+    index('outbound_webhook_deliveries_status_next_idx').on(t.status, t.nextAttemptAt),
+    index('outbound_webhook_deliveries_endpoint_created_idx').on(t.endpointId, t.createdAt),
+  ],
+)
+
 export const auditEvents = sqliteTable(
   'audit_events',
   {

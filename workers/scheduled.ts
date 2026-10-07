@@ -6,6 +6,7 @@ import { isFeatureUnlockEnabled } from '../server/domain/licensing'
 import { createCloudflarePlatform } from '../server/platform/cloudflare'
 import { syncPendingRemoteDownloadUsageReports } from '../server/usecases/downloads/remote-download-usage'
 import { purgeExpiredTrash, resolveTrashRetentionDays } from '../server/usecases/object'
+import { processDueOutboundWebhooks } from '../server/usecases/outbound-webhooks'
 import { purgeExpiredResourceChanges } from '../server/usecases/resource-changes'
 import { reconcileImageDomains } from '../server/usecases/site/image-domain-provider'
 import { INSTANCE_TELEMETRY_CRON, reportInstanceTelemetry } from '../server/usecases/site/instance-telemetry'
@@ -39,6 +40,7 @@ export async function handleScheduled(event: ScheduledTrigger, env: ScheduledEnv
   const cloudBaseUrl = env.ZPAN_CLOUD_URL ?? ZPAN_CLOUD_URL_DEFAULT
   if (event.cron === TRAFFIC_SYNC_CRON) {
     await deps.quota.reconcileFreePlanBaselines()
+    await processDueOutboundWebhooks(deps)
     if (!isFeatureUnlockEnabled()) {
       await Promise.all([
         syncPendingCloudTrafficReports(deps, { cloudBaseUrl }),

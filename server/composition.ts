@@ -41,6 +41,7 @@ import { createNotificationRepo } from './adapters/repos/notification'
 import { createOAuthGateway } from './adapters/repos/oauth'
 import { createObjectUploadSessionRepo } from './adapters/repos/object-upload-session'
 import { createOrgRepo } from './adapters/repos/org'
+import { createOutboundWebhookRepo } from './adapters/repos/outbound-webhooks'
 import { createProfileRepo } from './adapters/repos/profile'
 import { createQuotaRepo } from './adapters/repos/quota'
 import { createRemoteDownloadUsageRepo } from './adapters/repos/remote-download-usage'
@@ -118,6 +119,7 @@ export function createDeps(platform: Platform, options: CreateDepsOptions = {}):
     notifications: createNotificationRepo(db),
     objectUploadSessions: createObjectUploadSessionRepo(db),
     org: createOrgRepo(db),
+    outboundWebhooks: createOutboundWebhookRepo(db),
     profiles: createProfileRepo(db),
     quota: createQuotaRepo(db),
     remoteDownloadUsage: createRemoteDownloadUsageRepo(db),

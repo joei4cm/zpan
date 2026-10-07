@@ -2005,6 +2005,48 @@ func (e ManualImageDomainSettingsProvider) Valid() bool {
 	}
 }
 
+// Defines values for OutboundWebhookDeliveryStatus.
+const (
+	OutboundWebhookDeliveryStatusDead       OutboundWebhookDeliveryStatus = "dead"
+	OutboundWebhookDeliveryStatusDelivering OutboundWebhookDeliveryStatus = "delivering"
+	OutboundWebhookDeliveryStatusFailed     OutboundWebhookDeliveryStatus = "failed"
+	OutboundWebhookDeliveryStatusPending    OutboundWebhookDeliveryStatus = "pending"
+	OutboundWebhookDeliveryStatusSucceeded  OutboundWebhookDeliveryStatus = "succeeded"
+)
+
+// Valid indicates whether the value is a known member of the OutboundWebhookDeliveryStatus enum.
+func (e OutboundWebhookDeliveryStatus) Valid() bool {
+	switch e {
+	case OutboundWebhookDeliveryStatusDead:
+		return true
+	case OutboundWebhookDeliveryStatusDelivering:
+		return true
+	case OutboundWebhookDeliveryStatusFailed:
+		return true
+	case OutboundWebhookDeliveryStatusPending:
+		return true
+	case OutboundWebhookDeliveryStatusSucceeded:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OutboundWebhookTestResultOk.
+const (
+	OutboundWebhookTestResultOkTrue OutboundWebhookTestResultOk = true
+)
+
+// Valid indicates whether the value is a known member of the OutboundWebhookTestResultOk enum.
+func (e OutboundWebhookTestResultOk) Valid() bool {
+	switch e {
+	case OutboundWebhookTestResultOkTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PublicAuthProviderType.
 const (
 	PublicAuthProviderTypeBuiltin PublicAuthProviderType = "builtin"
@@ -2877,6 +2919,10 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsPurge              GetOAuthConsentContext200JSONResponseBodyScopes = "objects:purge"
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsRead               GetOAuthConsentContext200JSONResponseBodyScopes = "objects:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsUpdate             GetOAuthConsentContext200JSONResponseBodyScopes = "objects:update"
+	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:create"
+	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:delete"
+	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksRead      GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:read"
+	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksUpdate    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:update"
 	GetOAuthConsentContext200JSONResponseBodyScopesQuotaPurchase             GetOAuthConsentContext200JSONResponseBodyScopes = "quota:purchase"
 	GetOAuthConsentContext200JSONResponseBodyScopesQuotaRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "quota:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesSharesCreate              GetOAuthConsentContext200JSONResponseBodyScopes = "shares:create"
@@ -3019,6 +3065,14 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesObjectsUpdate:
 		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksCreate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksDelete:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksRead:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksUpdate:
+		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesQuotaPurchase:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesQuotaRead:
@@ -3156,6 +3210,10 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsPurge              ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:purge"
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsRead               ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsUpdate             ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:update"
+	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:create"
+	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:delete"
+	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksRead      ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:read"
+	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksUpdate    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:update"
 	ListOAuthGrants200JSONResponseBodyItemsScopesQuotaPurchase             ListOAuthGrants200JSONResponseBodyItemsScopes = "quota:purchase"
 	ListOAuthGrants200JSONResponseBodyItemsScopesQuotaRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "quota:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesSharesCreate              ListOAuthGrants200JSONResponseBodyItemsScopes = "shares:create"
@@ -3297,6 +3355,14 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 	case ListOAuthGrants200JSONResponseBodyItemsScopesObjectsRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesObjectsUpdate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksCreate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksDelete:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksRead:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksUpdate:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesQuotaPurchase:
 		return true
@@ -3651,13 +3717,13 @@ func (e CreateObject201JSONResponseBodyUploadWorkflowUploadUrlField) Valid() boo
 
 // Defines values for CreateObject201JSONResponseBodyUploadWorkflowVersion.
 const (
-	N1 CreateObject201JSONResponseBodyUploadWorkflowVersion = "1"
+	CreateObject201JSONResponseBodyUploadWorkflowVersionN1 CreateObject201JSONResponseBodyUploadWorkflowVersion = "1"
 )
 
 // Valid indicates whether the value is a known member of the CreateObject201JSONResponseBodyUploadWorkflowVersion enum.
 func (e CreateObject201JSONResponseBodyUploadWorkflowVersion) Valid() bool {
 	switch e {
-	case N1:
+	case CreateObject201JSONResponseBodyUploadWorkflowVersionN1:
 		return true
 	default:
 		return false
@@ -4027,6 +4093,81 @@ func (e UpsertAuthProviderJSONBodyType) Valid() bool {
 	case UpsertAuthProviderJSONBodyTypeBuiltin:
 		return true
 	case UpsertAuthProviderJSONBodyTypeOidc:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateOutboundWebhookEndpointJSONBodyEventTypes.
+const (
+	CreateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed CreateOutboundWebhookEndpointJSONBodyEventTypes = "object.upload.confirmed"
+	CreateOutboundWebhookEndpointJSONBodyEventTypesShareCreated          CreateOutboundWebhookEndpointJSONBodyEventTypes = "share.created"
+	CreateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid        CreateOutboundWebhookEndpointJSONBodyEventTypes = "store.order.paid"
+	CreateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest           CreateOutboundWebhookEndpointJSONBodyEventTypes = "webhook.test"
+)
+
+// Valid indicates whether the value is a known member of the CreateOutboundWebhookEndpointJSONBodyEventTypes enum.
+func (e CreateOutboundWebhookEndpointJSONBodyEventTypes) Valid() bool {
+	switch e {
+	case CreateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed:
+		return true
+	case CreateOutboundWebhookEndpointJSONBodyEventTypesShareCreated:
+		return true
+	case CreateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid:
+		return true
+	case CreateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateOutboundWebhookEndpointJSONBodyEventTypes.
+const (
+	UpdateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed UpdateOutboundWebhookEndpointJSONBodyEventTypes = "object.upload.confirmed"
+	UpdateOutboundWebhookEndpointJSONBodyEventTypesShareCreated          UpdateOutboundWebhookEndpointJSONBodyEventTypes = "share.created"
+	UpdateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid        UpdateOutboundWebhookEndpointJSONBodyEventTypes = "store.order.paid"
+	UpdateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest           UpdateOutboundWebhookEndpointJSONBodyEventTypes = "webhook.test"
+)
+
+// Valid indicates whether the value is a known member of the UpdateOutboundWebhookEndpointJSONBodyEventTypes enum.
+func (e UpdateOutboundWebhookEndpointJSONBodyEventTypes) Valid() bool {
+	switch e {
+	case UpdateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed:
+		return true
+	case UpdateOutboundWebhookEndpointJSONBodyEventTypesShareCreated:
+		return true
+	case UpdateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid:
+		return true
+	case UpdateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListOutboundWebhookDeliveriesParamsStatus.
+const (
+	ListOutboundWebhookDeliveriesParamsStatusDead       ListOutboundWebhookDeliveriesParamsStatus = "dead"
+	ListOutboundWebhookDeliveriesParamsStatusDelivering ListOutboundWebhookDeliveriesParamsStatus = "delivering"
+	ListOutboundWebhookDeliveriesParamsStatusFailed     ListOutboundWebhookDeliveriesParamsStatus = "failed"
+	ListOutboundWebhookDeliveriesParamsStatusPending    ListOutboundWebhookDeliveriesParamsStatus = "pending"
+	ListOutboundWebhookDeliveriesParamsStatusSucceeded  ListOutboundWebhookDeliveriesParamsStatus = "succeeded"
+)
+
+// Valid indicates whether the value is a known member of the ListOutboundWebhookDeliveriesParamsStatus enum.
+func (e ListOutboundWebhookDeliveriesParamsStatus) Valid() bool {
+	switch e {
+	case ListOutboundWebhookDeliveriesParamsStatusDead:
+		return true
+	case ListOutboundWebhookDeliveriesParamsStatusDelivering:
+		return true
+	case ListOutboundWebhookDeliveriesParamsStatusFailed:
+		return true
+	case ListOutboundWebhookDeliveriesParamsStatusPending:
+		return true
+	case ListOutboundWebhookDeliveriesParamsStatusSucceeded:
 		return true
 	default:
 		return false
@@ -4503,13 +4644,13 @@ func (e PurchaseStorageCapacity200JSONResponseBodyStatus) Valid() bool {
 
 // Defines values for PurchaseStorageCapacity202JSONResponseBodyStatus.
 const (
-	Pending PurchaseStorageCapacity202JSONResponseBodyStatus = "pending"
+	PurchaseStorageCapacity202JSONResponseBodyStatusPending PurchaseStorageCapacity202JSONResponseBodyStatus = "pending"
 )
 
 // Valid indicates whether the value is a known member of the PurchaseStorageCapacity202JSONResponseBodyStatus enum.
 func (e PurchaseStorageCapacity202JSONResponseBodyStatus) Valid() bool {
 	switch e {
-	case Pending:
+	case PurchaseStorageCapacity202JSONResponseBodyStatusPending:
 		return true
 	default:
 		return false
@@ -6528,6 +6669,62 @@ type ObjectPage struct {
 	NextPageToken *string          `json:"nextPageToken"`
 }
 
+// OutboundWebhookDelivery defines model for OutboundWebhookDelivery.
+type OutboundWebhookDelivery struct {
+	AttemptCount   int                           `json:"attemptCount"`
+	CreatedAt      string                        `json:"createdAt"`
+	DeliveredAt    *string                       `json:"deliveredAt"`
+	EndpointId     string                        `json:"endpointId"`
+	EventType      string                        `json:"eventType"`
+	Id             string                        `json:"id"`
+	IdempotencyKey string                        `json:"idempotencyKey"`
+	LastError      *string                       `json:"lastError"`
+	LastStatusCode *int                          `json:"lastStatusCode"`
+	NextAttemptAt  *string                       `json:"nextAttemptAt"`
+	Status         OutboundWebhookDeliveryStatus `json:"status"`
+}
+
+// OutboundWebhookDeliveryStatus defines model for OutboundWebhookDelivery.Status.
+type OutboundWebhookDeliveryStatus string
+
+// OutboundWebhookDeliveryList defines model for OutboundWebhookDeliveryList.
+type OutboundWebhookDeliveryList struct {
+	Items    []OutboundWebhookDelivery `json:"items"`
+	Page     int                       `json:"page"`
+	PageSize int                       `json:"pageSize"`
+	Total    int                       `json:"total"`
+}
+
+// OutboundWebhookEndpoint defines model for OutboundWebhookEndpoint.
+type OutboundWebhookEndpoint struct {
+	CreatedAt    string   `json:"createdAt"`
+	CreatedBy    string   `json:"createdBy"`
+	Description  string   `json:"description"`
+	Enabled      bool     `json:"enabled"`
+	EventTypes   []string `json:"eventTypes"`
+	Id           string   `json:"id"`
+	Secret       *string  `json:"secret,omitempty"`
+	SecretMasked string   `json:"secretMasked"`
+	UpdatedAt    string   `json:"updatedAt"`
+	Url          string   `json:"url"`
+}
+
+// OutboundWebhookEndpointList defines model for OutboundWebhookEndpointList.
+type OutboundWebhookEndpointList struct {
+	Items    []OutboundWebhookEndpoint `json:"items"`
+	Page     int                       `json:"page"`
+	PageSize int                       `json:"pageSize"`
+	Total    int                       `json:"total"`
+}
+
+// OutboundWebhookTestResult defines model for OutboundWebhookTestResult.
+type OutboundWebhookTestResult struct {
+	Ok OutboundWebhookTestResultOk `json:"ok"`
+}
+
+// OutboundWebhookTestResultOk defines model for OutboundWebhookTestResult.Ok.
+type OutboundWebhookTestResultOk bool
+
 // PendingInvitation defines model for PendingInvitation.
 type PendingInvitation struct {
 	CreatedAt string  `json:"createdAt"`
@@ -8016,6 +8213,44 @@ type ValidateInviteCodeJSONBody struct {
 	Code string `json:"code"`
 }
 
+// ListOutboundWebhookEndpointsParams defines parameters for ListOutboundWebhookEndpoints.
+type ListOutboundWebhookEndpointsParams struct {
+	Page     *int `form:"page,omitempty" json:"page,omitempty"`
+	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// CreateOutboundWebhookEndpointJSONBody defines parameters for CreateOutboundWebhookEndpoint.
+type CreateOutboundWebhookEndpointJSONBody struct {
+	Description *string                                           `json:"description,omitempty"`
+	Enabled     *bool                                             `json:"enabled,omitempty"`
+	EventTypes  []CreateOutboundWebhookEndpointJSONBodyEventTypes `json:"eventTypes"`
+	Url         string                                            `json:"url"`
+}
+
+// CreateOutboundWebhookEndpointJSONBodyEventTypes defines parameters for CreateOutboundWebhookEndpoint.
+type CreateOutboundWebhookEndpointJSONBodyEventTypes string
+
+// UpdateOutboundWebhookEndpointJSONBody defines parameters for UpdateOutboundWebhookEndpoint.
+type UpdateOutboundWebhookEndpointJSONBody struct {
+	Description *string                                            `json:"description,omitempty"`
+	Enabled     *bool                                              `json:"enabled,omitempty"`
+	EventTypes  *[]UpdateOutboundWebhookEndpointJSONBodyEventTypes `json:"eventTypes,omitempty"`
+	Url         *string                                            `json:"url,omitempty"`
+}
+
+// UpdateOutboundWebhookEndpointJSONBodyEventTypes defines parameters for UpdateOutboundWebhookEndpoint.
+type UpdateOutboundWebhookEndpointJSONBodyEventTypes string
+
+// ListOutboundWebhookDeliveriesParams defines parameters for ListOutboundWebhookDeliveries.
+type ListOutboundWebhookDeliveriesParams struct {
+	Status   *ListOutboundWebhookDeliveriesParamsStatus `form:"status,omitempty" json:"status,omitempty"`
+	Page     *string                                    `form:"page,omitempty" json:"page,omitempty"`
+	PageSize *string                                    `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// ListOutboundWebhookDeliveriesParamsStatus defines parameters for ListOutboundWebhookDeliveries.
+type ListOutboundWebhookDeliveriesParamsStatus string
+
 // SaveImageDomainProvider200JSONResponseBodySuccess defines parameters for SaveImageDomainProvider.
 type SaveImageDomainProvider200JSONResponseBodySuccess bool
 
@@ -8459,6 +8694,12 @@ type GenerateInviteCodesJSONRequestBody GenerateInviteCodesJSONBody
 
 // ValidateInviteCodeJSONRequestBody defines body for ValidateInviteCode for application/json ContentType.
 type ValidateInviteCodeJSONRequestBody ValidateInviteCodeJSONBody
+
+// CreateOutboundWebhookEndpointJSONRequestBody defines body for CreateOutboundWebhookEndpoint for application/json ContentType.
+type CreateOutboundWebhookEndpointJSONRequestBody CreateOutboundWebhookEndpointJSONBody
+
+// UpdateOutboundWebhookEndpointJSONRequestBody defines body for UpdateOutboundWebhookEndpoint for application/json ContentType.
+type UpdateOutboundWebhookEndpointJSONRequestBody UpdateOutboundWebhookEndpointJSONBody
 
 // UpdateSiteCaptchaJSONRequestBody defines body for UpdateSiteCaptcha for application/json ContentType.
 type UpdateSiteCaptchaJSONRequestBody = UpdateSiteCaptcha
@@ -12080,6 +12321,34 @@ type ClientInterface interface {
 	// RefreshLicense request
 	RefreshLicense(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListOutboundWebhookEndpoints request
+	ListOutboundWebhookEndpoints(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateOutboundWebhookEndpointWithBody request with any body
+	CreateOutboundWebhookEndpointWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOutboundWebhookEndpoint(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteOutboundWebhookEndpoint request
+	DeleteOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetOutboundWebhookEndpoint request
+	GetOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateOutboundWebhookEndpointWithBody request with any body
+	UpdateOutboundWebhookEndpointWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateOutboundWebhookEndpoint(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOutboundWebhookDeliveries request
+	ListOutboundWebhookDeliveries(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RotateOutboundWebhookSecret request
+	RotateOutboundWebhookSecret(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TestOutboundWebhookEndpoint request
+	TestOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetSiteSettings request
 	GetSiteSettings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13989,6 +14258,126 @@ func (c *Client) PollLicensePairing(ctx context.Context, code string, reqEditors
 
 func (c *Client) RefreshLicense(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRefreshLicenseRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOutboundWebhookEndpoints(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOutboundWebhookEndpointsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOutboundWebhookEndpointWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOutboundWebhookEndpointRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOutboundWebhookEndpoint(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOutboundWebhookEndpointRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteOutboundWebhookEndpointRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOutboundWebhookEndpointRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOutboundWebhookEndpointWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOutboundWebhookEndpointRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOutboundWebhookEndpoint(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOutboundWebhookEndpointRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOutboundWebhookDeliveries(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOutboundWebhookDeliveriesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RotateOutboundWebhookSecret(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRotateOutboundWebhookSecretRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TestOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTestOutboundWebhookEndpointRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -20033,6 +20422,380 @@ func NewRefreshLicenseRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewListOutboundWebhookEndpointsRequest generates requests for ListOutboundWebhookEndpoints
+func NewListOutboundWebhookEndpointsRequest(server string, params *ListOutboundWebhookEndpointsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "pageSize", *params.PageSize, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateOutboundWebhookEndpointRequest calls the generic CreateOutboundWebhookEndpoint builder with application/json body
+func NewCreateOutboundWebhookEndpointRequest(server string, body CreateOutboundWebhookEndpointJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOutboundWebhookEndpointRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateOutboundWebhookEndpointRequestWithBody generates requests for CreateOutboundWebhookEndpoint with any type of body
+func NewCreateOutboundWebhookEndpointRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteOutboundWebhookEndpointRequest generates requests for DeleteOutboundWebhookEndpoint
+func NewDeleteOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetOutboundWebhookEndpointRequest generates requests for GetOutboundWebhookEndpoint
+func NewGetOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateOutboundWebhookEndpointRequest calls the generic UpdateOutboundWebhookEndpoint builder with application/json body
+func NewUpdateOutboundWebhookEndpointRequest(server string, id string, body UpdateOutboundWebhookEndpointJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateOutboundWebhookEndpointRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateOutboundWebhookEndpointRequestWithBody generates requests for UpdateOutboundWebhookEndpoint with any type of body
+func NewUpdateOutboundWebhookEndpointRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListOutboundWebhookDeliveriesRequest generates requests for ListOutboundWebhookDeliveries
+func NewListOutboundWebhookDeliveriesRequest(server string, id string, params *ListOutboundWebhookDeliveriesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/deliveries", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "pageSize", *params.PageSize, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRotateOutboundWebhookSecretRequest generates requests for RotateOutboundWebhookSecret
+func NewRotateOutboundWebhookSecretRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/secret-rotations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewTestOutboundWebhookEndpointRequest generates requests for TestOutboundWebhookEndpoint
+func NewTestOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/tests", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetSiteSettingsRequest generates requests for GetSiteSettings
 func NewGetSiteSettingsRequest(server string) (*http.Request, error) {
 	var err error
@@ -23465,6 +24228,34 @@ type ClientWithResponsesInterface interface {
 
 	// RefreshLicenseWithResponse request
 	RefreshLicenseWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshLicenseResponse, error)
+
+	// ListOutboundWebhookEndpointsWithResponse request
+	ListOutboundWebhookEndpointsWithResponse(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookEndpointsResponse, error)
+
+	// CreateOutboundWebhookEndpointWithBodyWithResponse request with any body
+	CreateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error)
+
+	CreateOutboundWebhookEndpointWithResponse(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error)
+
+	// DeleteOutboundWebhookEndpointWithResponse request
+	DeleteOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteOutboundWebhookEndpointResponse, error)
+
+	// GetOutboundWebhookEndpointWithResponse request
+	GetOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetOutboundWebhookEndpointResponse, error)
+
+	// UpdateOutboundWebhookEndpointWithBodyWithResponse request with any body
+	UpdateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error)
+
+	UpdateOutboundWebhookEndpointWithResponse(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error)
+
+	// ListOutboundWebhookDeliveriesWithResponse request
+	ListOutboundWebhookDeliveriesWithResponse(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookDeliveriesResponse, error)
+
+	// RotateOutboundWebhookSecretWithResponse request
+	RotateOutboundWebhookSecretWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RotateOutboundWebhookSecretResponse, error)
+
+	// TestOutboundWebhookEndpointWithResponse request
+	TestOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*TestOutboundWebhookEndpointResponse, error)
 
 	// GetSiteSettingsWithResponse request
 	GetSiteSettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSiteSettingsResponse, error)
@@ -27156,6 +27947,252 @@ func (r RefreshLicenseResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r RefreshLicenseResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListOutboundWebhookEndpointsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookEndpointList
+	JSON403      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOutboundWebhookEndpointsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOutboundWebhookEndpointsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListOutboundWebhookEndpointsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateOutboundWebhookEndpointResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *OutboundWebhookEndpoint
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOutboundWebhookEndpointResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOutboundWebhookEndpointResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateOutboundWebhookEndpointResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteOutboundWebhookEndpointResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteOutboundWebhookEndpointResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteOutboundWebhookEndpointResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteOutboundWebhookEndpointResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetOutboundWebhookEndpointResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookEndpoint
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetOutboundWebhookEndpointResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetOutboundWebhookEndpointResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetOutboundWebhookEndpointResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateOutboundWebhookEndpointResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookEndpoint
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateOutboundWebhookEndpointResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateOutboundWebhookEndpointResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateOutboundWebhookEndpointResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListOutboundWebhookDeliveriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookDeliveryList
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOutboundWebhookDeliveriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOutboundWebhookDeliveriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListOutboundWebhookDeliveriesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RotateOutboundWebhookSecretResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookEndpoint
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r RotateOutboundWebhookSecretResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RotateOutboundWebhookSecretResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RotateOutboundWebhookSecretResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type TestOutboundWebhookEndpointResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *OutboundWebhookTestResult
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r TestOutboundWebhookEndpointResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TestOutboundWebhookEndpointResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r TestOutboundWebhookEndpointResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -30878,6 +31915,94 @@ func (c *ClientWithResponses) RefreshLicenseWithResponse(ctx context.Context, re
 		return nil, err
 	}
 	return ParseRefreshLicenseResponse(rsp)
+}
+
+// ListOutboundWebhookEndpointsWithResponse request returning *ListOutboundWebhookEndpointsResponse
+func (c *ClientWithResponses) ListOutboundWebhookEndpointsWithResponse(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookEndpointsResponse, error) {
+	rsp, err := c.ListOutboundWebhookEndpoints(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOutboundWebhookEndpointsResponse(rsp)
+}
+
+// CreateOutboundWebhookEndpointWithBodyWithResponse request with arbitrary body returning *CreateOutboundWebhookEndpointResponse
+func (c *ClientWithResponses) CreateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.CreateOutboundWebhookEndpointWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOutboundWebhookEndpointResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOutboundWebhookEndpointWithResponse(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.CreateOutboundWebhookEndpoint(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOutboundWebhookEndpointResponse(rsp)
+}
+
+// DeleteOutboundWebhookEndpointWithResponse request returning *DeleteOutboundWebhookEndpointResponse
+func (c *ClientWithResponses) DeleteOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.DeleteOutboundWebhookEndpoint(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteOutboundWebhookEndpointResponse(rsp)
+}
+
+// GetOutboundWebhookEndpointWithResponse request returning *GetOutboundWebhookEndpointResponse
+func (c *ClientWithResponses) GetOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.GetOutboundWebhookEndpoint(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetOutboundWebhookEndpointResponse(rsp)
+}
+
+// UpdateOutboundWebhookEndpointWithBodyWithResponse request with arbitrary body returning *UpdateOutboundWebhookEndpointResponse
+func (c *ClientWithResponses) UpdateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.UpdateOutboundWebhookEndpointWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOutboundWebhookEndpointResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateOutboundWebhookEndpointWithResponse(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.UpdateOutboundWebhookEndpoint(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOutboundWebhookEndpointResponse(rsp)
+}
+
+// ListOutboundWebhookDeliveriesWithResponse request returning *ListOutboundWebhookDeliveriesResponse
+func (c *ClientWithResponses) ListOutboundWebhookDeliveriesWithResponse(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookDeliveriesResponse, error) {
+	rsp, err := c.ListOutboundWebhookDeliveries(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOutboundWebhookDeliveriesResponse(rsp)
+}
+
+// RotateOutboundWebhookSecretWithResponse request returning *RotateOutboundWebhookSecretResponse
+func (c *ClientWithResponses) RotateOutboundWebhookSecretWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RotateOutboundWebhookSecretResponse, error) {
+	rsp, err := c.RotateOutboundWebhookSecret(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRotateOutboundWebhookSecretResponse(rsp)
+}
+
+// TestOutboundWebhookEndpointWithResponse request returning *TestOutboundWebhookEndpointResponse
+func (c *ClientWithResponses) TestOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*TestOutboundWebhookEndpointResponse, error) {
+	rsp, err := c.TestOutboundWebhookEndpoint(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTestOutboundWebhookEndpointResponse(rsp)
 }
 
 // GetSiteSettingsWithResponse request returning *GetSiteSettingsResponse
@@ -35812,6 +36937,256 @@ func ParseRefreshLicenseResponse(rsp *http.Response) (*RefreshLicenseResponse, e
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOutboundWebhookEndpointsResponse parses an HTTP response from a ListOutboundWebhookEndpointsWithResponse call
+func ParseListOutboundWebhookEndpointsResponse(rsp *http.Response) (*ListOutboundWebhookEndpointsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOutboundWebhookEndpointsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookEndpointList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateOutboundWebhookEndpointResponse parses an HTTP response from a CreateOutboundWebhookEndpointWithResponse call
+func ParseCreateOutboundWebhookEndpointResponse(rsp *http.Response) (*CreateOutboundWebhookEndpointResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOutboundWebhookEndpointResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest OutboundWebhookEndpoint
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteOutboundWebhookEndpointResponse parses an HTTP response from a DeleteOutboundWebhookEndpointWithResponse call
+func ParseDeleteOutboundWebhookEndpointResponse(rsp *http.Response) (*DeleteOutboundWebhookEndpointResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteOutboundWebhookEndpointResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetOutboundWebhookEndpointResponse parses an HTTP response from a GetOutboundWebhookEndpointWithResponse call
+func ParseGetOutboundWebhookEndpointResponse(rsp *http.Response) (*GetOutboundWebhookEndpointResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetOutboundWebhookEndpointResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookEndpoint
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateOutboundWebhookEndpointResponse parses an HTTP response from a UpdateOutboundWebhookEndpointWithResponse call
+func ParseUpdateOutboundWebhookEndpointResponse(rsp *http.Response) (*UpdateOutboundWebhookEndpointResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateOutboundWebhookEndpointResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookEndpoint
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOutboundWebhookDeliveriesResponse parses an HTTP response from a ListOutboundWebhookDeliveriesWithResponse call
+func ParseListOutboundWebhookDeliveriesResponse(rsp *http.Response) (*ListOutboundWebhookDeliveriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOutboundWebhookDeliveriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookDeliveryList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRotateOutboundWebhookSecretResponse parses an HTTP response from a RotateOutboundWebhookSecretWithResponse call
+func ParseRotateOutboundWebhookSecretResponse(rsp *http.Response) (*RotateOutboundWebhookSecretResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RotateOutboundWebhookSecretResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookEndpoint
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTestOutboundWebhookEndpointResponse parses an HTTP response from a TestOutboundWebhookEndpointWithResponse call
+func ParseTestOutboundWebhookEndpointResponse(rsp *http.Response) (*TestOutboundWebhookEndpointResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TestOutboundWebhookEndpointResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest OutboundWebhookTestResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

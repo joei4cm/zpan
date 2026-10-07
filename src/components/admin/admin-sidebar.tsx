@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Store,
   Users,
+  Webhook,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { UserAccountMenu } from '@/components/layout/user-account-menu'
@@ -41,6 +42,7 @@ const adminNavItems = [
   { titleKey: 'admin.nav.auth', url: '/admin/settings/oauth', icon: KeyRound },
   { titleKey: 'admin.nav.settings', url: '/admin/settings', icon: Settings },
   { titleKey: 'admin.nav.announcement', url: '/admin/announcement', icon: Megaphone },
+  { titleKey: 'admin.nav.webhooks', url: '/admin/webhooks', icon: Webhook },
   { titleKey: 'admin.nav.audit', url: '/admin/audit', icon: ShieldCheck },
   { titleKey: 'admin.nav.analytics', url: '/admin/analytics', icon: BarChart3 },
   { titleKey: 'admin.nav.licensing', url: '/admin/licensing', icon: BadgeCheck },

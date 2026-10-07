@@ -40,6 +40,7 @@ import imageDomainProvider from './http/site/image-domain-provider'
 import { adminSiteInvitations, publicSiteInvitations } from './http/site/invitations'
 import { adminInviteCodes, publicInviteCodes } from './http/site/invite-codes'
 import { licensing, licensingAdmin } from './http/site/licensing'
+import { outboundWebhooks } from './http/site/outbound-webhooks'
 import { siteSettings } from './http/site/settings'
 import storages from './http/site/storages'
 import system from './http/site/system'
@@ -354,6 +355,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
 
   app.route('/api/users', users)
   app.route('/api/site/announcements', announcements)
+  app.route('/api/site/outbound-webhooks', outboundWebhooks)
   app.route('/api/site/licensing', licensing)
 
   // Mount routes separately to avoid deep type chain accumulation.
@@ -514,6 +516,7 @@ export type DownloaderTasksRoute = typeof downloaderTasksRoute
 export type IhostRoute = typeof ihost
 export type IhostConfigRoute = typeof ihostConfig
 export type AnnouncementsRoute = typeof announcements
+export type OutboundWebhooksRoute = typeof outboundWebhooks
 export type LicensingRoute = typeof licensing
 export type LicensingAdminRoute = typeof licensingAdmin
 export type BrandingAdminRoute = typeof brandingAdmin

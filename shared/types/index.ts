@@ -649,6 +649,37 @@ export interface Announcement {
   updatedAt: string
 }
 
+export type OutboundWebhookDeliveryStatus = 'pending' | 'delivering' | 'succeeded' | 'failed' | 'dead'
+
+export interface OutboundWebhookEndpoint {
+  id: string
+  url: string
+  description: string
+  enabled: boolean
+  eventTypes: string[]
+  /** Masked signing secret (****last4). Full secret is only returned on create/rotate. */
+  secretMasked: string
+  /** Present only immediately after create or rotate. */
+  secret?: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface OutboundWebhookDelivery {
+  id: string
+  endpointId: string
+  eventType: string
+  idempotencyKey: string
+  status: OutboundWebhookDeliveryStatus
+  attemptCount: number
+  nextAttemptAt: string | null
+  lastStatusCode: number | null
+  lastError: string | null
+  createdAt: string
+  deliveredAt: string | null
+}
+
 export type AuditActorType = 'user' | 'api_key' | 'oauth' | 'agent' | 'anonymous' | 'system' | 'device' | 'task-upload'
 
 export interface AuditEvent {

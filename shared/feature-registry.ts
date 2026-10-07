@@ -169,7 +169,7 @@ export const FEATURE_REGISTRY = [
     community: false,
     pro: true,
     business: true,
-    comingSoon: true,
+    gateKey: 'outbound_webhooks',
   },
   {
     i18nKey: 'features.siteAnnouncements',
