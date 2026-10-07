@@ -85,6 +85,7 @@ import {
   getUserQuotaById,
   grantOrgEntitlement,
   grantUserEntitlement,
+  importStorageObjects,
   isNameConflictError,
   listActiveAnnouncements,
   listAdminAnnouncements,
@@ -2063,6 +2064,26 @@ describe('api', () => {
       vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'conflict' }, false, 409))
 
       await expect(deleteUploadPolicy('default')).rejects.toThrow('conflict')
+    })
+  })
+
+  describe('importStorageObjects', () => {
+    it('POSTs import-objects with dry-run payload', async () => {
+      const payload = { dryRun: true, scanned: 1, imported: 1, skipped: 0, samples: [] }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+
+      const result = await importStorageObjects('s1', { prefix: 'uploads/', dryRun: true })
+
+      expect(result).toEqual(payload)
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toContain('/api/site/storages/s1/import-objects')
+      expect(init.method).toBe('POST')
+      expect(JSON.parse(init.body as string)).toEqual({ prefix: 'uploads/', dryRun: true })
+    })
+
+    it('throws ApiError on failure', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'Storage is disabled' }, false, 400))
+      await expect(importStorageObjects('s1', { dryRun: true })).rejects.toThrow('Storage is disabled')
     })
   })
 

@@ -1915,6 +1915,24 @@ func (e ImageHostingConfigDomainStatus) Valid() bool {
 	}
 }
 
+// Defines values for ImportStorageObjectsResultSamplesAction.
+const (
+	Import ImportStorageObjectsResultSamplesAction = "import"
+	Skip   ImportStorageObjectsResultSamplesAction = "skip"
+)
+
+// Valid indicates whether the value is a known member of the ImportStorageObjectsResultSamplesAction enum.
+func (e ImportStorageObjectsResultSamplesAction) Valid() bool {
+	switch e {
+	case Import:
+		return true
+	case Skip:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LicenseEntitlementsEdition.
 const (
 	LicenseEntitlementsEditionBusiness    LicenseEntitlementsEdition = "business"
@@ -6280,6 +6298,31 @@ type ImageHostingList struct {
 	NextPageToken *string        `json:"nextPageToken"`
 }
 
+// ImportStorageObjectsRequest defines model for ImportStorageObjectsRequest.
+type ImportStorageObjectsRequest struct {
+	DryRun      *bool   `json:"dryRun,omitempty"`
+	Limit       *int    `json:"limit,omitempty"`
+	Prefix      *string `json:"prefix,omitempty"`
+	StripPrefix *string `json:"stripPrefix,omitempty"`
+}
+
+// ImportStorageObjectsResult defines model for ImportStorageObjectsResult.
+type ImportStorageObjectsResult struct {
+	DryRun   bool `json:"dryRun"`
+	Imported int  `json:"imported"`
+	Samples  []struct {
+		Action ImportStorageObjectsResultSamplesAction `json:"action"`
+		Key    string                                  `json:"key"`
+		Name   string                                  `json:"name"`
+		Parent string                                  `json:"parent"`
+	} `json:"samples"`
+	Scanned int `json:"scanned"`
+	Skipped int `json:"skipped"`
+}
+
+// ImportStorageObjectsResultSamplesAction defines model for ImportStorageObjectsResult.Samples.Action.
+type ImportStorageObjectsResultSamplesAction string
+
 // InstanceInfo defines model for InstanceInfo.
 type InstanceInfo struct {
 	Commit *string `json:"commit,omitempty"`
@@ -8452,6 +8495,9 @@ type ReplaceStorageJSONRequestBody ReplaceStorageJSONBody
 
 // UpdateStorageEgressBillingJSONRequestBody defines body for UpdateStorageEgressBilling for application/json ContentType.
 type UpdateStorageEgressBillingJSONRequestBody UpdateStorageEgressBillingJSONBody
+
+// ImportStorageObjectsJSONRequestBody defines body for ImportStorageObjects for application/json ContentType.
+type ImportStorageObjectsJSONRequestBody = ImportStorageObjectsRequest
 
 // CreateUploadPolicyJSONRequestBody defines body for CreateUploadPolicy for application/json ContentType.
 type CreateUploadPolicyJSONRequestBody CreateUploadPolicyJSONBody
@@ -12124,6 +12170,11 @@ type ClientInterface interface {
 
 	UpdateStorageEgressBilling(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ImportStorageObjectsWithBody request with any body
+	ImportStorageObjectsWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ImportStorageObjects(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListUploadPolicies request
 	ListUploadPolicies(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14346,6 +14397,30 @@ func (c *Client) UpdateStorageEgressBillingWithBody(ctx context.Context, id stri
 
 func (c *Client) UpdateStorageEgressBilling(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateStorageEgressBillingRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ImportStorageObjectsWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportStorageObjectsRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ImportStorageObjects(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportStorageObjectsRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -20750,6 +20825,53 @@ func NewUpdateStorageEgressBillingRequestWithBody(server string, id string, cont
 	return req, nil
 }
 
+// NewImportStorageObjectsRequest calls the generic ImportStorageObjects builder with application/json body
+func NewImportStorageObjectsRequest(server string, id string, body ImportStorageObjectsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewImportStorageObjectsRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewImportStorageObjectsRequestWithBody generates requests for ImportStorageObjects with any type of body
+func NewImportStorageObjectsRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/storages/%s/import-objects", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewListUploadPoliciesRequest generates requests for ListUploadPolicies
 func NewListUploadPoliciesRequest(server string) (*http.Request, error) {
 	var err error
@@ -23433,6 +23555,11 @@ type ClientWithResponsesInterface interface {
 	UpdateStorageEgressBillingWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateStorageEgressBillingResponse, error)
 
 	UpdateStorageEgressBillingWithResponse(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateStorageEgressBillingResponse, error)
+
+	// ImportStorageObjectsWithBodyWithResponse request with any body
+	ImportStorageObjectsWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error)
+
+	ImportStorageObjectsWithResponse(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error)
 
 	// ListUploadPoliciesWithResponse request
 	ListUploadPoliciesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUploadPoliciesResponse, error)
@@ -27725,6 +27852,38 @@ func (r UpdateStorageEgressBillingResponse) ContentType() string {
 	return ""
 }
 
+type ImportStorageObjectsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ImportStorageObjectsResult
+	JSON400      *Error
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ImportStorageObjectsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ImportStorageObjectsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ImportStorageObjectsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type ListUploadPoliciesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -31013,6 +31172,23 @@ func (c *ClientWithResponses) UpdateStorageEgressBillingWithResponse(ctx context
 		return nil, err
 	}
 	return ParseUpdateStorageEgressBillingResponse(rsp)
+}
+
+// ImportStorageObjectsWithBodyWithResponse request with arbitrary body returning *ImportStorageObjectsResponse
+func (c *ClientWithResponses) ImportStorageObjectsWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error) {
+	rsp, err := c.ImportStorageObjectsWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportStorageObjectsResponse(rsp)
+}
+
+func (c *ClientWithResponses) ImportStorageObjectsWithResponse(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error) {
+	rsp, err := c.ImportStorageObjects(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportStorageObjectsResponse(rsp)
 }
 
 // ListUploadPoliciesWithResponse request returning *ListUploadPoliciesResponse
@@ -36363,6 +36539,46 @@ func ParseUpdateStorageEgressBillingResponse(rsp *http.Response) (*UpdateStorage
 			return nil, err
 		}
 		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseImportStorageObjectsResponse parses an HTTP response from a ImportStorageObjectsWithResponse call
+func ParseImportStorageObjectsResponse(rsp *http.Response) (*ImportStorageObjectsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ImportStorageObjectsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ImportStorageObjectsResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest Error

@@ -167,7 +167,7 @@ echo "https://drive.example.com" | pnpm exec wrangler secret put BETTER_AUTH_URL
 
 ZPan 的文件树在 D1 的 `matters` 里（含 `object` key 和 `storage_id`）。把已经有文件的 R2/S3 桶挂上，**不会**把对象扫进「文件」页面。
 
-目前没有内置的 Cloudreve v3/v4 导入器。以后若做导入，需要把 Cloudreve 库表（或不完整地 `ListObjects`）映射成 `storages` + `matters`。本地磁盘策略还要先把字节拷进 S3/R2。
+管理员可用 `POST /api/site/storages/{id}/import-objects`（默认 dry-run）把已有 S3/R2 对象键导入文件树，适用于 Cloudreve 等已把文件放在兼容 S3 存储里的场景。完整的 Cloudreve v3/v4 库表导入（用户/元数据映射）仍是后续工作。本地磁盘策略仍需先把字节拷进 S3/R2。
 
 ## 相关文档
 

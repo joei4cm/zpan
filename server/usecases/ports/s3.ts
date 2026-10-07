@@ -61,4 +61,12 @@ export interface S3Gateway {
   ): Promise<number>
   deleteObject(storage: S3StorageCredentials, key: string): Promise<void>
   deleteObjects(storage: S3StorageCredentials, keys: string[]): Promise<void>
+  listObjects(
+    storage: S3StorageCredentials,
+    params: { prefix?: string; continuationToken?: string; maxKeys?: number },
+  ): Promise<{
+    objects: Array<{ key: string; size: number; contentType?: string }>
+    nextContinuationToken?: string
+    isTruncated: boolean
+  }>
 }
