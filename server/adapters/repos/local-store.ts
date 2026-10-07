@@ -1,6 +1,13 @@
 import { and, desc, eq } from 'drizzle-orm'
 import { generateId } from '../../../shared/ids'
-import { orgQuotaEntitlements, storeCustomers, storeGiftCards, storeOrders, storeProducts } from '../../db/schema'
+import {
+  orgQuotaEntitlements,
+  storeCustomers,
+  storeGiftCards,
+  storeOrders,
+  storeProducts,
+  webhookEvents,
+} from '../../db/schema'
 import type { Database } from '../../platform/interface'
 import type {
   LocalStoreRepo,
@@ -249,6 +256,51 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
             eq(orgQuotaEntitlements.resourceType, 'storage'),
           ),
         )
+    },
+
+    async beginStripeWebhookEvent(input) {
+      const id = generateId()
+      const inserted = await db
+        .insert(webhookEvents)
+        .values({
+          id,
+          source: 'stripe',
+          eventId: input.eventId,
+          eventType: input.eventType,
+          payloadHash: input.payloadHash,
+          rawPayload: input.rawPayload,
+          status: 'processing',
+          createdAt: new Date(),
+        })
+        .onConflictDoNothing({ target: [webhookEvents.source, webhookEvents.eventId] })
+        .returning({ id: webhookEvents.id })
+      if (inserted[0]) return { id: inserted[0].id, duplicate: false }
+
+      const existing = await db
+        .select({
+          id: webhookEvents.id,
+          payloadHash: webhookEvents.payloadHash,
+          status: webhookEvents.status,
+        })
+        .from(webhookEvents)
+        .where(and(eq(webhookEvents.source, 'stripe'), eq(webhookEvents.eventId, input.eventId)))
+        .limit(1)
+      const row = existing[0]
+      if (!row) throw new Error('webhook_event_conflict')
+      if (row.payloadHash !== input.payloadHash) throw new Error('webhook_payload_conflict')
+      if (row.status === 'processed' || row.status === 'duplicate') {
+        return { id: row.id, duplicate: true }
+      }
+      // Resume failed or stuck processing events so Stripe retries can finish grant.
+      await db
+        .update(webhookEvents)
+        .set({ rawPayload: input.rawPayload, status: 'processing', error: null, processedAt: null })
+        .where(eq(webhookEvents.id, row.id))
+      return { id: row.id, duplicate: false }
+    },
+
+    async markStripeWebhookEvent(id, status, error = null) {
+      await db.update(webhookEvents).set({ status, error, processedAt: new Date() }).where(eq(webhookEvents.id, id))
     },
   }
 }

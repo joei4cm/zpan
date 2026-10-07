@@ -363,54 +363,84 @@ export async function processStripeWebhook(
   } catch {
     return { ok: false, error: badRequest('Invalid payload', 'INVALID_PAYLOAD') }
   }
-  // Only fulfill when Stripe reports the session paid. `checkout.session.completed`
-  // can fire for async methods while payment_status is still unpaid; those wait for
-  // `checkout.session.async_payment_succeeded`.
-  if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
-    const session = event.data.object
-    const paymentStatus = String(session.payment_status ?? '')
-    if (paymentStatus !== 'paid') {
-      return { ok: true, duplicate: true, eventId: event.id }
-    }
-    const sessionId = String(session.id ?? '')
-    const metadata = (session.metadata ?? {}) as Record<string, string>
-    const order =
-      (await deps.localStore.getOrderByStripeSessionId(sessionId)) ??
-      (metadata.orderId ? await deps.localStore.getOrder(metadata.orderId) : null)
-    if (!order) return { ok: true, duplicate: true, eventId: event.id }
-    if (order.status === 'paid') return { ok: true, duplicate: true, eventId: event.id }
-    const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
-    await deps.localStore.updateOrder(order.id, {
-      status: 'paid',
-      stripeSessionId: sessionId,
-      stripeSubscriptionId: subscriptionId,
-      stripeCustomerId: typeof session.customer === 'string' ? session.customer : order.stripeCustomerId,
+
+  const payloadHash = await sha256Hex(params.rawPayload)
+  let claim: { id: string; duplicate: boolean }
+  try {
+    claim = await deps.localStore.beginStripeWebhookEvent({
+      eventId: event.id,
+      eventType: event.type,
+      rawPayload: params.rawPayload,
+      payloadHash,
     })
-    const sourceId = subscriptionId ? `stripe_subscription:${subscriptionId}:${order.orgId}` : `stripe:${order.id}`
-    await deps.localStore.grantStorage({
-      orgId: order.orgId,
-      bytes: order.storageBytes,
-      entitlementType: subscriptionId ? 'plan' : 'grant',
-      source: 'stripe',
-      sourceId,
-      packageName: order.productName,
-    })
-    return { ok: true, duplicate: false, eventId: event.id }
+  } catch (error) {
+    return { ok: false, error: badRequest((error as Error).message, 'WEBHOOK_CONFLICT') }
   }
-  if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
-    const subscription = event.data.object
-    const subscriptionId = String(subscription.id ?? '')
-    const order = await deps.localStore.getOrderByStripeSubscriptionId(subscriptionId)
-    if (!order) return { ok: true, duplicate: true, eventId: event.id }
-    const sourceId = `stripe_subscription:${subscriptionId}:${order.orgId}`
-    const status = String(subscription.status ?? '')
-    if (event.type === 'customer.subscription.deleted' || status === 'canceled' || status === 'unpaid') {
-      await deps.localStore.revokeStorage('stripe', sourceId)
+  if (claim.duplicate) return { ok: true, duplicate: true, eventId: event.id }
+
+  try {
+    // Only fulfill when Stripe reports the session paid. `checkout.session.completed`
+    // can fire for async methods while payment_status is still unpaid; those wait for
+    // `checkout.session.async_payment_succeeded`.
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
+      const session = event.data.object
+      const paymentStatus = String(session.payment_status ?? '')
+      if (paymentStatus !== 'paid') {
+        await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
+        return { ok: true, duplicate: true, eventId: event.id }
+      }
+      const sessionId = String(session.id ?? '')
+      const metadata = (session.metadata ?? {}) as Record<string, string>
+      const order =
+        (await deps.localStore.getOrderByStripeSessionId(sessionId)) ??
+        (metadata.orderId ? await deps.localStore.getOrder(metadata.orderId) : null)
+      if (!order) {
+        await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
+        return { ok: true, duplicate: true, eventId: event.id }
+      }
+      const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
+      // Always upsert the grant even when the order row is already paid, so a retry
+      // after a crashed grant can finish fulfillment.
+      await deps.localStore.updateOrder(order.id, {
+        status: 'paid',
+        stripeSessionId: sessionId,
+        stripeSubscriptionId: subscriptionId,
+        stripeCustomerId: typeof session.customer === 'string' ? session.customer : order.stripeCustomerId,
+      })
+      const sourceId = subscriptionId ? `stripe_subscription:${subscriptionId}:${order.orgId}` : `stripe:${order.id}`
+      await deps.localStore.grantStorage({
+        orgId: order.orgId,
+        bytes: order.storageBytes,
+        entitlementType: subscriptionId ? 'plan' : 'grant',
+        source: 'stripe',
+        sourceId,
+        packageName: order.productName,
+      })
+      await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
       return { ok: true, duplicate: false, eventId: event.id }
     }
-    return { ok: true, duplicate: false, eventId: event.id }
+    if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object
+      const subscriptionId = String(subscription.id ?? '')
+      const order = await deps.localStore.getOrderByStripeSubscriptionId(subscriptionId)
+      if (!order) {
+        await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
+        return { ok: true, duplicate: true, eventId: event.id }
+      }
+      const sourceId = `stripe_subscription:${subscriptionId}:${order.orgId}`
+      const status = String(subscription.status ?? '')
+      if (event.type === 'customer.subscription.deleted' || status === 'canceled' || status === 'unpaid') {
+        await deps.localStore.revokeStorage('stripe', sourceId)
+      }
+      await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
+      return { ok: true, duplicate: false, eventId: event.id }
+    }
+    await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
+    return { ok: true, duplicate: true, eventId: event.id }
+  } catch (error) {
+    await deps.localStore.markStripeWebhookEvent(claim.id, 'failed', (error as Error).message).catch(() => undefined)
+    return { ok: false, error: badGateway((error as Error).message) }
   }
-  return { ok: true, duplicate: true, eventId: event.id }
 }
 
 export async function listAdminStoreProducts(deps: LocalCommerceDeps) {
