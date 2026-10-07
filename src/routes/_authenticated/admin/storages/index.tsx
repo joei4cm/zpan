@@ -28,6 +28,7 @@ import { AdminFormDrawer, AdminFormLabel } from '@/components/admin/admin-form-d
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { DeleteStorageDialog } from '@/components/admin/delete-storage-dialog'
 import { StorageFormDrawer } from '@/components/admin/storage-form-drawer'
+import { UploadPoliciesPanel } from '@/components/admin/upload-policies-panel'
 import { ProBadge } from '@/components/ProBadge'
 import { UpgradeHint } from '@/components/UpgradeHint'
 import { Button } from '@/components/ui/button'
@@ -143,6 +144,7 @@ export function StoragesPage() {
   const [filter, setFilter] = useState<StorageFilter>('all')
   const [sort, setSort] = useState<StorageSort>('default')
   const [query, setQuery] = useState('')
+  const [activeTab, setActiveTab] = useState<'backends' | 'policies'>('backends')
 
   const storagesQuery = useQuery({
     queryKey: ['admin', 'storages'],
@@ -340,81 +342,110 @@ export function StoragesPage() {
         title={t('admin.storages.title')}
         description={t('admin.storages.placeholder')}
         action={
-          <Button size="sm" onClick={handleAddNew} disabled={storagesLimitReached}>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('admin.storages.add')}
-          </Button>
+          activeTab === 'backends' ? (
+            <Button size="sm" onClick={handleAddNew} disabled={storagesLimitReached}>
+              <Plus className="mr-2 h-4 w-4" />
+              {t('admin.storages.add')}
+            </Button>
+          ) : null
         }
       />
 
-      {storagesLimitReached && <UpgradeHint feature="storages_unlimited" />}
-
-      <StorageOverview storages={storages} />
-
-      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-lg border bg-card p-1">
-          {(['all', 'healthy', 'attention', 'failed', 'disabled'] as const).map((value) => (
-            <Button
-              key={value}
-              variant={filter === value ? 'secondary' : 'ghost'}
-              size="sm"
-              className="h-7 rounded-md px-2.5 text-[11px]"
-              onClick={() => setFilter(value)}
-            >
-              {t(`admin.storages.filter.${value}`)}
-              <span className="ml-1 rounded-full bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                {storageFilterCount(storages, value)}
-              </span>
-            </Button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <div className="relative min-w-0 flex-1 lg:w-60">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t('admin.storages.searchPlaceholder')}
-              className="h-8 rounded-lg bg-card pl-9 text-xs"
-            />
-          </div>
-          <Select value={sort} onValueChange={(value) => setSort(value as StorageSort)}>
-            <SelectTrigger className="h-8 w-36 rounded-lg bg-card text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {(['default', 'usage', 'used', 'bucket'] as const).map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`admin.storages.sort.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-lg border bg-card p-1">
+        <Button
+          type="button"
+          variant={activeTab === 'backends' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-7 rounded-md px-2.5 text-[11px]"
+          onClick={() => setActiveTab('backends')}
+        >
+          {t('admin.storages.tab.backends')}
+        </Button>
+        <Button
+          type="button"
+          variant={activeTab === 'policies' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-7 rounded-md px-2.5 text-[11px]"
+          onClick={() => setActiveTab('policies')}
+        >
+          {t('admin.storages.tab.policies')}
+        </Button>
       </div>
 
-      {visibleStorages.length > 0 ? (
-        <div className="grid gap-3 xl:grid-cols-2">
-          {visibleStorages.map((storage) => (
-            <StorageCard
-              key={storage.id}
-              storage={storage}
-              providerLabel={eplistProviderLabel(providers, storage.provider)}
-              testing={testTarget?.id === storage.id && testHealth.status === 'testing'}
-              toggling={enabledMutation.isPending && enabledMutation.variables?.storage.id === storage.id}
-              onTest={() => handleTest(storage)}
-              onToggle={() => enabledMutation.mutate({ storage, enabled: !storage.enabled })}
-              onEdit={() => handleEdit(storage)}
-              onConfigureBilling={() => handleConfigureBilling(storage)}
-              onDelete={() => setDeleteTarget({ id: storage.id, bucket: storage.bucket })}
-            />
-          ))}
+      {activeTab === 'backends' ? (
+        <div className="space-y-4">
+          {storagesLimitReached && <UpgradeHint feature="storages_unlimited" />}
+
+          <StorageOverview storages={storages} />
+
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-lg border bg-card p-1">
+              {(['all', 'healthy', 'attention', 'failed', 'disabled'] as const).map((value) => (
+                <Button
+                  key={value}
+                  variant={filter === value ? 'secondary' : 'ghost'}
+                  size="sm"
+                  className="h-7 rounded-md px-2.5 text-[11px]"
+                  onClick={() => setFilter(value)}
+                >
+                  {t(`admin.storages.filter.${value}`)}
+                  <span className="ml-1 rounded-full bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                    {storageFilterCount(storages, value)}
+                  </span>
+                </Button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <div className="relative min-w-0 flex-1 lg:w-60">
+                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={t('admin.storages.searchPlaceholder')}
+                  className="h-8 rounded-lg bg-card pl-9 text-xs"
+                />
+              </div>
+              <Select value={sort} onValueChange={(value) => setSort(value as StorageSort)}>
+                <SelectTrigger className="h-8 w-36 rounded-lg bg-card text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(['default', 'usage', 'used', 'bucket'] as const).map((value) => (
+                    <SelectItem key={value} value={value}>
+                      {t(`admin.storages.sort.${value}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {visibleStorages.length > 0 ? (
+            <div className="grid gap-3 xl:grid-cols-2">
+              {visibleStorages.map((storage) => (
+                <StorageCard
+                  key={storage.id}
+                  storage={storage}
+                  providerLabel={eplistProviderLabel(providers, storage.provider)}
+                  testing={testTarget?.id === storage.id && testHealth.status === 'testing'}
+                  toggling={enabledMutation.isPending && enabledMutation.variables?.storage.id === storage.id}
+                  onTest={() => handleTest(storage)}
+                  onToggle={() => enabledMutation.mutate({ storage, enabled: !storage.enabled })}
+                  onEdit={() => handleEdit(storage)}
+                  onConfigureBilling={() => handleConfigureBilling(storage)}
+                  onDelete={() => setDeleteTarget({ id: storage.id, bucket: storage.bucket })}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground">
+              <Database className="size-10" />
+              <p>{storages.length === 0 ? t('admin.storages.noStorages') : t('admin.storages.noMatches')}</p>
+            </div>
+          )}
         </div>
       ) : (
-        <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground">
-          <Database className="size-10" />
-          <p>{storages.length === 0 ? t('admin.storages.noStorages') : t('admin.storages.noMatches')}</p>
-        </div>
+        <UploadPoliciesPanel storages={storages} />
       )}
 
       <StorageFormDrawer

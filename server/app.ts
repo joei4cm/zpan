@@ -43,6 +43,7 @@ import { licensing, licensingAdmin } from './http/site/licensing'
 import { siteSettings } from './http/site/settings'
 import storages from './http/site/storages'
 import system from './http/site/system'
+import uploadPolicies from './http/site/upload-policies'
 import storageUsage from './http/storage-usage'
 import { cloudStore, cloudStoreWebhooks, localStoreAdmin } from './http/store'
 import { adminTeams, publicTeams, teams } from './http/teams'
@@ -366,6 +367,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.route('/api/teams', teams)
   app.route('/api/teams', adminTeams)
   app.route('/api/site/storages', storages)
+  app.route('/api/site/upload-policies', uploadPolicies)
   app.route('/api/site/settings', siteSettings)
   app.route('/api/site/settings/email', emailConfig)
   app.route('/api/site/settings/image-domains', imageDomainProvider)
@@ -482,6 +484,7 @@ export type PublicSharesRoute = typeof publicShares
 export type AuthedSharesRoute = typeof authedShares
 export type TrashRoute = typeof trash
 export type StoragesRoute = typeof storages
+export type UploadPoliciesRoute = typeof uploadPolicies
 export type UsersRoute = typeof users
 export type AdminQuotasRoute = typeof adminQuotas
 export type AdminTeamsRoute = typeof adminTeams

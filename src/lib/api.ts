@@ -12,6 +12,7 @@ import type {
   CreateDownloadTaskInput,
   CreateShareRequest,
   CreateStorageInput,
+  CreateUploadPolicyInput,
   DiscountQuote,
   DownloaderHeartbeatInput,
   DownloadTaskActionInput,
@@ -26,6 +27,7 @@ import type {
   OAuthGrant,
   OAuthGrantList,
   PatchStorageInput,
+  PatchUploadPolicyInput,
   PresignObjectUploadPartsInput,
   PublicProfile,
   PublicUser,
@@ -49,6 +51,7 @@ import type {
   UpdateSiteWebDavInput,
   UpdateStorageEgressBillingInput,
   UpdateStripeConfigInput,
+  UpdateUploadPolicyInput,
 } from '@shared/schemas'
 import type {
   AdminAuditEvent,
@@ -100,6 +103,7 @@ import type {
   StorageUsageResponse,
   StorageUsageSortDirection,
   StorageUsageSortField,
+  UploadPolicy,
 } from '@shared/types'
 import {
   adminAuditApi,
@@ -138,6 +142,7 @@ import {
   system,
   teamsApi,
   trash,
+  uploadPoliciesApi,
   userQuotas,
   users,
 } from './rpc'
@@ -614,6 +619,32 @@ export function updateStorageEgressBilling(id: string, data: UpdateStorageEgress
 
 export function deleteStorage(id: string) {
   return discard(storages[':id'].$delete({ param: { id } }))
+}
+
+// Admin Upload Policies API
+
+export function listUploadPolicies() {
+  return unwrap<{ items: UploadPolicy[]; total: number }>(uploadPoliciesApi.index.$get())
+}
+
+export function getUploadPolicy(id: string) {
+  return unwrap<UploadPolicy>(uploadPoliciesApi[':id'].$get({ param: { id } }))
+}
+
+export function createUploadPolicy(data: CreateUploadPolicyInput) {
+  return unwrap<UploadPolicy>(uploadPoliciesApi.index.$post({ json: data }))
+}
+
+export function updateUploadPolicy(id: string, data: UpdateUploadPolicyInput) {
+  return unwrap<UploadPolicy>(uploadPoliciesApi[':id'].$put({ param: { id }, json: data }))
+}
+
+export function patchUploadPolicy(id: string, data: PatchUploadPolicyInput) {
+  return unwrap<UploadPolicy>(uploadPoliciesApi[':id'].$patch({ param: { id }, json: data }))
+}
+
+export function deleteUploadPolicy(id: string) {
+  return discard(uploadPoliciesApi[':id'].$delete({ param: { id } }))
 }
 
 // User entitlements API (admin). User identity, listing, disable/enable and
