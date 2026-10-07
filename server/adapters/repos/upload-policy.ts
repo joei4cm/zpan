@@ -26,6 +26,8 @@ function toRecord(row: typeof uploadPolicies.$inferSelect): UploadPolicyRecord {
     selector: parseJson<UploadSelector>(row.selectorJson, {}),
     storageIds: parseJson<string[]>(row.storageIdsJson, []),
     selectionMode: (row.selectionMode as UploadSelectionMode) ?? 'ordered',
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   }
 }
 

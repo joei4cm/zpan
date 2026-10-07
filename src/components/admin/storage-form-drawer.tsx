@@ -7,11 +7,11 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { AdminFormDrawer, AdminFormField, AdminFormLabel } from '@/components/admin/admin-form-drawer'
+import { AdminFormDrawer, AdminFormField, AdminFormLabel, AdminSwitchField } from '@/components/admin/admin-form-drawer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { createStorage, patchStorage } from '@/lib/api'
+import { createStorage, getUploadPolicy, patchStorage, patchUploadPolicy } from '@/lib/api'
 import { eplistEndpointUrl, findEplistProvider, listEplistEndpoints, listEplistProviders } from '@/lib/eplist'
 
 const storageFormSchema = z.object({
@@ -53,6 +53,7 @@ export function StorageFormDrawer({ open, onOpenChange, storage, onCreated }: St
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [showSecret, setShowSecret] = useState(false)
+  const [addToDefaultPolicy, setAddToDefaultPolicy] = useState(true)
   const isEditing = storage !== null
   const providersQuery = useQuery({
     queryKey: ['eplist', 'providers'],
@@ -81,11 +82,26 @@ export function StorageFormDrawer({ open, onOpenChange, storage, onCreated }: St
       form.reset(DEFAULT_VALUES)
     }
     setShowSecret(false)
+    setAddToDefaultPolicy(true)
   }, [open, storage, form])
 
   const mutation = useMutation({
-    mutationFn: (values: StorageFormValues) => {
-      if (!isEditing) return createStorage(values)
+    mutationFn: async (values: StorageFormValues) => {
+      if (!isEditing) {
+        const created = await createStorage(values)
+        if (addToDefaultPolicy) {
+          try {
+            const defaults = await getUploadPolicy('default')
+            if (!defaults.storageIds.includes(created.id)) {
+              await patchUploadPolicy('default', { storageIds: [...defaults.storageIds, created.id] })
+            }
+          } catch {
+            // Creating the storage succeeded; policy append is best-effort and
+            // ensureDefault will still cover first-time placement.
+          }
+        }
+        return created
+      }
 
       const accessKey = values.accessKey.trim()
       const secretKey = values.secretKey.trim()
@@ -101,6 +117,7 @@ export function StorageFormDrawer({ open, onOpenChange, storage, onCreated }: St
     },
     onSuccess: (savedStorage) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'storages'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'upload-policies'] })
       onOpenChange(false)
       if (!isEditing) onCreated?.(savedStorage)
       toast.success(isEditing ? t('admin.storages.updated') : t('admin.storages.created'))
@@ -310,6 +327,16 @@ export function StorageFormDrawer({ open, onOpenChange, storage, onCreated }: St
           onCheckedChange={(checked) => form.setValue('forcePathStyle', checked)}
         />
       </div>
+
+      {!isEditing && (
+        <AdminSwitchField
+          id="add-to-default-upload-policy"
+          label={t('admin.storages.addToDefaultPolicy')}
+          help={t('admin.storages.addToDefaultPolicyHelp')}
+          checked={addToDefaultPolicy}
+          onCheckedChange={setAddToDefaultPolicy}
+        />
+      )}
 
       <div className="space-y-2 rounded-md border bg-muted/30 p-3">
         <div className="flex items-center justify-between gap-3">

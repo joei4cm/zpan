@@ -283,6 +283,23 @@ export {
   replaceStorageSchema,
   updateStorageEgressBillingSchema,
 } from './storage'
+export type {
+  CreateUploadPolicyInput,
+  PatchUploadPolicyInput,
+  UpdateUploadPolicyInput,
+  UploadSelectionModeInput,
+  UploadSelectorInput,
+} from './upload-policy'
+export {
+  createUploadPolicySchema,
+  patchUploadPolicySchema,
+  UPLOAD_SELECTOR_KEYS,
+  UPLOAD_SELECTOR_OPERATORS,
+  updateUploadPolicySchema,
+  uploadSelectionModeSchema,
+  uploadSelectorExpressionSchema,
+  uploadSelectorSchema,
+} from './upload-policy'
 
 export const signInSchema = z.object({
   email: z.string().email(),

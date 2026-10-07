@@ -19,11 +19,32 @@ export type UploadPolicyRecord = {
   selector: UploadSelector
   storageIds: string[]
   selectionMode: UploadSelectionMode
+  createdAt: Date
+  updatedAt: Date
 }
 
 export type UploadContextLabels = Record<string, string>
 
 export const DEFAULT_UPLOAD_POLICY_ID = 'default'
+
+export const UPLOAD_SELECTOR_LABEL_KEYS = [
+  'space.id',
+  'space.type',
+  'file.category',
+  'file.mime',
+  'file.extension',
+  'upload.source',
+] as const
+
+export function isDefaultUploadPolicy(id: string): boolean {
+  return id === DEFAULT_UPLOAD_POLICY_ID
+}
+
+export function selectorIsEmpty(selector: UploadSelector): boolean {
+  const labels = Object.keys(selector.matchLabels ?? {})
+  const expressions = selector.matchExpressions ?? []
+  return labels.length === 0 && expressions.length === 0
+}
 
 export function matchUploadSelector(selector: UploadSelector, labels: UploadContextLabels): boolean {
   for (const [key, value] of Object.entries(selector.matchLabels ?? {})) {

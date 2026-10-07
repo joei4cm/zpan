@@ -36,6 +36,7 @@ import type {
   SystemRoute,
   TeamsRoute,
   TrashRoute,
+  UploadPoliciesRoute,
   UserQuotasRoute,
   UsersRoute,
 } from '@server/app'
@@ -53,6 +54,7 @@ export const downloaderSelfApi = hc<DownloaderSelfRoute>('/api/downloads/downloa
 export const trash = hc<TrashRoute>('/api/trash', opts)
 export const oauthGrantsApi = hc<OAuthGrantsRoute>('/api', opts)
 export const storages = hc<StoragesRoute>('/api/site/storages', opts)
+export const uploadPoliciesApi = hc<UploadPoliciesRoute>('/api/site/upload-policies', opts)
 export const storageUsageApi = hc<StorageUsageRoute>('/api/storage', opts)
 export const adminDownloadersApi = hc<DownloadersRoute>('/api/downloads/downloaders', opts)
 // One users resource: self (/me/avatar), public profile (/:username), and admin management.
