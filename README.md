@@ -113,6 +113,7 @@ Deploy via GitHub Actions with zero server management. Free tier covers personal
 2. In your fork, go to **Settings → Secrets and variables → Actions** and add:
    - `CLOUDFLARE_ACCOUNT_ID` — found on the [Cloudflare dashboard](https://dash.cloudflare.com/) sidebar
    - `CLOUDFLARE_API_TOKEN` — create one [here](https://dash.cloudflare.com/profile/api-tokens) with **Workers Scripts:Edit**, **D1:Edit**, and **R2 Storage:Edit** permissions (R2 scope is needed to auto-provision the avatar/logo bucket)
+   - Optional local store: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` — the deploy workflow syncs these into Worker secrets. Point the Stripe webhook at `https://<your-worker>/api/store/webhook`.
 3. Go to the **Actions** tab, select **Deploy to Cloudflare Workers**, and click **Run workflow**
 
 After initial setup, the workflow runs automatically every time you sync your fork with the latest release.
