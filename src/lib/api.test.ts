@@ -27,6 +27,7 @@ import {
   createShare,
   createSiteInvitation,
   createStorage,
+  createUploadPolicy,
   createWebDavAppPassword,
   deleteAnnouncement,
   deleteAuthProvider,
@@ -39,6 +40,7 @@ import {
   deleteObject,
   deleteStorage,
   deleteTeamLogo,
+  deleteUploadPolicy,
   disableLocalStoreGiftCard,
   disconnectCloud,
   enableIhostFeature,
@@ -78,6 +80,7 @@ import {
   getTeam,
   getTrashObject,
   getUnreadCount,
+  getUploadPolicy,
   getUserQuota,
   getUserQuotaById,
   grantOrgEntitlement,
@@ -116,10 +119,12 @@ import {
   listTeamActivities,
   listTeams,
   listTrash,
+  listUploadPolicies,
   listUserEntitlements,
   markAllNotificationsRead,
   markNotificationRead,
   patchStorage,
+  patchUploadPolicy,
   pollPairing,
   presignObjectUploadParts,
   purgeTrashObject,
@@ -165,6 +170,7 @@ import {
   updateSiteRegistration,
   updateSiteWebDav,
   updateStorageEgressBilling,
+  updateUploadPolicy,
   updateUserEntitlement,
   uploadAvatar,
   uploadPartToS3,
@@ -1911,6 +1917,144 @@ describe('api', () => {
       vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'not found' }, false, 404))
 
       await expect(deleteStorage('missing')).rejects.toThrow('not found')
+    })
+  })
+
+  describe('listUploadPolicies', () => {
+    it('fetches upload policies list', async () => {
+      const payload = { items: [{ id: 'default', name: 'Default' }], total: 1 }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(payload))
+
+      const result = await listUploadPolicies()
+
+      expect(result).toEqual(payload)
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string]
+      expect(url).toContain('/api/site/upload-policies')
+    })
+
+    it('throws on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'forbidden' }, false, 403))
+
+      await expect(listUploadPolicies()).rejects.toThrow('forbidden')
+    })
+  })
+
+  describe('getUploadPolicy', () => {
+    it('fetches upload policy by id', async () => {
+      const policy = { id: 'default', name: 'Default' }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(policy))
+
+      const result = await getUploadPolicy('default')
+
+      expect(result).toEqual(policy)
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string]
+      expect(url).toContain('/api/site/upload-policies/default')
+    })
+
+    it('throws on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'not found' }, false, 404))
+
+      await expect(getUploadPolicy('missing')).rejects.toThrow('not found')
+    })
+  })
+
+  describe('createUploadPolicy', () => {
+    const validInput = {
+      name: 'Images',
+      enabled: true,
+      priority: 50,
+      selector: { matchLabels: { 'file.category': 'image' } },
+      storageIds: ['st-1'],
+      selectionMode: 'ordered' as const,
+    }
+
+    it('posts upload policy data and returns created policy', async () => {
+      const policy = { id: 'p1', name: 'Images' }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(policy))
+
+      const result = await createUploadPolicy(validInput)
+
+      expect(result).toEqual(policy)
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toContain('/api/site/upload-policies')
+      expect(init.method).toBe('POST')
+      const body = typeof init.body === 'string' ? JSON.parse(init.body) : null
+      expect(body).toMatchObject({ name: 'Images', storageIds: ['st-1'] })
+    })
+
+    it('throws on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'Feature not available' }, false, 402))
+
+      await expect(createUploadPolicy(validInput)).rejects.toThrow('Feature not available')
+    })
+  })
+
+  describe('updateUploadPolicy', () => {
+    const validInput = {
+      name: 'Default',
+      enabled: true,
+      priority: 0,
+      selector: {},
+      storageIds: ['st-1', 'st-2'],
+      selectionMode: 'balanced' as const,
+    }
+
+    it('puts upload policy data and returns updated policy', async () => {
+      const policy = { id: 'default', selectionMode: 'balanced' }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(policy))
+
+      const result = await updateUploadPolicy('default', validInput)
+
+      expect(result).toEqual(policy)
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toContain('/api/site/upload-policies/default')
+      expect(init.method).toBe('PUT')
+      expect(init.body).toBe(JSON.stringify(validInput))
+    })
+
+    it('throws on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'not found' }, false, 404))
+
+      await expect(updateUploadPolicy('missing', validInput)).rejects.toThrow('not found')
+    })
+  })
+
+  describe('patchUploadPolicy', () => {
+    it('patches upload policy fields', async () => {
+      const policy = { id: 'default', enabled: true }
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(policy))
+
+      const result = await patchUploadPolicy('default', { storageIds: ['st-1'] })
+
+      expect(result).toEqual(policy)
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toContain('/api/site/upload-policies/default')
+      expect(init.method).toBe('PATCH')
+      expect(init.body).toBe(JSON.stringify({ storageIds: ['st-1'] }))
+    })
+
+    it('throws ApiError on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'invalid' }, false, 400))
+
+      await expect(patchUploadPolicy('default', { enabled: false })).rejects.toBeInstanceOf(ApiError)
+    })
+  })
+
+  describe('deleteUploadPolicy', () => {
+    it('sends DELETE request (resolves on 204)', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse(null, true, 204))
+
+      await expect(deleteUploadPolicy('p1')).resolves.toBeUndefined()
+
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit]
+      expect(url).toContain('/api/site/upload-policies/p1')
+      expect(init.method).toBe('DELETE')
+    })
+
+    it('throws on error response', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(makeResponse({ error: 'conflict' }, false, 409))
+
+      await expect(deleteUploadPolicy('default')).rejects.toThrow('conflict')
     })
   })
 

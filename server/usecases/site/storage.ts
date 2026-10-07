@@ -24,12 +24,15 @@ import {
   type StorageRecord,
   type StorageRepo,
   storageNotFound,
+  type UploadPolicyRepo,
 } from '../ports'
 import { loadBindingState } from './licensing'
+import { policiesReferencingStorage } from './upload-policy'
 
 export type StorageDeps = {
   storages: StorageRepo
   licenseBinding: LicenseBindingRepo
+  uploadPolicies?: UploadPolicyRepo
 }
 
 // The license feature that gates a storage write, plus the payload its 402
@@ -147,6 +150,19 @@ export async function deleteStorage(deps: StorageDeps, params: { id: string }): 
   const { id } = params
   const existing = await deps.storages.get(id)
   if (!existing) return { ok: false, error: storageNotFound() }
+  if (deps.uploadPolicies) {
+    const referencing = await policiesReferencingStorage(
+      { uploadPolicies: deps.uploadPolicies, storages: deps.storages },
+      id,
+    )
+    if (referencing.length > 0) {
+      const names = referencing.map((policy) => policy.name).join(', ')
+      return {
+        ok: false,
+        error: conflict(`Storage is referenced by upload policies: ${names}`, 'storage_referenced_by_upload_policy'),
+      }
+    }
+  }
   const result = await deps.storages.delete(id)
   if (result === 'not_found') return { ok: false, error: storageNotFound() }
   if (result === 'in_use') return { ok: false, error: conflict('Storage is referenced by existing files') }

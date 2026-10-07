@@ -156,6 +156,8 @@ function makeDeps(
           selector: {},
           storageIds: [storage.id],
           selectionMode: 'ordered' as const,
+          createdAt: new Date(0),
+          updatedAt: new Date(0),
         },
       ],
       get: async () => null,
@@ -167,6 +169,8 @@ function makeDeps(
         selector: {},
         storageIds: ids,
         selectionMode: 'ordered' as const,
+        createdAt: new Date(0),
+        updatedAt: new Date(0),
       }),
       upsert: async () => {
         throw new Error('not used')
@@ -682,6 +686,8 @@ describe('object usecase', () => {
             selector: {},
             storageIds: [],
             selectionMode: 'ordered',
+            createdAt: new Date(0),
+            updatedAt: new Date(0),
           }),
           list: async () => [
             {
@@ -692,6 +698,8 @@ describe('object usecase', () => {
               selector: {},
               storageIds: [],
               selectionMode: 'ordered',
+              createdAt: new Date(0),
+              updatedAt: new Date(0),
             },
           ],
         },
