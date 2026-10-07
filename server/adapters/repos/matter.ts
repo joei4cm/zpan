@@ -50,6 +50,7 @@ import {
   matterRestoredProjectionQueries,
   matterTrashedProjectionQueries,
 } from './storage-usage-projection-mutations'
+import { syncObjectChangeQuery } from './sync'
 
 type MatterRow = typeof matters.$inferSelect
 
@@ -106,6 +107,15 @@ export function createMatterRepo(db: Database): MatterRepo {
       metadata: ids.length === 1 ? undefined : { affectedCount: ids.length },
       occurredAt: now,
     }),
+    ...ids.map((objectId) =>
+      syncObjectChangeQuery(db, {
+        orgId,
+        objectId,
+        action,
+        changeType,
+        occurredAt: now,
+      }),
+    ),
   ]
 
   async function getMatter(id: string, orgId: string): Promise<Matter | null> {

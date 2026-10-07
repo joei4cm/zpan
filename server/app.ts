@@ -47,6 +47,7 @@ import system from './http/site/system'
 import uploadPolicies from './http/site/upload-policies'
 import storageUsage from './http/storage-usage'
 import { cloudStore, cloudStoreWebhooks, localStoreAdmin } from './http/store'
+import { syncApi } from './http/sync'
 import { adminTeams, publicTeams, teams } from './http/teams'
 import trash from './http/trash'
 import { users } from './http/users'
@@ -356,6 +357,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.route('/api/users', users)
   app.route('/api/site/announcements', announcements)
   app.route('/api/site/outbound-webhooks', outboundWebhooks)
+  app.route('/api/sync', syncApi)
   app.route('/api/site/licensing', licensing)
 
   // Mount routes separately to avoid deep type chain accumulation.
@@ -517,6 +519,7 @@ export type IhostRoute = typeof ihost
 export type IhostConfigRoute = typeof ihostConfig
 export type AnnouncementsRoute = typeof announcements
 export type OutboundWebhooksRoute = typeof outboundWebhooks
+export type SyncRoute = typeof syncApi
 export type LicensingRoute = typeof licensing
 export type LicensingAdminRoute = typeof licensingAdmin
 export type BrandingAdminRoute = typeof brandingAdmin

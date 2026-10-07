@@ -1350,13 +1350,13 @@ func (e CloudflareSaasImageDomainSettingsProvider) Valid() bool {
 
 // Defines values for DownloadTaskControlAction.
 const (
-	Delete DownloadTaskControlAction = "delete"
+	DownloadTaskControlActionDelete DownloadTaskControlAction = "delete"
 )
 
 // Valid indicates whether the value is a known member of the DownloadTaskControlAction enum.
 func (e DownloadTaskControlAction) Valid() bool {
 	switch e {
-	case Delete:
+	case DownloadTaskControlActionDelete:
 		return true
 	default:
 		return false
@@ -2260,6 +2260,42 @@ func (e StripeConfigSource) Valid() bool {
 	}
 }
 
+// Defines values for SyncDeviceStatus.
+const (
+	SyncDeviceStatusActive  SyncDeviceStatus = "active"
+	SyncDeviceStatusRevoked SyncDeviceStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the SyncDeviceStatus enum.
+func (e SyncDeviceStatus) Valid() bool {
+	switch e {
+	case SyncDeviceStatusActive:
+		return true
+	case SyncDeviceStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SyncObjectChangeChangeType.
+const (
+	SyncObjectChangeChangeTypeDelete SyncObjectChangeChangeType = "delete"
+	SyncObjectChangeChangeTypeUpsert SyncObjectChangeChangeType = "upsert"
+)
+
+// Valid indicates whether the value is a known member of the SyncObjectChangeChangeType enum.
+func (e SyncObjectChangeChangeType) Valid() bool {
+	switch e {
+	case SyncObjectChangeChangeTypeDelete:
+		return true
+	case SyncObjectChangeChangeTypeUpsert:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UploadPolicySelectionMode.
 const (
 	UploadPolicySelectionModeBalanced UploadPolicySelectionMode = "balanced"
@@ -2942,6 +2978,10 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreCreate               GetOAuthConsentContext200JSONResponseBodyScopes = "store:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "store:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreUpdate               GetOAuthConsentContext200JSONResponseBodyScopes = "store:update"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncChangesRead           GetOAuthConsentContext200JSONResponseBodyScopes = "sync-changes:read"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesCreate         GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:create"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesDelete         GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:delete"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesRead           GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesSystemRead                GetOAuthConsentContext200JSONResponseBodyScopes = "system:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "team-entitlements:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "team-entitlements:delete"
@@ -3111,6 +3151,14 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesStoreUpdate:
 		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncChangesRead:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesCreate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesDelete:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesRead:
+		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesSystemRead:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsCreate:
@@ -3233,6 +3281,10 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreCreate               ListOAuthGrants200JSONResponseBodyItemsScopes = "store:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "store:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreUpdate               ListOAuthGrants200JSONResponseBodyItemsScopes = "store:update"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncChangesRead           ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-changes:read"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesCreate         ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:create"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesDelete         ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:delete"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesRead           ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesSystemRead                ListOAuthGrants200JSONResponseBodyItemsScopes = "system:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamEntitlementsCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "team-entitlements:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamEntitlementsDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "team-entitlements:delete"
@@ -3401,6 +3453,14 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 	case ListOAuthGrants200JSONResponseBodyItemsScopesStoreRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesStoreUpdate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncChangesRead:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesCreate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesDelete:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesSystemRead:
 		return true
@@ -3897,13 +3957,13 @@ func (e VerifySharePassword200JSONResponseBodyOk) Valid() bool {
 
 // Defines values for RevokeShareJSONBodyStatus.
 const (
-	Revoked RevokeShareJSONBodyStatus = "revoked"
+	RevokeShareJSONBodyStatusRevoked RevokeShareJSONBodyStatus = "revoked"
 )
 
 // Valid indicates whether the value is a known member of the RevokeShareJSONBodyStatus enum.
 func (e RevokeShareJSONBodyStatus) Valid() bool {
 	switch e {
-	case Revoked:
+	case RevokeShareJSONBodyStatusRevoked:
 		return true
 	default:
 		return false
@@ -7160,6 +7220,53 @@ type StripeConfigSettings struct {
 // StripeConfigSource defines model for StripeConfigSource.
 type StripeConfigSource string
 
+// SyncChangesPage defines model for SyncChangesPage.
+type SyncChangesPage struct {
+	Changes       []SyncObjectChange `json:"changes"`
+	NextCursor    string             `json:"nextCursor"`
+	ResetRequired bool               `json:"resetRequired"`
+}
+
+// SyncDevice defines model for SyncDevice.
+type SyncDevice struct {
+	AppVersion string           `json:"appVersion"`
+	CreatedAt  string           `json:"createdAt"`
+	Id         string           `json:"id"`
+	LastSeenAt *string          `json:"lastSeenAt"`
+	Name       string           `json:"name"`
+	OrgId      string           `json:"orgId"`
+	Platform   string           `json:"platform"`
+	Status     SyncDeviceStatus `json:"status"`
+	Token      *string          `json:"token,omitempty"`
+	UpdatedAt  string           `json:"updatedAt"`
+	UserId     string           `json:"userId"`
+}
+
+// SyncDeviceStatus defines model for SyncDevice.Status.
+type SyncDeviceStatus string
+
+// SyncDeviceList defines model for SyncDeviceList.
+type SyncDeviceList struct {
+	Items []SyncDevice `json:"items"`
+	Total int          `json:"total"`
+}
+
+// SyncObjectChange defines model for SyncObjectChange.
+type SyncObjectChange struct {
+	Action        string                     `json:"action"`
+	ActorDeviceId *string                    `json:"actorDeviceId"`
+	ChangeType    SyncObjectChangeChangeType `json:"changeType"`
+	Cursor        string                     `json:"cursor"`
+	Name          string                     `json:"name"`
+	ObjectId      string                     `json:"objectId"`
+	OccurredAt    string                     `json:"occurredAt"`
+	OrgId         string                     `json:"orgId"`
+	Parent        string                     `json:"parent"`
+}
+
+// SyncObjectChangeChangeType defines model for SyncObjectChange.ChangeType.
+type SyncObjectChangeChangeType string
+
 // TeamInvitationList defines model for TeamInvitationList.
 type TeamInvitationList struct {
 	Items    []PendingInvitation `json:"items"`
@@ -8512,6 +8619,28 @@ type CancelOrderJSONBody struct {
 // CancelOrderJSONBodyStatus defines parameters for CancelOrder.
 type CancelOrderJSONBodyStatus string
 
+// ListSyncChangesParams defines parameters for ListSyncChanges.
+type ListSyncChangesParams struct {
+	SpaceId string  `form:"spaceId" json:"spaceId"`
+	Cursor  *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit   *int    `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RegisterSyncDeviceJSONBody defines parameters for RegisterSyncDevice.
+type RegisterSyncDeviceJSONBody struct {
+	AppVersion *string `json:"appVersion,omitempty"`
+	Name       string  `json:"name"`
+	OrgId      *string `json:"orgId,omitempty"`
+	Platform   *string `json:"platform,omitempty"`
+}
+
+// HeartbeatSyncDeviceJSONBody defines parameters for HeartbeatSyncDevice.
+type HeartbeatSyncDeviceJSONBody struct {
+	AppVersion *string `json:"appVersion,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Platform   *string `json:"platform,omitempty"`
+}
+
 // ListTeamActivityParams defines parameters for ListTeamActivity.
 type ListTeamActivityParams struct {
 	Page     *int `form:"page,omitempty" json:"page,omitempty"`
@@ -8775,6 +8904,12 @@ type GetDiscountQuoteJSONRequestBody GetDiscountQuoteJSONBody
 
 // CancelOrderJSONRequestBody defines body for CancelOrder for application/json ContentType.
 type CancelOrderJSONRequestBody CancelOrderJSONBody
+
+// RegisterSyncDeviceJSONRequestBody defines body for RegisterSyncDevice for application/json ContentType.
+type RegisterSyncDeviceJSONRequestBody RegisterSyncDeviceJSONBody
+
+// HeartbeatSyncDeviceJSONRequestBody defines body for HeartbeatSyncDevice for application/json ContentType.
+type HeartbeatSyncDeviceJSONRequestBody HeartbeatSyncDeviceJSONBody
 
 // GrantTeamEntitlementJSONRequestBody defines body for GrantTeamEntitlement for application/json ContentType.
 type GrantTeamEntitlementJSONRequestBody GrantTeamEntitlementJSONBody
@@ -12558,6 +12693,25 @@ type ClientInterface interface {
 	// ListStoreTargets request
 	ListStoreTargets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListSyncChanges request
+	ListSyncChanges(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSyncDevices request
+	ListSyncDevices(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RegisterSyncDeviceWithBody request with any body
+	RegisterSyncDeviceWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RegisterSyncDevice(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RevokeSyncDevice request
+	RevokeSyncDevice(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// HeartbeatSyncDeviceWithBody request with any body
+	HeartbeatSyncDeviceWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	HeartbeatSyncDevice(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListTeams request
 	ListTeams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -15314,6 +15468,90 @@ func (c *Client) ListStorePackages(ctx context.Context, reqEditors ...RequestEdi
 
 func (c *Client) ListStoreTargets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListStoreTargetsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSyncChanges(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSyncChangesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSyncDevices(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSyncDevicesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RegisterSyncDeviceWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterSyncDeviceRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RegisterSyncDevice(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterSyncDeviceRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RevokeSyncDevice(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeSyncDeviceRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) HeartbeatSyncDeviceWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewHeartbeatSyncDeviceRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) HeartbeatSyncDevice(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewHeartbeatSyncDeviceRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -22796,6 +23034,228 @@ func NewListStoreTargetsRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewListSyncChangesRequest generates requests for ListSyncChanges
+func NewListSyncChangesRequest(server string, params *ListSyncChangesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/changes")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "spaceId", params.SpaceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "cursor", *params.Cursor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSyncDevicesRequest generates requests for ListSyncDevices
+func NewListSyncDevicesRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRegisterSyncDeviceRequest calls the generic RegisterSyncDevice builder with application/json body
+func NewRegisterSyncDeviceRequest(server string, body RegisterSyncDeviceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRegisterSyncDeviceRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewRegisterSyncDeviceRequestWithBody generates requests for RegisterSyncDevice with any type of body
+func NewRegisterSyncDeviceRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewRevokeSyncDeviceRequest generates requests for RevokeSyncDevice
+func NewRevokeSyncDeviceRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewHeartbeatSyncDeviceRequest calls the generic HeartbeatSyncDevice builder with application/json body
+func NewHeartbeatSyncDeviceRequest(server string, id string, body HeartbeatSyncDeviceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewHeartbeatSyncDeviceRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewHeartbeatSyncDeviceRequestWithBody generates requests for HeartbeatSyncDevice with any type of body
+func NewHeartbeatSyncDeviceRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices/%s/heartbeats", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewListTeamsRequest generates requests for ListTeams
 func NewListTeamsRequest(server string) (*http.Request, error) {
 	var err error
@@ -24465,6 +24925,25 @@ type ClientWithResponsesInterface interface {
 
 	// ListStoreTargetsWithResponse request
 	ListStoreTargetsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListStoreTargetsResponse, error)
+
+	// ListSyncChangesWithResponse request
+	ListSyncChangesWithResponse(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*ListSyncChangesResponse, error)
+
+	// ListSyncDevicesWithResponse request
+	ListSyncDevicesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSyncDevicesResponse, error)
+
+	// RegisterSyncDeviceWithBodyWithResponse request with any body
+	RegisterSyncDeviceWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error)
+
+	RegisterSyncDeviceWithResponse(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error)
+
+	// RevokeSyncDeviceWithResponse request
+	RevokeSyncDeviceWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeSyncDeviceResponse, error)
+
+	// HeartbeatSyncDeviceWithBodyWithResponse request with any body
+	HeartbeatSyncDeviceWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error)
+
+	HeartbeatSyncDeviceWithResponse(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error)
 
 	// ListTeamsWithResponse request
 	ListTeamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error)
@@ -29942,6 +30421,159 @@ func (r ListStoreTargetsResponse) ContentType() string {
 	return ""
 }
 
+type ListSyncChangesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncChangesPage
+	JSON401      *Error
+	JSON403      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSyncChangesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSyncChangesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListSyncChangesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListSyncDevicesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncDeviceList
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSyncDevicesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSyncDevicesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListSyncDevicesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RegisterSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SyncDevice
+}
+
+// Status returns HTTPResponse.Status
+func (r RegisterSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RegisterSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RegisterSyncDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RevokeSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r RevokeSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RevokeSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RevokeSyncDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type HeartbeatSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncDevice
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r HeartbeatSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r HeartbeatSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r HeartbeatSyncDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type ListTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -32680,6 +33312,67 @@ func (c *ClientWithResponses) ListStoreTargetsWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseListStoreTargetsResponse(rsp)
+}
+
+// ListSyncChangesWithResponse request returning *ListSyncChangesResponse
+func (c *ClientWithResponses) ListSyncChangesWithResponse(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*ListSyncChangesResponse, error) {
+	rsp, err := c.ListSyncChanges(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSyncChangesResponse(rsp)
+}
+
+// ListSyncDevicesWithResponse request returning *ListSyncDevicesResponse
+func (c *ClientWithResponses) ListSyncDevicesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSyncDevicesResponse, error) {
+	rsp, err := c.ListSyncDevices(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSyncDevicesResponse(rsp)
+}
+
+// RegisterSyncDeviceWithBodyWithResponse request with arbitrary body returning *RegisterSyncDeviceResponse
+func (c *ClientWithResponses) RegisterSyncDeviceWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error) {
+	rsp, err := c.RegisterSyncDeviceWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterSyncDeviceResponse(rsp)
+}
+
+func (c *ClientWithResponses) RegisterSyncDeviceWithResponse(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error) {
+	rsp, err := c.RegisterSyncDevice(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterSyncDeviceResponse(rsp)
+}
+
+// RevokeSyncDeviceWithResponse request returning *RevokeSyncDeviceResponse
+func (c *ClientWithResponses) RevokeSyncDeviceWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeSyncDeviceResponse, error) {
+	rsp, err := c.RevokeSyncDevice(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRevokeSyncDeviceResponse(rsp)
+}
+
+// HeartbeatSyncDeviceWithBodyWithResponse request with arbitrary body returning *HeartbeatSyncDeviceResponse
+func (c *ClientWithResponses) HeartbeatSyncDeviceWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error) {
+	rsp, err := c.HeartbeatSyncDeviceWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseHeartbeatSyncDeviceResponse(rsp)
+}
+
+func (c *ClientWithResponses) HeartbeatSyncDeviceWithResponse(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error) {
+	rsp, err := c.HeartbeatSyncDevice(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseHeartbeatSyncDeviceResponse(rsp)
 }
 
 // ListTeamsWithResponse request returning *ListTeamsResponse
@@ -39246,6 +39939,157 @@ func ParseListStoreTargetsResponse(rsp *http.Response) (*ListStoreTargetsRespons
 			return nil, err
 		}
 		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSyncChangesResponse parses an HTTP response from a ListSyncChangesWithResponse call
+func ParseListSyncChangesResponse(rsp *http.Response) (*ListSyncChangesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSyncChangesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncChangesPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSyncDevicesResponse parses an HTTP response from a ListSyncDevicesWithResponse call
+func ParseListSyncDevicesResponse(rsp *http.Response) (*ListSyncDevicesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSyncDevicesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncDeviceList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRegisterSyncDeviceResponse parses an HTTP response from a RegisterSyncDeviceWithResponse call
+func ParseRegisterSyncDeviceResponse(rsp *http.Response) (*RegisterSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RegisterSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SyncDevice
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRevokeSyncDeviceResponse parses an HTTP response from a RevokeSyncDeviceWithResponse call
+func ParseRevokeSyncDeviceResponse(rsp *http.Response) (*RevokeSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RevokeSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseHeartbeatSyncDeviceResponse parses an HTTP response from a HeartbeatSyncDeviceWithResponse call
+func ParseHeartbeatSyncDeviceResponse(rsp *http.Response) (*HeartbeatSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &HeartbeatSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncDevice
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

@@ -687,6 +687,13 @@
       "when": 1791393301316,
       "tag": "0098_outbound-webhooks",
       "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "6",
+      "when": 1791393807179,
+      "tag": "0099_sync-devices-cursor",
+      "breakpoints": true
     }
   ]
 }
