@@ -313,6 +313,13 @@ export {
   uploadSelectorExpressionSchema,
   uploadSelectorSchema,
 } from './upload-policy'
+export type { CreateSyncDeviceInput, ListSyncChangesQuery, SyncDeviceHeartbeatInput } from './sync'
+export {
+  createSyncDeviceSchema,
+  listSyncChangesQuerySchema,
+  syncDeviceHeartbeatSchema,
+  syncDevicePlatformSchema,
+} from './sync'
 
 export const signInSchema = z.object({
   email: z.string().email(),

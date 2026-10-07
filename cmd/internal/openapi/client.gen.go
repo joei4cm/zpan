@@ -1350,13 +1350,13 @@ func (e CloudflareSaasImageDomainSettingsProvider) Valid() bool {
 
 // Defines values for DownloadTaskControlAction.
 const (
-	Delete DownloadTaskControlAction = "delete"
+	DownloadTaskControlActionDelete DownloadTaskControlAction = "delete"
 )
 
 // Valid indicates whether the value is a known member of the DownloadTaskControlAction enum.
 func (e DownloadTaskControlAction) Valid() bool {
 	switch e {
-	case Delete:
+	case DownloadTaskControlActionDelete:
 		return true
 	default:
 		return false
@@ -1915,24 +1915,6 @@ func (e ImageHostingConfigDomainStatus) Valid() bool {
 	}
 }
 
-// Defines values for ImportStorageObjectsResultSamplesAction.
-const (
-	Import ImportStorageObjectsResultSamplesAction = "import"
-	Skip   ImportStorageObjectsResultSamplesAction = "skip"
-)
-
-// Valid indicates whether the value is a known member of the ImportStorageObjectsResultSamplesAction enum.
-func (e ImportStorageObjectsResultSamplesAction) Valid() bool {
-	switch e {
-	case Import:
-		return true
-	case Skip:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for LicenseEntitlementsEdition.
 const (
 	LicenseEntitlementsEditionBusiness    LicenseEntitlementsEdition = "business"
@@ -1999,48 +1981,6 @@ const (
 func (e ManualImageDomainSettingsProvider) Valid() bool {
 	switch e {
 	case Manual:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for OutboundWebhookDeliveryStatus.
-const (
-	OutboundWebhookDeliveryStatusDead       OutboundWebhookDeliveryStatus = "dead"
-	OutboundWebhookDeliveryStatusDelivering OutboundWebhookDeliveryStatus = "delivering"
-	OutboundWebhookDeliveryStatusFailed     OutboundWebhookDeliveryStatus = "failed"
-	OutboundWebhookDeliveryStatusPending    OutboundWebhookDeliveryStatus = "pending"
-	OutboundWebhookDeliveryStatusSucceeded  OutboundWebhookDeliveryStatus = "succeeded"
-)
-
-// Valid indicates whether the value is a known member of the OutboundWebhookDeliveryStatus enum.
-func (e OutboundWebhookDeliveryStatus) Valid() bool {
-	switch e {
-	case OutboundWebhookDeliveryStatusDead:
-		return true
-	case OutboundWebhookDeliveryStatusDelivering:
-		return true
-	case OutboundWebhookDeliveryStatusFailed:
-		return true
-	case OutboundWebhookDeliveryStatusPending:
-		return true
-	case OutboundWebhookDeliveryStatusSucceeded:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for OutboundWebhookTestResultOk.
-const (
-	OutboundWebhookTestResultOkTrue OutboundWebhookTestResultOk = true
-)
-
-// Valid indicates whether the value is a known member of the OutboundWebhookTestResultOk enum.
-func (e OutboundWebhookTestResultOk) Valid() bool {
-	switch e {
-	case OutboundWebhookTestResultOkTrue:
 		return true
 	default:
 		return false
@@ -2239,93 +2179,36 @@ func (e StorageUsageBreakdownsCategory) Valid() bool {
 	}
 }
 
-// Defines values for StripeConfigSource.
+// Defines values for SyncDeviceStatus.
 const (
-	Database StripeConfigSource = "database"
-	Env      StripeConfigSource = "env"
-	None     StripeConfigSource = "none"
+	SyncDeviceStatusActive  SyncDeviceStatus = "active"
+	SyncDeviceStatusRevoked SyncDeviceStatus = "revoked"
 )
 
-// Valid indicates whether the value is a known member of the StripeConfigSource enum.
-func (e StripeConfigSource) Valid() bool {
+// Valid indicates whether the value is a known member of the SyncDeviceStatus enum.
+func (e SyncDeviceStatus) Valid() bool {
 	switch e {
-	case Database:
+	case SyncDeviceStatusActive:
 		return true
-	case Env:
-		return true
-	case None:
+	case SyncDeviceStatusRevoked:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for UploadPolicySelectionMode.
+// Defines values for SyncObjectChangeChangeType.
 const (
-	UploadPolicySelectionModeBalanced UploadPolicySelectionMode = "balanced"
-	UploadPolicySelectionModeOrdered  UploadPolicySelectionMode = "ordered"
+	SyncObjectChangeChangeTypeDelete SyncObjectChangeChangeType = "delete"
+	SyncObjectChangeChangeTypeUpsert SyncObjectChangeChangeType = "upsert"
 )
 
-// Valid indicates whether the value is a known member of the UploadPolicySelectionMode enum.
-func (e UploadPolicySelectionMode) Valid() bool {
+// Valid indicates whether the value is a known member of the SyncObjectChangeChangeType enum.
+func (e SyncObjectChangeChangeType) Valid() bool {
 	switch e {
-	case UploadPolicySelectionModeBalanced:
+	case SyncObjectChangeChangeTypeDelete:
 		return true
-	case UploadPolicySelectionModeOrdered:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UploadPolicySelectorMatchExpressionsKey.
-const (
-	UploadPolicySelectorMatchExpressionsKeyFileCategory  UploadPolicySelectorMatchExpressionsKey = "file.category"
-	UploadPolicySelectorMatchExpressionsKeyFileExtension UploadPolicySelectorMatchExpressionsKey = "file.extension"
-	UploadPolicySelectorMatchExpressionsKeyFileMime      UploadPolicySelectorMatchExpressionsKey = "file.mime"
-	UploadPolicySelectorMatchExpressionsKeySpaceId       UploadPolicySelectorMatchExpressionsKey = "space.id"
-	UploadPolicySelectorMatchExpressionsKeySpaceType     UploadPolicySelectorMatchExpressionsKey = "space.type"
-	UploadPolicySelectorMatchExpressionsKeyUploadSource  UploadPolicySelectorMatchExpressionsKey = "upload.source"
-)
-
-// Valid indicates whether the value is a known member of the UploadPolicySelectorMatchExpressionsKey enum.
-func (e UploadPolicySelectorMatchExpressionsKey) Valid() bool {
-	switch e {
-	case UploadPolicySelectorMatchExpressionsKeyFileCategory:
-		return true
-	case UploadPolicySelectorMatchExpressionsKeyFileExtension:
-		return true
-	case UploadPolicySelectorMatchExpressionsKeyFileMime:
-		return true
-	case UploadPolicySelectorMatchExpressionsKeySpaceId:
-		return true
-	case UploadPolicySelectorMatchExpressionsKeySpaceType:
-		return true
-	case UploadPolicySelectorMatchExpressionsKeyUploadSource:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UploadPolicySelectorMatchExpressionsOperator.
-const (
-	UploadPolicySelectorMatchExpressionsOperatorDoesNotExist UploadPolicySelectorMatchExpressionsOperator = "DoesNotExist"
-	UploadPolicySelectorMatchExpressionsOperatorExists       UploadPolicySelectorMatchExpressionsOperator = "Exists"
-	UploadPolicySelectorMatchExpressionsOperatorIn           UploadPolicySelectorMatchExpressionsOperator = "In"
-	UploadPolicySelectorMatchExpressionsOperatorNotIn        UploadPolicySelectorMatchExpressionsOperator = "NotIn"
-)
-
-// Valid indicates whether the value is a known member of the UploadPolicySelectorMatchExpressionsOperator enum.
-func (e UploadPolicySelectorMatchExpressionsOperator) Valid() bool {
-	switch e {
-	case UploadPolicySelectorMatchExpressionsOperatorDoesNotExist:
-		return true
-	case UploadPolicySelectorMatchExpressionsOperatorExists:
-		return true
-	case UploadPolicySelectorMatchExpressionsOperatorIn:
-		return true
-	case UploadPolicySelectorMatchExpressionsOperatorNotIn:
+	case SyncObjectChangeChangeTypeUpsert:
 		return true
 	default:
 		return false
@@ -2919,10 +2802,6 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsPurge              GetOAuthConsentContext200JSONResponseBodyScopes = "objects:purge"
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsRead               GetOAuthConsentContext200JSONResponseBodyScopes = "objects:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesObjectsUpdate             GetOAuthConsentContext200JSONResponseBodyScopes = "objects:update"
-	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:create"
-	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:delete"
-	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksRead      GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:read"
-	GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksUpdate    GetOAuthConsentContext200JSONResponseBodyScopes = "outbound-webhooks:update"
 	GetOAuthConsentContext200JSONResponseBodyScopesQuotaPurchase             GetOAuthConsentContext200JSONResponseBodyScopes = "quota:purchase"
 	GetOAuthConsentContext200JSONResponseBodyScopesQuotaRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "quota:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesSharesCreate              GetOAuthConsentContext200JSONResponseBodyScopes = "shares:create"
@@ -2942,6 +2821,10 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreCreate               GetOAuthConsentContext200JSONResponseBodyScopes = "store:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "store:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesStoreUpdate               GetOAuthConsentContext200JSONResponseBodyScopes = "store:update"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncChangesRead           GetOAuthConsentContext200JSONResponseBodyScopes = "sync-changes:read"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesCreate         GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:create"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesDelete         GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:delete"
+	GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesRead           GetOAuthConsentContext200JSONResponseBodyScopes = "sync-devices:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesSystemRead                GetOAuthConsentContext200JSONResponseBodyScopes = "system:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "team-entitlements:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "team-entitlements:delete"
@@ -2953,10 +2836,6 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsCreate               GetOAuthConsentContext200JSONResponseBodyScopes = "teams:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "teams:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsUpdate               GetOAuthConsentContext200JSONResponseBodyScopes = "teams:update"
-	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesCreate      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:create"
-	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesDelete      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:delete"
-	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesRead        GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:read"
-	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesUpdate      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:update"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:delete"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsRead      GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:read"
@@ -3065,14 +2944,6 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesObjectsUpdate:
 		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksCreate:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksDelete:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksRead:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesOutboundWebhooksUpdate:
-		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesQuotaPurchase:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesQuotaRead:
@@ -3111,6 +2982,14 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesStoreUpdate:
 		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncChangesRead:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesCreate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesDelete:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesSyncDevicesRead:
+		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesSystemRead:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesTeamEntitlementsCreate:
@@ -3132,14 +3011,6 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 	case GetOAuthConsentContext200JSONResponseBodyScopesTeamsRead:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesTeamsUpdate:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesCreate:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesDelete:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesRead:
-		return true
-	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesUpdate:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsCreate:
 		return true
@@ -3210,10 +3081,6 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsPurge              ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:purge"
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsRead               ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesObjectsUpdate             ListOAuthGrants200JSONResponseBodyItemsScopes = "objects:update"
-	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:create"
-	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:delete"
-	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksRead      ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:read"
-	ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksUpdate    ListOAuthGrants200JSONResponseBodyItemsScopes = "outbound-webhooks:update"
 	ListOAuthGrants200JSONResponseBodyItemsScopesQuotaPurchase             ListOAuthGrants200JSONResponseBodyItemsScopes = "quota:purchase"
 	ListOAuthGrants200JSONResponseBodyItemsScopesQuotaRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "quota:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesSharesCreate              ListOAuthGrants200JSONResponseBodyItemsScopes = "shares:create"
@@ -3233,6 +3100,10 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreCreate               ListOAuthGrants200JSONResponseBodyItemsScopes = "store:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "store:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesStoreUpdate               ListOAuthGrants200JSONResponseBodyItemsScopes = "store:update"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncChangesRead           ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-changes:read"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesCreate         ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:create"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesDelete         ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:delete"
+	ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesRead           ListOAuthGrants200JSONResponseBodyItemsScopes = "sync-devices:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesSystemRead                ListOAuthGrants200JSONResponseBodyItemsScopes = "system:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamEntitlementsCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "team-entitlements:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamEntitlementsDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "team-entitlements:delete"
@@ -3244,10 +3115,6 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsCreate               ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsUpdate               ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:update"
-	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesCreate      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:create"
-	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesDelete      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:delete"
-	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesRead        ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:read"
-	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesUpdate      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:update"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:delete"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsRead      ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:read"
@@ -3356,14 +3223,6 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesObjectsUpdate:
 		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksCreate:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksDelete:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksRead:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesOutboundWebhooksUpdate:
-		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesQuotaPurchase:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesQuotaRead:
@@ -3402,6 +3261,14 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesStoreUpdate:
 		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncChangesRead:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesCreate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesDelete:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesSyncDevicesRead:
+		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesSystemRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesTeamEntitlementsCreate:
@@ -3423,14 +3290,6 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 	case ListOAuthGrants200JSONResponseBodyItemsScopesTeamsRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesTeamsUpdate:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesCreate:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesDelete:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesRead:
-		return true
-	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesUpdate:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsCreate:
 		return true
@@ -3717,13 +3576,13 @@ func (e CreateObject201JSONResponseBodyUploadWorkflowUploadUrlField) Valid() boo
 
 // Defines values for CreateObject201JSONResponseBodyUploadWorkflowVersion.
 const (
-	CreateObject201JSONResponseBodyUploadWorkflowVersionN1 CreateObject201JSONResponseBodyUploadWorkflowVersion = "1"
+	N1 CreateObject201JSONResponseBodyUploadWorkflowVersion = "1"
 )
 
 // Valid indicates whether the value is a known member of the CreateObject201JSONResponseBodyUploadWorkflowVersion enum.
 func (e CreateObject201JSONResponseBodyUploadWorkflowVersion) Valid() bool {
 	switch e {
-	case CreateObject201JSONResponseBodyUploadWorkflowVersionN1:
+	case N1:
 		return true
 	default:
 		return false
@@ -3897,13 +3756,13 @@ func (e VerifySharePassword200JSONResponseBodyOk) Valid() bool {
 
 // Defines values for RevokeShareJSONBodyStatus.
 const (
-	Revoked RevokeShareJSONBodyStatus = "revoked"
+	RevokeShareJSONBodyStatusRevoked RevokeShareJSONBodyStatus = "revoked"
 )
 
 // Valid indicates whether the value is a known member of the RevokeShareJSONBodyStatus enum.
 func (e RevokeShareJSONBodyStatus) Valid() bool {
 	switch e {
-	case Revoked:
+	case RevokeShareJSONBodyStatusRevoked:
 		return true
 	default:
 		return false
@@ -4099,81 +3958,6 @@ func (e UpsertAuthProviderJSONBodyType) Valid() bool {
 	}
 }
 
-// Defines values for CreateOutboundWebhookEndpointJSONBodyEventTypes.
-const (
-	CreateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed CreateOutboundWebhookEndpointJSONBodyEventTypes = "object.upload.confirmed"
-	CreateOutboundWebhookEndpointJSONBodyEventTypesShareCreated          CreateOutboundWebhookEndpointJSONBodyEventTypes = "share.created"
-	CreateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid        CreateOutboundWebhookEndpointJSONBodyEventTypes = "store.order.paid"
-	CreateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest           CreateOutboundWebhookEndpointJSONBodyEventTypes = "webhook.test"
-)
-
-// Valid indicates whether the value is a known member of the CreateOutboundWebhookEndpointJSONBodyEventTypes enum.
-func (e CreateOutboundWebhookEndpointJSONBodyEventTypes) Valid() bool {
-	switch e {
-	case CreateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed:
-		return true
-	case CreateOutboundWebhookEndpointJSONBodyEventTypesShareCreated:
-		return true
-	case CreateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid:
-		return true
-	case CreateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UpdateOutboundWebhookEndpointJSONBodyEventTypes.
-const (
-	UpdateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed UpdateOutboundWebhookEndpointJSONBodyEventTypes = "object.upload.confirmed"
-	UpdateOutboundWebhookEndpointJSONBodyEventTypesShareCreated          UpdateOutboundWebhookEndpointJSONBodyEventTypes = "share.created"
-	UpdateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid        UpdateOutboundWebhookEndpointJSONBodyEventTypes = "store.order.paid"
-	UpdateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest           UpdateOutboundWebhookEndpointJSONBodyEventTypes = "webhook.test"
-)
-
-// Valid indicates whether the value is a known member of the UpdateOutboundWebhookEndpointJSONBodyEventTypes enum.
-func (e UpdateOutboundWebhookEndpointJSONBodyEventTypes) Valid() bool {
-	switch e {
-	case UpdateOutboundWebhookEndpointJSONBodyEventTypesObjectUploadConfirmed:
-		return true
-	case UpdateOutboundWebhookEndpointJSONBodyEventTypesShareCreated:
-		return true
-	case UpdateOutboundWebhookEndpointJSONBodyEventTypesStoreOrderPaid:
-		return true
-	case UpdateOutboundWebhookEndpointJSONBodyEventTypesWebhookTest:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for ListOutboundWebhookDeliveriesParamsStatus.
-const (
-	ListOutboundWebhookDeliveriesParamsStatusDead       ListOutboundWebhookDeliveriesParamsStatus = "dead"
-	ListOutboundWebhookDeliveriesParamsStatusDelivering ListOutboundWebhookDeliveriesParamsStatus = "delivering"
-	ListOutboundWebhookDeliveriesParamsStatusFailed     ListOutboundWebhookDeliveriesParamsStatus = "failed"
-	ListOutboundWebhookDeliveriesParamsStatusPending    ListOutboundWebhookDeliveriesParamsStatus = "pending"
-	ListOutboundWebhookDeliveriesParamsStatusSucceeded  ListOutboundWebhookDeliveriesParamsStatus = "succeeded"
-)
-
-// Valid indicates whether the value is a known member of the ListOutboundWebhookDeliveriesParamsStatus enum.
-func (e ListOutboundWebhookDeliveriesParamsStatus) Valid() bool {
-	switch e {
-	case ListOutboundWebhookDeliveriesParamsStatusDead:
-		return true
-	case ListOutboundWebhookDeliveriesParamsStatusDelivering:
-		return true
-	case ListOutboundWebhookDeliveriesParamsStatusFailed:
-		return true
-	case ListOutboundWebhookDeliveriesParamsStatusPending:
-		return true
-	case ListOutboundWebhookDeliveriesParamsStatusSucceeded:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for SaveImageDomainProvider200JSONResponseBodySuccess.
 const (
 	SaveImageDomainProvider200JSONResponseBodySuccessTrue SaveImageDomainProvider200JSONResponseBodySuccess = true
@@ -4252,222 +4036,6 @@ func (e PatchStorageJSONBodyStatusReason) Valid() bool {
 	case PatchStorageJSONBodyStatusReasonPermissionDenied:
 		return true
 	case PatchStorageJSONBodyStatusReasonUnknown:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for CreateUploadPolicyJSONBodySelectionMode.
-const (
-	CreateUploadPolicyJSONBodySelectionModeBalanced CreateUploadPolicyJSONBodySelectionMode = "balanced"
-	CreateUploadPolicyJSONBodySelectionModeOrdered  CreateUploadPolicyJSONBodySelectionMode = "ordered"
-)
-
-// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectionMode enum.
-func (e CreateUploadPolicyJSONBodySelectionMode) Valid() bool {
-	switch e {
-	case CreateUploadPolicyJSONBodySelectionModeBalanced:
-		return true
-	case CreateUploadPolicyJSONBodySelectionModeOrdered:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for CreateUploadPolicyJSONBodySelectorMatchExpressionsKey.
-const (
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
-)
-
-// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
-func (e CreateUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
-	switch e {
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator.
-const (
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
-	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
-)
-
-// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
-func (e CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
-	switch e {
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
-		return true
-	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for PatchUploadPolicyJSONBodySelectionMode.
-const (
-	PatchUploadPolicyJSONBodySelectionModeBalanced PatchUploadPolicyJSONBodySelectionMode = "balanced"
-	PatchUploadPolicyJSONBodySelectionModeOrdered  PatchUploadPolicyJSONBodySelectionMode = "ordered"
-)
-
-// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectionMode enum.
-func (e PatchUploadPolicyJSONBodySelectionMode) Valid() bool {
-	switch e {
-	case PatchUploadPolicyJSONBodySelectionModeBalanced:
-		return true
-	case PatchUploadPolicyJSONBodySelectionModeOrdered:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for PatchUploadPolicyJSONBodySelectorMatchExpressionsKey.
-const (
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
-)
-
-// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
-func (e PatchUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
-	switch e {
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator.
-const (
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
-	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
-)
-
-// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
-func (e PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
-	switch e {
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
-		return true
-	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UpdateUploadPolicyJSONBodySelectionMode.
-const (
-	UpdateUploadPolicyJSONBodySelectionModeBalanced UpdateUploadPolicyJSONBodySelectionMode = "balanced"
-	UpdateUploadPolicyJSONBodySelectionModeOrdered  UpdateUploadPolicyJSONBodySelectionMode = "ordered"
-)
-
-// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectionMode enum.
-func (e UpdateUploadPolicyJSONBodySelectionMode) Valid() bool {
-	switch e {
-	case UpdateUploadPolicyJSONBodySelectionModeBalanced:
-		return true
-	case UpdateUploadPolicyJSONBodySelectionModeOrdered:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey.
-const (
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
-)
-
-// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
-func (e UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
-	switch e {
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator.
-const (
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
-	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
-)
-
-// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
-func (e UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
-	switch e {
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
-		return true
-	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
 		return true
 	default:
 		return false
@@ -4644,13 +4212,13 @@ func (e PurchaseStorageCapacity200JSONResponseBodyStatus) Valid() bool {
 
 // Defines values for PurchaseStorageCapacity202JSONResponseBodyStatus.
 const (
-	PurchaseStorageCapacity202JSONResponseBodyStatusPending PurchaseStorageCapacity202JSONResponseBodyStatus = "pending"
+	Pending PurchaseStorageCapacity202JSONResponseBodyStatus = "pending"
 )
 
 // Valid indicates whether the value is a known member of the PurchaseStorageCapacity202JSONResponseBodyStatus enum.
 func (e PurchaseStorageCapacity202JSONResponseBodyStatus) Valid() bool {
 	switch e {
-	case PurchaseStorageCapacity202JSONResponseBodyStatusPending:
+	case Pending:
 		return true
 	default:
 		return false
@@ -6439,31 +6007,6 @@ type ImageHostingList struct {
 	NextPageToken *string        `json:"nextPageToken"`
 }
 
-// ImportStorageObjectsRequest defines model for ImportStorageObjectsRequest.
-type ImportStorageObjectsRequest struct {
-	DryRun      *bool   `json:"dryRun,omitempty"`
-	Limit       *int    `json:"limit,omitempty"`
-	Prefix      *string `json:"prefix,omitempty"`
-	StripPrefix *string `json:"stripPrefix,omitempty"`
-}
-
-// ImportStorageObjectsResult defines model for ImportStorageObjectsResult.
-type ImportStorageObjectsResult struct {
-	DryRun   bool `json:"dryRun"`
-	Imported int  `json:"imported"`
-	Samples  []struct {
-		Action ImportStorageObjectsResultSamplesAction `json:"action"`
-		Key    string                                  `json:"key"`
-		Name   string                                  `json:"name"`
-		Parent string                                  `json:"parent"`
-	} `json:"samples"`
-	Scanned int `json:"scanned"`
-	Skipped int `json:"skipped"`
-}
-
-// ImportStorageObjectsResultSamplesAction defines model for ImportStorageObjectsResult.Samples.Action.
-type ImportStorageObjectsResultSamplesAction string
-
 // InstanceInfo defines model for InstanceInfo.
 type InstanceInfo struct {
 	Commit *string `json:"commit,omitempty"`
@@ -6550,7 +6093,6 @@ type LocalStoreGiftCard struct {
 	CodeLast4     string  `json:"codeLast4"`
 	CreatedAt     string  `json:"createdAt"`
 	CreatedBy     string  `json:"createdBy"`
-	CreditAmount  int     `json:"creditAmount"`
 	ExpiresAt     *string `json:"expiresAt"`
 	Id            string  `json:"id"`
 	Note          *string `json:"note"`
@@ -6558,7 +6100,6 @@ type LocalStoreGiftCard struct {
 	RedeemedOrgId *string `json:"redeemedOrgId"`
 	Status        string  `json:"status"`
 	StorageBytes  int     `json:"storageBytes"`
-	TrafficBytes  int     `json:"trafficBytes"`
 	UpdatedAt     string  `json:"updatedAt"`
 }
 
@@ -6567,7 +6108,6 @@ type LocalStoreProduct struct {
 	Active       bool                       `json:"active"`
 	AmountCents  int                        `json:"amountCents"`
 	CreatedAt    string                     `json:"createdAt"`
-	CreditAmount int                        `json:"creditAmount"`
 	Currency     string                     `json:"currency"`
 	Description  string                     `json:"description"`
 	Id           string                     `json:"id"`
@@ -6576,7 +6116,6 @@ type LocalStoreProduct struct {
 	Name         string                     `json:"name"`
 	SortOrder    int                        `json:"sortOrder"`
 	StorageBytes int                        `json:"storageBytes"`
-	TrafficBytes int                        `json:"trafficBytes"`
 	UpdatedAt    string                     `json:"updatedAt"`
 }
 
@@ -6668,62 +6207,6 @@ type ObjectPage struct {
 	Items         []ObjectListItem `json:"items"`
 	NextPageToken *string          `json:"nextPageToken"`
 }
-
-// OutboundWebhookDelivery defines model for OutboundWebhookDelivery.
-type OutboundWebhookDelivery struct {
-	AttemptCount   int                           `json:"attemptCount"`
-	CreatedAt      string                        `json:"createdAt"`
-	DeliveredAt    *string                       `json:"deliveredAt"`
-	EndpointId     string                        `json:"endpointId"`
-	EventType      string                        `json:"eventType"`
-	Id             string                        `json:"id"`
-	IdempotencyKey string                        `json:"idempotencyKey"`
-	LastError      *string                       `json:"lastError"`
-	LastStatusCode *int                          `json:"lastStatusCode"`
-	NextAttemptAt  *string                       `json:"nextAttemptAt"`
-	Status         OutboundWebhookDeliveryStatus `json:"status"`
-}
-
-// OutboundWebhookDeliveryStatus defines model for OutboundWebhookDelivery.Status.
-type OutboundWebhookDeliveryStatus string
-
-// OutboundWebhookDeliveryList defines model for OutboundWebhookDeliveryList.
-type OutboundWebhookDeliveryList struct {
-	Items    []OutboundWebhookDelivery `json:"items"`
-	Page     int                       `json:"page"`
-	PageSize int                       `json:"pageSize"`
-	Total    int                       `json:"total"`
-}
-
-// OutboundWebhookEndpoint defines model for OutboundWebhookEndpoint.
-type OutboundWebhookEndpoint struct {
-	CreatedAt    string   `json:"createdAt"`
-	CreatedBy    string   `json:"createdBy"`
-	Description  string   `json:"description"`
-	Enabled      bool     `json:"enabled"`
-	EventTypes   []string `json:"eventTypes"`
-	Id           string   `json:"id"`
-	Secret       *string  `json:"secret,omitempty"`
-	SecretMasked string   `json:"secretMasked"`
-	UpdatedAt    string   `json:"updatedAt"`
-	Url          string   `json:"url"`
-}
-
-// OutboundWebhookEndpointList defines model for OutboundWebhookEndpointList.
-type OutboundWebhookEndpointList struct {
-	Items    []OutboundWebhookEndpoint `json:"items"`
-	Page     int                       `json:"page"`
-	PageSize int                       `json:"pageSize"`
-	Total    int                       `json:"total"`
-}
-
-// OutboundWebhookTestResult defines model for OutboundWebhookTestResult.
-type OutboundWebhookTestResult struct {
-	Ok OutboundWebhookTestResultOk `json:"ok"`
-}
-
-// OutboundWebhookTestResultOk defines model for OutboundWebhookTestResult.Ok.
-type OutboundWebhookTestResultOk bool
 
 // PendingInvitation defines model for PendingInvitation.
 type PendingInvitation struct {
@@ -7147,18 +6630,52 @@ type StorageUsage struct {
 // StorageUsageBreakdownsCategory defines model for StorageUsage.Breakdowns.Category.
 type StorageUsageBreakdownsCategory string
 
-// StripeConfigSettings defines model for StripeConfigSettings.
-type StripeConfigSettings struct {
-	SecretKey               string             `json:"secretKey"`
-	SecretKeyConfigured     bool               `json:"secretKeyConfigured"`
-	SecretKeySource         StripeConfigSource `json:"secretKeySource"`
-	WebhookSecret           string             `json:"webhookSecret"`
-	WebhookSecretConfigured bool               `json:"webhookSecretConfigured"`
-	WebhookSecretSource     StripeConfigSource `json:"webhookSecretSource"`
+// SyncChangesPage defines model for SyncChangesPage.
+type SyncChangesPage struct {
+	Changes       []SyncObjectChange `json:"changes"`
+	NextCursor    string             `json:"nextCursor"`
+	ResetRequired bool               `json:"resetRequired"`
 }
 
-// StripeConfigSource defines model for StripeConfigSource.
-type StripeConfigSource string
+// SyncDevice defines model for SyncDevice.
+type SyncDevice struct {
+	AppVersion string           `json:"appVersion"`
+	CreatedAt  string           `json:"createdAt"`
+	Id         string           `json:"id"`
+	LastSeenAt *string          `json:"lastSeenAt"`
+	Name       string           `json:"name"`
+	OrgId      string           `json:"orgId"`
+	Platform   string           `json:"platform"`
+	Status     SyncDeviceStatus `json:"status"`
+	Token      *string          `json:"token,omitempty"`
+	UpdatedAt  string           `json:"updatedAt"`
+	UserId     string           `json:"userId"`
+}
+
+// SyncDeviceStatus defines model for SyncDevice.Status.
+type SyncDeviceStatus string
+
+// SyncDeviceList defines model for SyncDeviceList.
+type SyncDeviceList struct {
+	Items []SyncDevice `json:"items"`
+	Total int          `json:"total"`
+}
+
+// SyncObjectChange defines model for SyncObjectChange.
+type SyncObjectChange struct {
+	Action        string                     `json:"action"`
+	ActorDeviceId *string                    `json:"actorDeviceId"`
+	ChangeType    SyncObjectChangeChangeType `json:"changeType"`
+	Cursor        string                     `json:"cursor"`
+	Name          string                     `json:"name"`
+	ObjectId      string                     `json:"objectId"`
+	OccurredAt    string                     `json:"occurredAt"`
+	OrgId         string                     `json:"orgId"`
+	Parent        string                     `json:"parent"`
+}
+
+// SyncObjectChangeChangeType defines model for SyncObjectChange.ChangeType.
+type SyncObjectChangeChangeType string
 
 // TeamInvitationList defines model for TeamInvitationList.
 type TeamInvitationList struct {
@@ -7265,50 +6782,6 @@ type UpdateSiteRegistration struct {
 type UpdateSiteWebDav struct {
 	Domain  string `json:"domain"`
 	Enabled bool   `json:"enabled"`
-}
-
-// UpdateStripeConfig defines model for UpdateStripeConfig.
-type UpdateStripeConfig struct {
-	SecretKey     string `json:"secretKey"`
-	WebhookSecret string `json:"webhookSecret"`
-}
-
-// UploadPolicy defines model for UploadPolicy.
-type UploadPolicy struct {
-	CreatedAt     string                    `json:"createdAt"`
-	Enabled       bool                      `json:"enabled"`
-	Id            string                    `json:"id"`
-	IsDefault     bool                      `json:"isDefault"`
-	Name          string                    `json:"name"`
-	Priority      int                       `json:"priority"`
-	SelectionMode UploadPolicySelectionMode `json:"selectionMode"`
-	Selector      *struct {
-		MatchExpressions *[]struct {
-			Key      UploadPolicySelectorMatchExpressionsKey      `json:"key"`
-			Operator UploadPolicySelectorMatchExpressionsOperator `json:"operator"`
-			Values   *[]string                                    `json:"values,omitempty"`
-		} `json:"matchExpressions,omitempty"`
-		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
-	} `json:"selector,omitempty"`
-	StorageIds []string `json:"storageIds"`
-	UpdatedAt  string   `json:"updatedAt"`
-}
-
-// UploadPolicySelectionMode defines model for UploadPolicy.SelectionMode.
-type UploadPolicySelectionMode string
-
-// UploadPolicySelectorMatchExpressionsKey defines model for UploadPolicy.Selector.MatchExpressions.Key.
-type UploadPolicySelectorMatchExpressionsKey string
-
-// UploadPolicySelectorMatchExpressionsOperator defines model for UploadPolicy.Selector.MatchExpressions.Operator.
-type UploadPolicySelectorMatchExpressionsOperator string
-
-// UploadPolicyList defines model for UploadPolicyList.
-type UploadPolicyList struct {
-	Items    []UploadPolicy `json:"items"`
-	Page     int            `json:"page"`
-	PageSize int            `json:"pageSize"`
-	Total    int            `json:"total"`
 }
 
 // WebDavVerificationStatus defines model for WebDavVerificationStatus.
@@ -8213,44 +7686,6 @@ type ValidateInviteCodeJSONBody struct {
 	Code string `json:"code"`
 }
 
-// ListOutboundWebhookEndpointsParams defines parameters for ListOutboundWebhookEndpoints.
-type ListOutboundWebhookEndpointsParams struct {
-	Page     *int `form:"page,omitempty" json:"page,omitempty"`
-	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty"`
-}
-
-// CreateOutboundWebhookEndpointJSONBody defines parameters for CreateOutboundWebhookEndpoint.
-type CreateOutboundWebhookEndpointJSONBody struct {
-	Description *string                                           `json:"description,omitempty"`
-	Enabled     *bool                                             `json:"enabled,omitempty"`
-	EventTypes  []CreateOutboundWebhookEndpointJSONBodyEventTypes `json:"eventTypes"`
-	Url         string                                            `json:"url"`
-}
-
-// CreateOutboundWebhookEndpointJSONBodyEventTypes defines parameters for CreateOutboundWebhookEndpoint.
-type CreateOutboundWebhookEndpointJSONBodyEventTypes string
-
-// UpdateOutboundWebhookEndpointJSONBody defines parameters for UpdateOutboundWebhookEndpoint.
-type UpdateOutboundWebhookEndpointJSONBody struct {
-	Description *string                                            `json:"description,omitempty"`
-	Enabled     *bool                                              `json:"enabled,omitempty"`
-	EventTypes  *[]UpdateOutboundWebhookEndpointJSONBodyEventTypes `json:"eventTypes,omitempty"`
-	Url         *string                                            `json:"url,omitempty"`
-}
-
-// UpdateOutboundWebhookEndpointJSONBodyEventTypes defines parameters for UpdateOutboundWebhookEndpoint.
-type UpdateOutboundWebhookEndpointJSONBodyEventTypes string
-
-// ListOutboundWebhookDeliveriesParams defines parameters for ListOutboundWebhookDeliveries.
-type ListOutboundWebhookDeliveriesParams struct {
-	Status   *ListOutboundWebhookDeliveriesParamsStatus `form:"status,omitempty" json:"status,omitempty"`
-	Page     *string                                    `form:"page,omitempty" json:"page,omitempty"`
-	PageSize *string                                    `form:"pageSize,omitempty" json:"pageSize,omitempty"`
-}
-
-// ListOutboundWebhookDeliveriesParamsStatus defines parameters for ListOutboundWebhookDeliveries.
-type ListOutboundWebhookDeliveriesParamsStatus string
-
 // SaveImageDomainProvider200JSONResponseBodySuccess defines parameters for SaveImageDomainProvider.
 type SaveImageDomainProvider200JSONResponseBodySuccess bool
 
@@ -8319,84 +7754,6 @@ type UpdateStorageEgressBillingJSONBody struct {
 	UnitBytes      int  `json:"unitBytes"`
 }
 
-// CreateUploadPolicyJSONBody defines parameters for CreateUploadPolicy.
-type CreateUploadPolicyJSONBody struct {
-	Enabled       *bool                                    `json:"enabled,omitempty"`
-	Name          string                                   `json:"name"`
-	Priority      *int                                     `json:"priority,omitempty"`
-	SelectionMode *CreateUploadPolicyJSONBodySelectionMode `json:"selectionMode,omitempty"`
-	Selector      *struct {
-		MatchExpressions *[]struct {
-			Key      CreateUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
-			Operator CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
-			Values   *[]string                                                  `json:"values,omitempty"`
-		} `json:"matchExpressions,omitempty"`
-		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
-	} `json:"selector,omitempty"`
-	StorageIds []string `json:"storageIds"`
-}
-
-// CreateUploadPolicyJSONBodySelectionMode defines parameters for CreateUploadPolicy.
-type CreateUploadPolicyJSONBodySelectionMode string
-
-// CreateUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for CreateUploadPolicy.
-type CreateUploadPolicyJSONBodySelectorMatchExpressionsKey string
-
-// CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for CreateUploadPolicy.
-type CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator string
-
-// PatchUploadPolicyJSONBody defines parameters for PatchUploadPolicy.
-type PatchUploadPolicyJSONBody struct {
-	Enabled       *bool                                   `json:"enabled,omitempty"`
-	Name          *string                                 `json:"name,omitempty"`
-	Priority      *int                                    `json:"priority,omitempty"`
-	SelectionMode *PatchUploadPolicyJSONBodySelectionMode `json:"selectionMode,omitempty"`
-	Selector      *struct {
-		MatchExpressions *[]struct {
-			Key      PatchUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
-			Operator PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
-			Values   *[]string                                                 `json:"values,omitempty"`
-		} `json:"matchExpressions,omitempty"`
-		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
-	} `json:"selector,omitempty"`
-	StorageIds *[]string `json:"storageIds,omitempty"`
-}
-
-// PatchUploadPolicyJSONBodySelectionMode defines parameters for PatchUploadPolicy.
-type PatchUploadPolicyJSONBodySelectionMode string
-
-// PatchUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for PatchUploadPolicy.
-type PatchUploadPolicyJSONBodySelectorMatchExpressionsKey string
-
-// PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for PatchUploadPolicy.
-type PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator string
-
-// UpdateUploadPolicyJSONBody defines parameters for UpdateUploadPolicy.
-type UpdateUploadPolicyJSONBody struct {
-	Enabled       bool                                    `json:"enabled"`
-	Name          string                                  `json:"name"`
-	Priority      int                                     `json:"priority"`
-	SelectionMode UpdateUploadPolicyJSONBodySelectionMode `json:"selectionMode"`
-	Selector      *struct {
-		MatchExpressions *[]struct {
-			Key      UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
-			Operator UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
-			Values   *[]string                                                  `json:"values,omitempty"`
-		} `json:"matchExpressions,omitempty"`
-		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
-	} `json:"selector,omitempty"`
-	StorageIds []string `json:"storageIds"`
-}
-
-// UpdateUploadPolicyJSONBodySelectionMode defines parameters for UpdateUploadPolicy.
-type UpdateUploadPolicyJSONBodySelectionMode string
-
-// UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for UpdateUploadPolicy.
-type UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey string
-
-// UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for UpdateUploadPolicy.
-type UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator string
-
 // ListStorageUsageItemsParams defines parameters for ListStorageUsageItems.
 type ListStorageUsageItemsParams struct {
 	Category ListStorageUsageItemsParamsCategory `form:"category" json:"category"`
@@ -8421,24 +7778,20 @@ type ListStorageUsageItems200JSONResponseBodyItemsSource string
 // CreateLocalStoreGiftCardsJSONBody defines parameters for CreateLocalStoreGiftCards.
 type CreateLocalStoreGiftCardsJSONBody struct {
 	Count        int        `json:"count"`
-	CreditAmount *int       `json:"creditAmount,omitempty"`
 	ExpiresAt    *time.Time `json:"expiresAt,omitempty"`
 	Note         *string    `json:"note,omitempty"`
-	StorageBytes *int       `json:"storageBytes,omitempty"`
-	TrafficBytes *int       `json:"trafficBytes,omitempty"`
+	StorageBytes int        `json:"storageBytes"`
 }
 
 // CreateLocalStoreProductJSONBody defines parameters for CreateLocalStoreProduct.
 type CreateLocalStoreProductJSONBody struct {
 	Active       *bool                                    `json:"active,omitempty"`
 	AmountCents  int                                      `json:"amountCents"`
-	CreditAmount *int                                     `json:"creditAmount,omitempty"`
 	Currency     *CreateLocalStoreProductJSONBodyCurrency `json:"currency,omitempty"`
 	Description  *string                                  `json:"description,omitempty"`
 	Interval     *CreateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
 	Name         string                                   `json:"name"`
-	StorageBytes *int                                     `json:"storageBytes,omitempty"`
-	TrafficBytes *int                                     `json:"trafficBytes,omitempty"`
+	StorageBytes int                                      `json:"storageBytes"`
 }
 
 // CreateLocalStoreProductJSONBodyCurrency defines parameters for CreateLocalStoreProduct.
@@ -8451,12 +7804,10 @@ type CreateLocalStoreProductJSONBodyInterval string
 type UpdateLocalStoreProductJSONBody struct {
 	Active       *bool                                    `json:"active,omitempty"`
 	AmountCents  *int                                     `json:"amountCents,omitempty"`
-	CreditAmount *int                                     `json:"creditAmount,omitempty"`
 	Description  *string                                  `json:"description,omitempty"`
 	Interval     *UpdateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
 	Name         *string                                  `json:"name,omitempty"`
 	StorageBytes *int                                     `json:"storageBytes,omitempty"`
-	TrafficBytes *int                                     `json:"trafficBytes,omitempty"`
 }
 
 // UpdateLocalStoreProductJSONBodyInterval defines parameters for UpdateLocalStoreProduct.
@@ -8511,6 +7862,28 @@ type CancelOrderJSONBody struct {
 
 // CancelOrderJSONBodyStatus defines parameters for CancelOrder.
 type CancelOrderJSONBodyStatus string
+
+// ListSyncChangesParams defines parameters for ListSyncChanges.
+type ListSyncChangesParams struct {
+	SpaceId string  `form:"spaceId" json:"spaceId"`
+	Cursor  *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit   *int    `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RegisterSyncDeviceJSONBody defines parameters for RegisterSyncDevice.
+type RegisterSyncDeviceJSONBody struct {
+	AppVersion *string `json:"appVersion,omitempty"`
+	Name       string  `json:"name"`
+	OrgId      *string `json:"orgId,omitempty"`
+	Platform   *string `json:"platform,omitempty"`
+}
+
+// HeartbeatSyncDeviceJSONBody defines parameters for HeartbeatSyncDevice.
+type HeartbeatSyncDeviceJSONBody struct {
+	AppVersion *string `json:"appVersion,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Platform   *string `json:"platform,omitempty"`
+}
 
 // ListTeamActivityParams defines parameters for ListTeamActivity.
 type ListTeamActivityParams struct {
@@ -8695,12 +8068,6 @@ type GenerateInviteCodesJSONRequestBody GenerateInviteCodesJSONBody
 // ValidateInviteCodeJSONRequestBody defines body for ValidateInviteCode for application/json ContentType.
 type ValidateInviteCodeJSONRequestBody ValidateInviteCodeJSONBody
 
-// CreateOutboundWebhookEndpointJSONRequestBody defines body for CreateOutboundWebhookEndpoint for application/json ContentType.
-type CreateOutboundWebhookEndpointJSONRequestBody CreateOutboundWebhookEndpointJSONBody
-
-// UpdateOutboundWebhookEndpointJSONRequestBody defines body for UpdateOutboundWebhookEndpoint for application/json ContentType.
-type UpdateOutboundWebhookEndpointJSONRequestBody UpdateOutboundWebhookEndpointJSONBody
-
 // UpdateSiteCaptchaJSONRequestBody defines body for UpdateSiteCaptcha for application/json ContentType.
 type UpdateSiteCaptchaJSONRequestBody = UpdateSiteCaptcha
 
@@ -8737,18 +8104,6 @@ type ReplaceStorageJSONRequestBody ReplaceStorageJSONBody
 // UpdateStorageEgressBillingJSONRequestBody defines body for UpdateStorageEgressBilling for application/json ContentType.
 type UpdateStorageEgressBillingJSONRequestBody UpdateStorageEgressBillingJSONBody
 
-// ImportStorageObjectsJSONRequestBody defines body for ImportStorageObjects for application/json ContentType.
-type ImportStorageObjectsJSONRequestBody = ImportStorageObjectsRequest
-
-// CreateUploadPolicyJSONRequestBody defines body for CreateUploadPolicy for application/json ContentType.
-type CreateUploadPolicyJSONRequestBody CreateUploadPolicyJSONBody
-
-// PatchUploadPolicyJSONRequestBody defines body for PatchUploadPolicy for application/json ContentType.
-type PatchUploadPolicyJSONRequestBody PatchUploadPolicyJSONBody
-
-// UpdateUploadPolicyJSONRequestBody defines body for UpdateUploadPolicy for application/json ContentType.
-type UpdateUploadPolicyJSONRequestBody UpdateUploadPolicyJSONBody
-
 // CreateLocalStoreGiftCardsJSONRequestBody defines body for CreateLocalStoreGiftCards for application/json ContentType.
 type CreateLocalStoreGiftCardsJSONRequestBody CreateLocalStoreGiftCardsJSONBody
 
@@ -8757,9 +8112,6 @@ type CreateLocalStoreProductJSONRequestBody CreateLocalStoreProductJSONBody
 
 // UpdateLocalStoreProductJSONRequestBody defines body for UpdateLocalStoreProduct for application/json ContentType.
 type UpdateLocalStoreProductJSONRequestBody UpdateLocalStoreProductJSONBody
-
-// SaveLocalStoreStripeConfigJSONRequestBody defines body for SaveLocalStoreStripeConfig for application/json ContentType.
-type SaveLocalStoreStripeConfigJSONRequestBody = UpdateStripeConfig
 
 // PurchaseStorageCapacityJSONRequestBody defines body for PurchaseStorageCapacity for application/json ContentType.
 type PurchaseStorageCapacityJSONRequestBody PurchaseStorageCapacityJSONBody
@@ -8775,6 +8127,12 @@ type GetDiscountQuoteJSONRequestBody GetDiscountQuoteJSONBody
 
 // CancelOrderJSONRequestBody defines body for CancelOrder for application/json ContentType.
 type CancelOrderJSONRequestBody CancelOrderJSONBody
+
+// RegisterSyncDeviceJSONRequestBody defines body for RegisterSyncDevice for application/json ContentType.
+type RegisterSyncDeviceJSONRequestBody RegisterSyncDeviceJSONBody
+
+// HeartbeatSyncDeviceJSONRequestBody defines body for HeartbeatSyncDevice for application/json ContentType.
+type HeartbeatSyncDeviceJSONRequestBody HeartbeatSyncDeviceJSONBody
 
 // GrantTeamEntitlementJSONRequestBody defines body for GrantTeamEntitlement for application/json ContentType.
 type GrantTeamEntitlementJSONRequestBody GrantTeamEntitlementJSONBody
@@ -12321,34 +11679,6 @@ type ClientInterface interface {
 	// RefreshLicense request
 	RefreshLicense(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListOutboundWebhookEndpoints request
-	ListOutboundWebhookEndpoints(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOutboundWebhookEndpointWithBody request with any body
-	CreateOutboundWebhookEndpointWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateOutboundWebhookEndpoint(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteOutboundWebhookEndpoint request
-	DeleteOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOutboundWebhookEndpoint request
-	GetOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateOutboundWebhookEndpointWithBody request with any body
-	UpdateOutboundWebhookEndpointWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	UpdateOutboundWebhookEndpoint(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListOutboundWebhookDeliveries request
-	ListOutboundWebhookDeliveries(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// RotateOutboundWebhookSecret request
-	RotateOutboundWebhookSecret(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// TestOutboundWebhookEndpoint request
-	TestOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetSiteSettings request
 	GetSiteSettings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -12439,35 +11769,6 @@ type ClientInterface interface {
 
 	UpdateStorageEgressBilling(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ImportStorageObjectsWithBody request with any body
-	ImportStorageObjectsWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	ImportStorageObjects(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListUploadPolicies request
-	ListUploadPolicies(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateUploadPolicyWithBody request with any body
-	CreateUploadPolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateUploadPolicy(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteUploadPolicy request
-	DeleteUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUploadPolicy request
-	GetUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// PatchUploadPolicyWithBody request with any body
-	PatchUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	PatchUploadPolicy(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateUploadPolicyWithBody request with any body
-	UpdateUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	UpdateUploadPolicy(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetStorageUsage request
 	GetStorageUsage(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -12500,14 +11801,6 @@ type ClientInterface interface {
 	UpdateLocalStoreProductWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateLocalStoreProduct(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetLocalStoreStripeConfig request
-	GetLocalStoreStripeConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// SaveLocalStoreStripeConfigWithBody request with any body
-	SaveLocalStoreStripeConfigWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	SaveLocalStoreStripeConfig(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateBillingPortalSession request
 	CreateBillingPortalSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -12557,6 +11850,25 @@ type ClientInterface interface {
 
 	// ListStoreTargets request
 	ListStoreTargets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSyncChanges request
+	ListSyncChanges(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSyncDevices request
+	ListSyncDevices(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RegisterSyncDeviceWithBody request with any body
+	RegisterSyncDeviceWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RegisterSyncDevice(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RevokeSyncDevice request
+	RevokeSyncDevice(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// HeartbeatSyncDeviceWithBody request with any body
+	HeartbeatSyncDeviceWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	HeartbeatSyncDevice(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTeams request
 	ListTeams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14268,126 +13580,6 @@ func (c *Client) RefreshLicense(ctx context.Context, reqEditors ...RequestEditor
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListOutboundWebhookEndpoints(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOutboundWebhookEndpointsRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOutboundWebhookEndpointWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOutboundWebhookEndpointRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOutboundWebhookEndpoint(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOutboundWebhookEndpointRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteOutboundWebhookEndpointRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOutboundWebhookEndpointRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateOutboundWebhookEndpointWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOutboundWebhookEndpointRequestWithBody(c.Server, id, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateOutboundWebhookEndpoint(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOutboundWebhookEndpointRequest(c.Server, id, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListOutboundWebhookDeliveries(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOutboundWebhookDeliveriesRequest(c.Server, id, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) RotateOutboundWebhookSecret(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRotateOutboundWebhookSecretRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) TestOutboundWebhookEndpoint(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewTestOutboundWebhookEndpointRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) GetSiteSettings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSiteSettingsRequest(c.Server)
 	if err != nil {
@@ -14796,138 +13988,6 @@ func (c *Client) UpdateStorageEgressBilling(ctx context.Context, id string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) ImportStorageObjectsWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewImportStorageObjectsRequestWithBody(c.Server, id, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ImportStorageObjects(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewImportStorageObjectsRequest(c.Server, id, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListUploadPolicies(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListUploadPoliciesRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUploadPolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUploadPolicyRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUploadPolicy(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUploadPolicyRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteUploadPolicyRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUploadPolicyRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PatchUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPatchUploadPolicyRequestWithBody(c.Server, id, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PatchUploadPolicy(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPatchUploadPolicyRequest(c.Server, id, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUploadPolicyRequestWithBody(c.Server, id, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateUploadPolicy(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUploadPolicyRequest(c.Server, id, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) GetStorageUsage(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStorageUsageRequest(c.Server)
 	if err != nil {
@@ -15062,42 +14122,6 @@ func (c *Client) UpdateLocalStoreProductWithBody(ctx context.Context, id string,
 
 func (c *Client) UpdateLocalStoreProduct(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateLocalStoreProductRequest(c.Server, id, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetLocalStoreStripeConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetLocalStoreStripeConfigRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) SaveLocalStoreStripeConfigWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSaveLocalStoreStripeConfigRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) SaveLocalStoreStripeConfig(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSaveLocalStoreStripeConfigRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -15314,6 +14338,90 @@ func (c *Client) ListStorePackages(ctx context.Context, reqEditors ...RequestEdi
 
 func (c *Client) ListStoreTargets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListStoreTargetsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSyncChanges(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSyncChangesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSyncDevices(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSyncDevicesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RegisterSyncDeviceWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterSyncDeviceRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RegisterSyncDevice(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterSyncDeviceRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RevokeSyncDevice(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeSyncDeviceRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) HeartbeatSyncDeviceWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewHeartbeatSyncDeviceRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) HeartbeatSyncDevice(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewHeartbeatSyncDeviceRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -20422,380 +19530,6 @@ func NewRefreshLicenseRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewListOutboundWebhookEndpointsRequest generates requests for ListOutboundWebhookEndpoints
-func NewListOutboundWebhookEndpointsRequest(server string, params *ListOutboundWebhookEndpointsParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		// queryValues collects non-styled parameters (passthrough, JSON)
-		// that are safe to round-trip through url.Values.Encode().
-		queryValues := queryURL.Query()
-		// rawQueryFragments collects pre-encoded query fragments from
-		// styled parameters, preserving literal commas as delimiters
-		// per the OpenAPI spec (e.g. "color=blue,black,brown").
-		var rawQueryFragments []string
-
-		if params.Page != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.PageSize != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "pageSize", *params.PageSize, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if encoded := queryValues.Encode(); encoded != "" {
-			rawQueryFragments = append(rawQueryFragments, encoded)
-		}
-		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOutboundWebhookEndpointRequest calls the generic CreateOutboundWebhookEndpoint builder with application/json body
-func NewCreateOutboundWebhookEndpointRequest(server string, body CreateOutboundWebhookEndpointJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateOutboundWebhookEndpointRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateOutboundWebhookEndpointRequestWithBody generates requests for CreateOutboundWebhookEndpoint with any type of body
-func NewCreateOutboundWebhookEndpointRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteOutboundWebhookEndpointRequest generates requests for DeleteOutboundWebhookEndpoint
-func NewDeleteOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetOutboundWebhookEndpointRequest generates requests for GetOutboundWebhookEndpoint
-func NewGetOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateOutboundWebhookEndpointRequest calls the generic UpdateOutboundWebhookEndpoint builder with application/json body
-func NewUpdateOutboundWebhookEndpointRequest(server string, id string, body UpdateOutboundWebhookEndpointJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateOutboundWebhookEndpointRequestWithBody(server, id, "application/json", bodyReader)
-}
-
-// NewUpdateOutboundWebhookEndpointRequestWithBody generates requests for UpdateOutboundWebhookEndpoint with any type of body
-func NewUpdateOutboundWebhookEndpointRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewListOutboundWebhookDeliveriesRequest generates requests for ListOutboundWebhookDeliveries
-func NewListOutboundWebhookDeliveriesRequest(server string, id string, params *ListOutboundWebhookDeliveriesParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/deliveries", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		// queryValues collects non-styled parameters (passthrough, JSON)
-		// that are safe to round-trip through url.Values.Encode().
-		queryValues := queryURL.Query()
-		// rawQueryFragments collects pre-encoded query fragments from
-		// styled parameters, preserving literal commas as delimiters
-		// per the OpenAPI spec (e.g. "color=blue,black,brown").
-		var rawQueryFragments []string
-
-		if params.Status != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.Page != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.PageSize != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "pageSize", *params.PageSize, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if encoded := queryValues.Encode(); encoded != "" {
-			rawQueryFragments = append(rawQueryFragments, encoded)
-		}
-		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewRotateOutboundWebhookSecretRequest generates requests for RotateOutboundWebhookSecret
-func NewRotateOutboundWebhookSecretRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/secret-rotations", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewTestOutboundWebhookEndpointRequest generates requests for TestOutboundWebhookEndpoint
-func NewTestOutboundWebhookEndpointRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/outbound-webhooks/%s/tests", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewGetSiteSettingsRequest generates requests for GetSiteSettings
 func NewGetSiteSettingsRequest(server string) (*http.Request, error) {
 	var err error
@@ -21588,282 +20322,6 @@ func NewUpdateStorageEgressBillingRequestWithBody(server string, id string, cont
 	return req, nil
 }
 
-// NewImportStorageObjectsRequest calls the generic ImportStorageObjects builder with application/json body
-func NewImportStorageObjectsRequest(server string, id string, body ImportStorageObjectsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewImportStorageObjectsRequestWithBody(server, id, "application/json", bodyReader)
-}
-
-// NewImportStorageObjectsRequestWithBody generates requests for ImportStorageObjects with any type of body
-func NewImportStorageObjectsRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/storages/%s/import-objects", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewListUploadPoliciesRequest generates requests for ListUploadPolicies
-func NewListUploadPoliciesRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateUploadPolicyRequest calls the generic CreateUploadPolicy builder with application/json body
-func NewCreateUploadPolicyRequest(server string, body CreateUploadPolicyJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateUploadPolicyRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateUploadPolicyRequestWithBody generates requests for CreateUploadPolicy with any type of body
-func NewCreateUploadPolicyRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteUploadPolicyRequest generates requests for DeleteUploadPolicy
-func NewDeleteUploadPolicyRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetUploadPolicyRequest generates requests for GetUploadPolicy
-func NewGetUploadPolicyRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewPatchUploadPolicyRequest calls the generic PatchUploadPolicy builder with application/json body
-func NewPatchUploadPolicyRequest(server string, id string, body PatchUploadPolicyJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewPatchUploadPolicyRequestWithBody(server, id, "application/json", bodyReader)
-}
-
-// NewPatchUploadPolicyRequestWithBody generates requests for PatchUploadPolicy with any type of body
-func NewPatchUploadPolicyRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewUpdateUploadPolicyRequest calls the generic UpdateUploadPolicy builder with application/json body
-func NewUpdateUploadPolicyRequest(server string, id string, body UpdateUploadPolicyJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateUploadPolicyRequestWithBody(server, id, "application/json", bodyReader)
-}
-
-// NewUpdateUploadPolicyRequestWithBody generates requests for UpdateUploadPolicy with any type of body
-func NewUpdateUploadPolicyRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewGetStorageUsageRequest generates requests for GetStorageUsage
 func NewGetStorageUsageRequest(server string) (*http.Request, error) {
 	var err error
@@ -22229,73 +20687,6 @@ func NewUpdateLocalStoreProductRequestWithBody(server string, id string, content
 	}
 
 	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetLocalStoreStripeConfigRequest generates requests for GetLocalStoreStripeConfig
-func NewGetLocalStoreStripeConfigRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/store/admin/settings/stripe")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewSaveLocalStoreStripeConfigRequest calls the generic SaveLocalStoreStripeConfig builder with application/json body
-func NewSaveLocalStoreStripeConfigRequest(server string, body SaveLocalStoreStripeConfigJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewSaveLocalStoreStripeConfigRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewSaveLocalStoreStripeConfigRequestWithBody generates requests for SaveLocalStoreStripeConfig with any type of body
-func NewSaveLocalStoreStripeConfigRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/store/admin/settings/stripe")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -22792,6 +21183,228 @@ func NewListStoreTargetsRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewListSyncChangesRequest generates requests for ListSyncChanges
+func NewListSyncChangesRequest(server string, params *ListSyncChangesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/changes")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "spaceId", params.SpaceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "cursor", *params.Cursor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSyncDevicesRequest generates requests for ListSyncDevices
+func NewListSyncDevicesRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRegisterSyncDeviceRequest calls the generic RegisterSyncDevice builder with application/json body
+func NewRegisterSyncDeviceRequest(server string, body RegisterSyncDeviceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRegisterSyncDeviceRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewRegisterSyncDeviceRequestWithBody generates requests for RegisterSyncDevice with any type of body
+func NewRegisterSyncDeviceRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewRevokeSyncDeviceRequest generates requests for RevokeSyncDevice
+func NewRevokeSyncDeviceRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewHeartbeatSyncDeviceRequest calls the generic HeartbeatSyncDevice builder with application/json body
+func NewHeartbeatSyncDeviceRequest(server string, id string, body HeartbeatSyncDeviceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewHeartbeatSyncDeviceRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewHeartbeatSyncDeviceRequestWithBody generates requests for HeartbeatSyncDevice with any type of body
+func NewHeartbeatSyncDeviceRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/sync/devices/%s/heartbeats", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -24229,34 +22842,6 @@ type ClientWithResponsesInterface interface {
 	// RefreshLicenseWithResponse request
 	RefreshLicenseWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshLicenseResponse, error)
 
-	// ListOutboundWebhookEndpointsWithResponse request
-	ListOutboundWebhookEndpointsWithResponse(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookEndpointsResponse, error)
-
-	// CreateOutboundWebhookEndpointWithBodyWithResponse request with any body
-	CreateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error)
-
-	CreateOutboundWebhookEndpointWithResponse(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error)
-
-	// DeleteOutboundWebhookEndpointWithResponse request
-	DeleteOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteOutboundWebhookEndpointResponse, error)
-
-	// GetOutboundWebhookEndpointWithResponse request
-	GetOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetOutboundWebhookEndpointResponse, error)
-
-	// UpdateOutboundWebhookEndpointWithBodyWithResponse request with any body
-	UpdateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error)
-
-	UpdateOutboundWebhookEndpointWithResponse(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error)
-
-	// ListOutboundWebhookDeliveriesWithResponse request
-	ListOutboundWebhookDeliveriesWithResponse(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookDeliveriesResponse, error)
-
-	// RotateOutboundWebhookSecretWithResponse request
-	RotateOutboundWebhookSecretWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RotateOutboundWebhookSecretResponse, error)
-
-	// TestOutboundWebhookEndpointWithResponse request
-	TestOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*TestOutboundWebhookEndpointResponse, error)
-
 	// GetSiteSettingsWithResponse request
 	GetSiteSettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSiteSettingsResponse, error)
 
@@ -24347,35 +22932,6 @@ type ClientWithResponsesInterface interface {
 
 	UpdateStorageEgressBillingWithResponse(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateStorageEgressBillingResponse, error)
 
-	// ImportStorageObjectsWithBodyWithResponse request with any body
-	ImportStorageObjectsWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error)
-
-	ImportStorageObjectsWithResponse(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error)
-
-	// ListUploadPoliciesWithResponse request
-	ListUploadPoliciesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUploadPoliciesResponse, error)
-
-	// CreateUploadPolicyWithBodyWithResponse request with any body
-	CreateUploadPolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error)
-
-	CreateUploadPolicyWithResponse(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error)
-
-	// DeleteUploadPolicyWithResponse request
-	DeleteUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUploadPolicyResponse, error)
-
-	// GetUploadPolicyWithResponse request
-	GetUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetUploadPolicyResponse, error)
-
-	// PatchUploadPolicyWithBodyWithResponse request with any body
-	PatchUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error)
-
-	PatchUploadPolicyWithResponse(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error)
-
-	// UpdateUploadPolicyWithBodyWithResponse request with any body
-	UpdateUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error)
-
-	UpdateUploadPolicyWithResponse(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error)
-
 	// GetStorageUsageWithResponse request
 	GetStorageUsageWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStorageUsageResponse, error)
 
@@ -24408,14 +22964,6 @@ type ClientWithResponsesInterface interface {
 	UpdateLocalStoreProductWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateLocalStoreProductResponse, error)
 
 	UpdateLocalStoreProductWithResponse(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateLocalStoreProductResponse, error)
-
-	// GetLocalStoreStripeConfigWithResponse request
-	GetLocalStoreStripeConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLocalStoreStripeConfigResponse, error)
-
-	// SaveLocalStoreStripeConfigWithBodyWithResponse request with any body
-	SaveLocalStoreStripeConfigWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error)
-
-	SaveLocalStoreStripeConfigWithResponse(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error)
 
 	// CreateBillingPortalSessionWithResponse request
 	CreateBillingPortalSessionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateBillingPortalSessionResponse, error)
@@ -24465,6 +23013,25 @@ type ClientWithResponsesInterface interface {
 
 	// ListStoreTargetsWithResponse request
 	ListStoreTargetsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListStoreTargetsResponse, error)
+
+	// ListSyncChangesWithResponse request
+	ListSyncChangesWithResponse(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*ListSyncChangesResponse, error)
+
+	// ListSyncDevicesWithResponse request
+	ListSyncDevicesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSyncDevicesResponse, error)
+
+	// RegisterSyncDeviceWithBodyWithResponse request with any body
+	RegisterSyncDeviceWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error)
+
+	RegisterSyncDeviceWithResponse(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error)
+
+	// RevokeSyncDeviceWithResponse request
+	RevokeSyncDeviceWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeSyncDeviceResponse, error)
+
+	// HeartbeatSyncDeviceWithBodyWithResponse request with any body
+	HeartbeatSyncDeviceWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error)
+
+	HeartbeatSyncDeviceWithResponse(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error)
 
 	// ListTeamsWithResponse request
 	ListTeamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error)
@@ -27953,252 +26520,6 @@ func (r RefreshLicenseResponse) ContentType() string {
 	return ""
 }
 
-type ListOutboundWebhookEndpointsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookEndpointList
-	JSON403      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListOutboundWebhookEndpointsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListOutboundWebhookEndpointsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r ListOutboundWebhookEndpointsResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type CreateOutboundWebhookEndpointResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *OutboundWebhookEndpoint
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOutboundWebhookEndpointResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOutboundWebhookEndpointResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r CreateOutboundWebhookEndpointResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type DeleteOutboundWebhookEndpointResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteOutboundWebhookEndpointResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteOutboundWebhookEndpointResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r DeleteOutboundWebhookEndpointResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type GetOutboundWebhookEndpointResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookEndpoint
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOutboundWebhookEndpointResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOutboundWebhookEndpointResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r GetOutboundWebhookEndpointResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type UpdateOutboundWebhookEndpointResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookEndpoint
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateOutboundWebhookEndpointResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateOutboundWebhookEndpointResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r UpdateOutboundWebhookEndpointResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type ListOutboundWebhookDeliveriesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookDeliveryList
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListOutboundWebhookDeliveriesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListOutboundWebhookDeliveriesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r ListOutboundWebhookDeliveriesResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type RotateOutboundWebhookSecretResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookEndpoint
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r RotateOutboundWebhookSecretResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r RotateOutboundWebhookSecretResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r RotateOutboundWebhookSecretResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type TestOutboundWebhookEndpointResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OutboundWebhookTestResult
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r TestOutboundWebhookEndpointResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r TestOutboundWebhookEndpointResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r TestOutboundWebhookEndpointResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
 type GetSiteSettingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -28889,229 +27210,6 @@ func (r UpdateStorageEgressBillingResponse) ContentType() string {
 	return ""
 }
 
-type ImportStorageObjectsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ImportStorageObjectsResult
-	JSON400      *Error
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ImportStorageObjectsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ImportStorageObjectsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r ImportStorageObjectsResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type ListUploadPoliciesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *UploadPolicyList
-}
-
-// Status returns HTTPResponse.Status
-func (r ListUploadPoliciesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListUploadPoliciesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r ListUploadPoliciesResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type CreateUploadPolicyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *UploadPolicy
-	JSON400      *Error
-	JSON402      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateUploadPolicyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateUploadPolicyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r CreateUploadPolicyResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type DeleteUploadPolicyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON402      *Error
-	JSON404      *Error
-	JSON409      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteUploadPolicyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteUploadPolicyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r DeleteUploadPolicyResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type GetUploadPolicyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *UploadPolicy
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetUploadPolicyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUploadPolicyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r GetUploadPolicyResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type PatchUploadPolicyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *UploadPolicy
-	JSON400      *Error
-	JSON402      *Error
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r PatchUploadPolicyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PatchUploadPolicyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r PatchUploadPolicyResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type UpdateUploadPolicyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *UploadPolicy
-	JSON400      *Error
-	JSON402      *Error
-	JSON404      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateUploadPolicyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateUploadPolicyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r UpdateUploadPolicyResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
 type GetStorageUsageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -29407,70 +27505,6 @@ func (r UpdateLocalStoreProductResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r UpdateLocalStoreProductResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type GetLocalStoreStripeConfigResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *StripeConfigSettings
-	JSON403      *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetLocalStoreStripeConfigResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetLocalStoreStripeConfigResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r GetLocalStoreStripeConfigResponse) ContentType() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Header.Get("Content-Type")
-	}
-	return ""
-}
-
-type SaveLocalStoreStripeConfigResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Success bool `json:"success"`
-	}
-	JSON403 *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r SaveLocalStoreStripeConfigResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r SaveLocalStoreStripeConfigResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r SaveLocalStoreStripeConfigResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -29936,6 +27970,159 @@ func (r ListStoreTargetsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r ListStoreTargetsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListSyncChangesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncChangesPage
+	JSON401      *Error
+	JSON403      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSyncChangesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSyncChangesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListSyncChangesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListSyncDevicesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncDeviceList
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSyncDevicesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSyncDevicesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListSyncDevicesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RegisterSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SyncDevice
+}
+
+// Status returns HTTPResponse.Status
+func (r RegisterSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RegisterSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RegisterSyncDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RevokeSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r RevokeSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RevokeSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RevokeSyncDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type HeartbeatSyncDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SyncDevice
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r HeartbeatSyncDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r HeartbeatSyncDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r HeartbeatSyncDeviceResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -31917,94 +30104,6 @@ func (c *ClientWithResponses) RefreshLicenseWithResponse(ctx context.Context, re
 	return ParseRefreshLicenseResponse(rsp)
 }
 
-// ListOutboundWebhookEndpointsWithResponse request returning *ListOutboundWebhookEndpointsResponse
-func (c *ClientWithResponses) ListOutboundWebhookEndpointsWithResponse(ctx context.Context, params *ListOutboundWebhookEndpointsParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookEndpointsResponse, error) {
-	rsp, err := c.ListOutboundWebhookEndpoints(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListOutboundWebhookEndpointsResponse(rsp)
-}
-
-// CreateOutboundWebhookEndpointWithBodyWithResponse request with arbitrary body returning *CreateOutboundWebhookEndpointResponse
-func (c *ClientWithResponses) CreateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.CreateOutboundWebhookEndpointWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOutboundWebhookEndpointResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateOutboundWebhookEndpointWithResponse(ctx context.Context, body CreateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.CreateOutboundWebhookEndpoint(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOutboundWebhookEndpointResponse(rsp)
-}
-
-// DeleteOutboundWebhookEndpointWithResponse request returning *DeleteOutboundWebhookEndpointResponse
-func (c *ClientWithResponses) DeleteOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.DeleteOutboundWebhookEndpoint(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteOutboundWebhookEndpointResponse(rsp)
-}
-
-// GetOutboundWebhookEndpointWithResponse request returning *GetOutboundWebhookEndpointResponse
-func (c *ClientWithResponses) GetOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.GetOutboundWebhookEndpoint(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOutboundWebhookEndpointResponse(rsp)
-}
-
-// UpdateOutboundWebhookEndpointWithBodyWithResponse request with arbitrary body returning *UpdateOutboundWebhookEndpointResponse
-func (c *ClientWithResponses) UpdateOutboundWebhookEndpointWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.UpdateOutboundWebhookEndpointWithBody(ctx, id, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateOutboundWebhookEndpointResponse(rsp)
-}
-
-func (c *ClientWithResponses) UpdateOutboundWebhookEndpointWithResponse(ctx context.Context, id string, body UpdateOutboundWebhookEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.UpdateOutboundWebhookEndpoint(ctx, id, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateOutboundWebhookEndpointResponse(rsp)
-}
-
-// ListOutboundWebhookDeliveriesWithResponse request returning *ListOutboundWebhookDeliveriesResponse
-func (c *ClientWithResponses) ListOutboundWebhookDeliveriesWithResponse(ctx context.Context, id string, params *ListOutboundWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListOutboundWebhookDeliveriesResponse, error) {
-	rsp, err := c.ListOutboundWebhookDeliveries(ctx, id, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListOutboundWebhookDeliveriesResponse(rsp)
-}
-
-// RotateOutboundWebhookSecretWithResponse request returning *RotateOutboundWebhookSecretResponse
-func (c *ClientWithResponses) RotateOutboundWebhookSecretWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RotateOutboundWebhookSecretResponse, error) {
-	rsp, err := c.RotateOutboundWebhookSecret(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseRotateOutboundWebhookSecretResponse(rsp)
-}
-
-// TestOutboundWebhookEndpointWithResponse request returning *TestOutboundWebhookEndpointResponse
-func (c *ClientWithResponses) TestOutboundWebhookEndpointWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*TestOutboundWebhookEndpointResponse, error) {
-	rsp, err := c.TestOutboundWebhookEndpoint(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseTestOutboundWebhookEndpointResponse(rsp)
-}
-
 // GetSiteSettingsWithResponse request returning *GetSiteSettingsResponse
 func (c *ClientWithResponses) GetSiteSettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSiteSettingsResponse, error) {
 	rsp, err := c.GetSiteSettings(ctx, reqEditors...)
@@ -32299,101 +30398,6 @@ func (c *ClientWithResponses) UpdateStorageEgressBillingWithResponse(ctx context
 	return ParseUpdateStorageEgressBillingResponse(rsp)
 }
 
-// ImportStorageObjectsWithBodyWithResponse request with arbitrary body returning *ImportStorageObjectsResponse
-func (c *ClientWithResponses) ImportStorageObjectsWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error) {
-	rsp, err := c.ImportStorageObjectsWithBody(ctx, id, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseImportStorageObjectsResponse(rsp)
-}
-
-func (c *ClientWithResponses) ImportStorageObjectsWithResponse(ctx context.Context, id string, body ImportStorageObjectsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportStorageObjectsResponse, error) {
-	rsp, err := c.ImportStorageObjects(ctx, id, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseImportStorageObjectsResponse(rsp)
-}
-
-// ListUploadPoliciesWithResponse request returning *ListUploadPoliciesResponse
-func (c *ClientWithResponses) ListUploadPoliciesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUploadPoliciesResponse, error) {
-	rsp, err := c.ListUploadPolicies(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListUploadPoliciesResponse(rsp)
-}
-
-// CreateUploadPolicyWithBodyWithResponse request with arbitrary body returning *CreateUploadPolicyResponse
-func (c *ClientWithResponses) CreateUploadPolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error) {
-	rsp, err := c.CreateUploadPolicyWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUploadPolicyResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateUploadPolicyWithResponse(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error) {
-	rsp, err := c.CreateUploadPolicy(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUploadPolicyResponse(rsp)
-}
-
-// DeleteUploadPolicyWithResponse request returning *DeleteUploadPolicyResponse
-func (c *ClientWithResponses) DeleteUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUploadPolicyResponse, error) {
-	rsp, err := c.DeleteUploadPolicy(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteUploadPolicyResponse(rsp)
-}
-
-// GetUploadPolicyWithResponse request returning *GetUploadPolicyResponse
-func (c *ClientWithResponses) GetUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetUploadPolicyResponse, error) {
-	rsp, err := c.GetUploadPolicy(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUploadPolicyResponse(rsp)
-}
-
-// PatchUploadPolicyWithBodyWithResponse request with arbitrary body returning *PatchUploadPolicyResponse
-func (c *ClientWithResponses) PatchUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error) {
-	rsp, err := c.PatchUploadPolicyWithBody(ctx, id, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePatchUploadPolicyResponse(rsp)
-}
-
-func (c *ClientWithResponses) PatchUploadPolicyWithResponse(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error) {
-	rsp, err := c.PatchUploadPolicy(ctx, id, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePatchUploadPolicyResponse(rsp)
-}
-
-// UpdateUploadPolicyWithBodyWithResponse request with arbitrary body returning *UpdateUploadPolicyResponse
-func (c *ClientWithResponses) UpdateUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error) {
-	rsp, err := c.UpdateUploadPolicyWithBody(ctx, id, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateUploadPolicyResponse(rsp)
-}
-
-func (c *ClientWithResponses) UpdateUploadPolicyWithResponse(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error) {
-	rsp, err := c.UpdateUploadPolicy(ctx, id, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateUploadPolicyResponse(rsp)
-}
-
 // GetStorageUsageWithResponse request returning *GetStorageUsageResponse
 func (c *ClientWithResponses) GetStorageUsageWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStorageUsageResponse, error) {
 	rsp, err := c.GetStorageUsage(ctx, reqEditors...)
@@ -32497,32 +30501,6 @@ func (c *ClientWithResponses) UpdateLocalStoreProductWithResponse(ctx context.Co
 		return nil, err
 	}
 	return ParseUpdateLocalStoreProductResponse(rsp)
-}
-
-// GetLocalStoreStripeConfigWithResponse request returning *GetLocalStoreStripeConfigResponse
-func (c *ClientWithResponses) GetLocalStoreStripeConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLocalStoreStripeConfigResponse, error) {
-	rsp, err := c.GetLocalStoreStripeConfig(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetLocalStoreStripeConfigResponse(rsp)
-}
-
-// SaveLocalStoreStripeConfigWithBodyWithResponse request with arbitrary body returning *SaveLocalStoreStripeConfigResponse
-func (c *ClientWithResponses) SaveLocalStoreStripeConfigWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error) {
-	rsp, err := c.SaveLocalStoreStripeConfigWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseSaveLocalStoreStripeConfigResponse(rsp)
-}
-
-func (c *ClientWithResponses) SaveLocalStoreStripeConfigWithResponse(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error) {
-	rsp, err := c.SaveLocalStoreStripeConfig(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseSaveLocalStoreStripeConfigResponse(rsp)
 }
 
 // CreateBillingPortalSessionWithResponse request returning *CreateBillingPortalSessionResponse
@@ -32680,6 +30658,67 @@ func (c *ClientWithResponses) ListStoreTargetsWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseListStoreTargetsResponse(rsp)
+}
+
+// ListSyncChangesWithResponse request returning *ListSyncChangesResponse
+func (c *ClientWithResponses) ListSyncChangesWithResponse(ctx context.Context, params *ListSyncChangesParams, reqEditors ...RequestEditorFn) (*ListSyncChangesResponse, error) {
+	rsp, err := c.ListSyncChanges(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSyncChangesResponse(rsp)
+}
+
+// ListSyncDevicesWithResponse request returning *ListSyncDevicesResponse
+func (c *ClientWithResponses) ListSyncDevicesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSyncDevicesResponse, error) {
+	rsp, err := c.ListSyncDevices(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSyncDevicesResponse(rsp)
+}
+
+// RegisterSyncDeviceWithBodyWithResponse request with arbitrary body returning *RegisterSyncDeviceResponse
+func (c *ClientWithResponses) RegisterSyncDeviceWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error) {
+	rsp, err := c.RegisterSyncDeviceWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterSyncDeviceResponse(rsp)
+}
+
+func (c *ClientWithResponses) RegisterSyncDeviceWithResponse(ctx context.Context, body RegisterSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterSyncDeviceResponse, error) {
+	rsp, err := c.RegisterSyncDevice(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterSyncDeviceResponse(rsp)
+}
+
+// RevokeSyncDeviceWithResponse request returning *RevokeSyncDeviceResponse
+func (c *ClientWithResponses) RevokeSyncDeviceWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeSyncDeviceResponse, error) {
+	rsp, err := c.RevokeSyncDevice(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRevokeSyncDeviceResponse(rsp)
+}
+
+// HeartbeatSyncDeviceWithBodyWithResponse request with arbitrary body returning *HeartbeatSyncDeviceResponse
+func (c *ClientWithResponses) HeartbeatSyncDeviceWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error) {
+	rsp, err := c.HeartbeatSyncDeviceWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseHeartbeatSyncDeviceResponse(rsp)
+}
+
+func (c *ClientWithResponses) HeartbeatSyncDeviceWithResponse(ctx context.Context, id string, body HeartbeatSyncDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*HeartbeatSyncDeviceResponse, error) {
+	rsp, err := c.HeartbeatSyncDevice(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseHeartbeatSyncDeviceResponse(rsp)
 }
 
 // ListTeamsWithResponse request returning *ListTeamsResponse
@@ -36943,256 +34982,6 @@ func ParseRefreshLicenseResponse(rsp *http.Response) (*RefreshLicenseResponse, e
 	return response, nil
 }
 
-// ParseListOutboundWebhookEndpointsResponse parses an HTTP response from a ListOutboundWebhookEndpointsWithResponse call
-func ParseListOutboundWebhookEndpointsResponse(rsp *http.Response) (*ListOutboundWebhookEndpointsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListOutboundWebhookEndpointsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookEndpointList
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON403 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOutboundWebhookEndpointResponse parses an HTTP response from a CreateOutboundWebhookEndpointWithResponse call
-func ParseCreateOutboundWebhookEndpointResponse(rsp *http.Response) (*CreateOutboundWebhookEndpointResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOutboundWebhookEndpointResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest OutboundWebhookEndpoint
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteOutboundWebhookEndpointResponse parses an HTTP response from a DeleteOutboundWebhookEndpointWithResponse call
-func ParseDeleteOutboundWebhookEndpointResponse(rsp *http.Response) (*DeleteOutboundWebhookEndpointResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteOutboundWebhookEndpointResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOutboundWebhookEndpointResponse parses an HTTP response from a GetOutboundWebhookEndpointWithResponse call
-func ParseGetOutboundWebhookEndpointResponse(rsp *http.Response) (*GetOutboundWebhookEndpointResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOutboundWebhookEndpointResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookEndpoint
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateOutboundWebhookEndpointResponse parses an HTTP response from a UpdateOutboundWebhookEndpointWithResponse call
-func ParseUpdateOutboundWebhookEndpointResponse(rsp *http.Response) (*UpdateOutboundWebhookEndpointResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateOutboundWebhookEndpointResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookEndpoint
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListOutboundWebhookDeliveriesResponse parses an HTTP response from a ListOutboundWebhookDeliveriesWithResponse call
-func ParseListOutboundWebhookDeliveriesResponse(rsp *http.Response) (*ListOutboundWebhookDeliveriesResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListOutboundWebhookDeliveriesResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookDeliveryList
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseRotateOutboundWebhookSecretResponse parses an HTTP response from a RotateOutboundWebhookSecretWithResponse call
-func ParseRotateOutboundWebhookSecretResponse(rsp *http.Response) (*RotateOutboundWebhookSecretResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &RotateOutboundWebhookSecretResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookEndpoint
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseTestOutboundWebhookEndpointResponse parses an HTTP response from a TestOutboundWebhookEndpointWithResponse call
-func ParseTestOutboundWebhookEndpointResponse(rsp *http.Response) (*TestOutboundWebhookEndpointResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &TestOutboundWebhookEndpointResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OutboundWebhookTestResult
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseGetSiteSettingsResponse parses an HTTP response from a GetSiteSettingsWithResponse call
 func ParseGetSiteSettingsResponse(rsp *http.Response) (*GetSiteSettingsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -37927,279 +35716,6 @@ func ParseUpdateStorageEgressBillingResponse(rsp *http.Response) (*UpdateStorage
 	return response, nil
 }
 
-// ParseImportStorageObjectsResponse parses an HTTP response from a ImportStorageObjectsWithResponse call
-func ParseImportStorageObjectsResponse(rsp *http.Response) (*ImportStorageObjectsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ImportStorageObjectsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ImportStorageObjectsResult
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListUploadPoliciesResponse parses an HTTP response from a ListUploadPoliciesWithResponse call
-func ParseListUploadPoliciesResponse(rsp *http.Response) (*ListUploadPoliciesResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListUploadPoliciesResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest UploadPolicyList
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateUploadPolicyResponse parses an HTTP response from a CreateUploadPolicyWithResponse call
-func ParseCreateUploadPolicyResponse(rsp *http.Response) (*CreateUploadPolicyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateUploadPolicyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest UploadPolicy
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON402 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteUploadPolicyResponse parses an HTTP response from a DeleteUploadPolicyWithResponse call
-func ParseDeleteUploadPolicyResponse(rsp *http.Response) (*DeleteUploadPolicyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteUploadPolicyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON402 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON409 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetUploadPolicyResponse parses an HTTP response from a GetUploadPolicyWithResponse call
-func ParseGetUploadPolicyResponse(rsp *http.Response) (*GetUploadPolicyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetUploadPolicyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest UploadPolicy
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParsePatchUploadPolicyResponse parses an HTTP response from a PatchUploadPolicyWithResponse call
-func ParsePatchUploadPolicyResponse(rsp *http.Response) (*PatchUploadPolicyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PatchUploadPolicyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest UploadPolicy
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON402 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateUploadPolicyResponse parses an HTTP response from a UpdateUploadPolicyWithResponse call
-func ParseUpdateUploadPolicyResponse(rsp *http.Response) (*UpdateUploadPolicyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateUploadPolicyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest UploadPolicy
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON402 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseGetStorageUsageResponse parses an HTTP response from a GetStorageUsageWithResponse call
 func ParseGetStorageUsageResponse(rsp *http.Response) (*GetStorageUsageResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -38513,74 +36029,6 @@ func ParseUpdateLocalStoreProductResponse(rsp *http.Response) (*UpdateLocalStore
 			return nil, err
 		}
 		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetLocalStoreStripeConfigResponse parses an HTTP response from a GetLocalStoreStripeConfigWithResponse call
-func ParseGetLocalStoreStripeConfigResponse(rsp *http.Response) (*GetLocalStoreStripeConfigResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetLocalStoreStripeConfigResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest StripeConfigSettings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON403 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseSaveLocalStoreStripeConfigResponse parses an HTTP response from a SaveLocalStoreStripeConfigWithResponse call
-func ParseSaveLocalStoreStripeConfigResponse(rsp *http.Response) (*SaveLocalStoreStripeConfigResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &SaveLocalStoreStripeConfigResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Success bool `json:"success"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON403 = &dest
 
 	}
 
@@ -39246,6 +36694,157 @@ func ParseListStoreTargetsResponse(rsp *http.Response) (*ListStoreTargetsRespons
 			return nil, err
 		}
 		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSyncChangesResponse parses an HTTP response from a ListSyncChangesWithResponse call
+func ParseListSyncChangesResponse(rsp *http.Response) (*ListSyncChangesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSyncChangesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncChangesPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSyncDevicesResponse parses an HTTP response from a ListSyncDevicesWithResponse call
+func ParseListSyncDevicesResponse(rsp *http.Response) (*ListSyncDevicesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSyncDevicesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncDeviceList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRegisterSyncDeviceResponse parses an HTTP response from a RegisterSyncDeviceWithResponse call
+func ParseRegisterSyncDeviceResponse(rsp *http.Response) (*RegisterSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RegisterSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SyncDevice
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRevokeSyncDeviceResponse parses an HTTP response from a RevokeSyncDeviceWithResponse call
+func ParseRevokeSyncDeviceResponse(rsp *http.Response) (*RevokeSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RevokeSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseHeartbeatSyncDeviceResponse parses an HTTP response from a HeartbeatSyncDeviceWithResponse call
+func ParseHeartbeatSyncDeviceResponse(rsp *http.Response) (*HeartbeatSyncDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &HeartbeatSyncDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SyncDevice
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

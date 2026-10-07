@@ -735,6 +735,50 @@ export const resourceChanges = sqliteTable(
   ],
 )
 
+export const syncDevices = sqliteTable(
+  'sync_devices',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull(),
+    orgId: text('org_id').notNull(),
+    name: text('name').notNull(),
+    platform: text('platform').notNull().default('unknown'),
+    appVersion: text('app_version').notNull().default('unknown'),
+    tokenHash: text('token_hash').notNull(),
+    status: text('status').notNull().default('active'),
+    lastSeenAt: integer('last_seen_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    index('sync_devices_user_idx').on(t.userId),
+    index('sync_devices_org_idx').on(t.orgId),
+    index('sync_devices_token_hash_idx').on(t.tokenHash),
+    index('sync_devices_status_idx').on(t.status),
+  ],
+)
+
+export const syncObjectChanges = sqliteTable(
+  'sync_object_changes',
+  {
+    sequence: integer('sequence').primaryKey({ autoIncrement: true }),
+    orgId: text('org_id').notNull(),
+    objectId: text('object_id').notNull(),
+    parent: text('parent').notNull().default(''),
+    name: text('name').notNull().default(''),
+    action: text('action').notNull(),
+    changeType: text('change_type').notNull(),
+    actorDeviceId: text('actor_device_id'),
+    metadata: text('metadata'),
+    occurredAt: integer('occurred_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    index('sync_object_changes_org_sequence_idx').on(t.orgId, t.sequence),
+    index('sync_object_changes_object_idx').on(t.objectId),
+    index('sync_object_changes_occurred_idx').on(t.occurredAt),
+  ],
+)
+
 export const statsRollupsHourly = sqliteTable(
   'stats_rollups_hourly',
   {
