@@ -689,6 +689,29 @@ export const outboundWebhookDeliveries = sqliteTable(
   ],
 )
 
+/** Dedicated Subsonic/OpenSubsonic app credentials (never the ZPan account password). */
+export const musicAppCredentials = sqliteTable(
+  'music_app_credentials',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull(),
+    orgId: text('org_id').notNull(),
+    username: text('username').notNull(),
+    // Stored so legacy Subsonic t+s auth can be verified. Treat as a secret.
+    token: text('token').notNull(),
+    label: text('label').notNull().default(''),
+    status: text('status').notNull().default('active'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+    lastUsedAt: integer('last_used_at', { mode: 'timestamp_ms' }),
+  },
+  (t) => [
+    uniqueIndex('music_app_credentials_username_uniq').on(t.username),
+    index('music_app_credentials_user_idx').on(t.userId),
+    index('music_app_credentials_status_idx').on(t.status),
+  ],
+)
+
 export const auditEvents = sqliteTable(
   'audit_events',
   {
