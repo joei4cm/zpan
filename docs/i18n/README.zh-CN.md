@@ -109,6 +109,7 @@ ZPan 并不打算成为：
 2. 在你的 fork 中，进入 **Settings → Secrets and variables → Actions** 并添加：
    - `CLOUDFLARE_ACCOUNT_ID` — 可在 [Cloudflare 控制台](https://dash.cloudflare.com/) 侧边栏找到
    - `CLOUDFLARE_API_TOKEN` — 在[这里](https://dash.cloudflare.com/profile/api-tokens)创建一个，并赋予 **Workers Scripts:Edit**、**D1:Edit** 和 **R2 Storage:Edit** 权限（R2 权限用于自动创建头像/Logo 存储桶）
+   - 可选本地商店：`STRIPE_SECRET_KEY` 与 `STRIPE_WEBHOOK_SECRET` — 部署工作流会同步到 Worker secrets。Stripe webhook 指向 `https://<你的 Worker>/api/store/webhook`。
 3. 进入 **Actions** 标签页，选择 **Deploy to Cloudflare Workers**，然后点击 **Run workflow**
 
 完成初始设置后，每次你将 fork 与最新版本同步时，该工作流都会自动运行。
