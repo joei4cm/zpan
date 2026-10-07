@@ -51,6 +51,7 @@ import {
 import { StorageQuotaExceededError, withStorageUsageReservation } from './storage-usage'
 import { confirmDownloadTraffic, meterDownloadTraffic, reverseDownloadTraffic } from './store/traffic-metering'
 import { createTrafficEventId } from './transfer-activity'
+import { resolveUploadStorage } from './upload-placement'
 
 export { ObjectUploadSessionError } from './ports'
 
@@ -172,7 +173,18 @@ export type CreateObjectOutcome =
   | { ok: false; error: AppError }
 
 export async function createObject(
-  deps: Pick<Deps, 'matter' | 'storages' | 's3' | 'objectUploadSessions' | 'downloaders' | 'downloadTasks' | 'quota'>,
+  deps: Pick<
+    Deps,
+    | 'matter'
+    | 'storages'
+    | 's3'
+    | 'objectUploadSessions'
+    | 'downloaders'
+    | 'downloadTasks'
+    | 'quota'
+    | 'uploadPolicies'
+    | 'org'
+  >,
   params: { orgId: string; actor: ObjectActor; input: CreateMatterInput },
 ): Promise<CreateObjectOutcome> {
   const { orgId, actor, input } = params
@@ -208,7 +220,33 @@ export async function createObject(
 
   let storage: StorageRecord
   try {
-    storage = await deps.storages.select(input.storageId)
+    const extension = fileExt(name).replace(/^\./, '').toLowerCase()
+    const mime = input.type?.toLowerCase() ?? ''
+    const category = mime.startsWith('image/')
+      ? 'image'
+      : mime.startsWith('video/')
+        ? 'video'
+        : mime.startsWith('audio/')
+          ? 'audio'
+          : ['zip', 'rar', '7z', 'tar', 'gz'].includes(extension)
+            ? 'archive'
+            : mime.includes('pdf') || ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'md'].includes(extension)
+              ? 'document'
+              : 'other'
+    const spaceType = (await deps.org.isPersonalOrg(orgId)) ? 'personal' : 'team'
+    const uploadSource = actor.kind === 'download-task-upload' ? 'download-task' : 'web'
+    storage = await resolveUploadStorage(deps, {
+      storageId: input.storageId,
+      bytesNeeded: isFolder ? 0 : size,
+      labels: {
+        'space.id': orgId,
+        'space.type': spaceType,
+        'file.category': category,
+        'file.mime': mime,
+        'file.extension': extension,
+        'upload.source': uploadSource,
+      },
+    })
   } catch (error) {
     if (error instanceof Error && error.message === 'No available storage') {
       return {
