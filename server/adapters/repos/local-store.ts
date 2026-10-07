@@ -10,6 +10,7 @@ import {
 } from '../../db/schema'
 import type { Database } from '../../platform/interface'
 import type {
+  LocalEntitlementGrant,
   LocalStoreRepo,
   StoreBillingInterval,
   StoreGiftCard,
@@ -21,6 +22,7 @@ function toProduct(row: typeof storeProducts.$inferSelect): StoreProduct {
   return {
     ...row,
     kind: 'plan',
+    trafficBytes: row.trafficBytes ?? 0,
     interval: (row.interval as StoreBillingInterval | null) ?? null,
   }
 }
@@ -28,6 +30,7 @@ function toProduct(row: typeof storeProducts.$inferSelect): StoreProduct {
 function toGiftCard(row: typeof storeGiftCards.$inferSelect): StoreGiftCard {
   return {
     ...row,
+    trafficBytes: row.trafficBytes ?? 0,
     status: row.status as StoreGiftCard['status'],
   }
 }
@@ -35,9 +38,60 @@ function toGiftCard(row: typeof storeGiftCards.$inferSelect): StoreGiftCard {
 function toOrder(row: typeof storeOrders.$inferSelect): StoreOrder {
   return {
     ...row,
+    trafficBytes: row.trafficBytes ?? 0,
     interval: (row.interval as StoreBillingInterval | null) ?? null,
     status: row.status as StoreOrder['status'],
   }
+}
+
+async function upsertEntitlement(
+  db: Database,
+  resourceType: 'storage' | 'traffic',
+  input: LocalEntitlementGrant,
+): Promise<void> {
+  if (input.bytes <= 0) return
+  const now = new Date()
+  const existing = await db
+    .select({ id: orgQuotaEntitlements.id })
+    .from(orgQuotaEntitlements)
+    .where(
+      and(
+        eq(orgQuotaEntitlements.source, input.source),
+        eq(orgQuotaEntitlements.sourceId, input.sourceId),
+        eq(orgQuotaEntitlements.resourceType, resourceType),
+      ),
+    )
+    .limit(1)
+  const metadata = JSON.stringify({ packageName: input.packageName, source: input.source })
+  if (existing[0]) {
+    await db
+      .update(orgQuotaEntitlements)
+      .set({
+        bytes: input.bytes,
+        entitlementType: input.entitlementType,
+        status: 'active',
+        expiresAt: input.expiresAt ?? null,
+        metadata,
+        updatedAt: now,
+      })
+      .where(eq(orgQuotaEntitlements.id, existing[0].id))
+    return
+  }
+  await db.insert(orgQuotaEntitlements).values({
+    id: generateId(),
+    orgId: input.orgId,
+    resourceType,
+    entitlementType: input.entitlementType,
+    source: input.source,
+    sourceId: input.sourceId,
+    bytes: input.bytes,
+    startsAt: now,
+    expiresAt: input.expiresAt ?? null,
+    status: 'active',
+    metadata,
+    createdAt: now,
+    updatedAt: now,
+  })
 }
 
 export function createLocalStoreRepo(db: Database): LocalStoreRepo {
@@ -60,6 +114,7 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
           description: input.description,
           kind: 'plan',
           storageBytes: input.storageBytes,
+          trafficBytes: input.trafficBytes,
           amountCents: input.amountCents,
           currency: input.currency,
           interval: input.interval,
@@ -94,6 +149,7 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
             codeHash: code.codeHash,
             codeLast4: code.codeLast4,
             storageBytes: input.storageBytes,
+            trafficBytes: input.trafficBytes,
             status: 'active',
             expiresAt: input.expiresAt,
             note: input.note,
@@ -202,60 +258,17 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
     },
 
     async grantStorage(input) {
-      const now = new Date()
-      const existing = await db
-        .select({ id: orgQuotaEntitlements.id })
-        .from(orgQuotaEntitlements)
-        .where(
-          and(
-            eq(orgQuotaEntitlements.source, input.source),
-            eq(orgQuotaEntitlements.sourceId, input.sourceId),
-            eq(orgQuotaEntitlements.resourceType, 'storage'),
-          ),
-        )
-        .limit(1)
-      const metadata = JSON.stringify({ packageName: input.packageName, source: input.source })
-      if (existing[0]) {
-        await db
-          .update(orgQuotaEntitlements)
-          .set({
-            bytes: input.bytes,
-            entitlementType: input.entitlementType,
-            status: 'active',
-            expiresAt: input.expiresAt ?? null,
-            metadata,
-            updatedAt: now,
-          })
-          .where(eq(orgQuotaEntitlements.id, existing[0].id))
-        return
-      }
-      await db.insert(orgQuotaEntitlements).values({
-        id: generateId(),
-        orgId: input.orgId,
-        resourceType: 'storage',
-        entitlementType: input.entitlementType,
-        source: input.source,
-        sourceId: input.sourceId,
-        bytes: input.bytes,
-        startsAt: now,
-        expiresAt: input.expiresAt ?? null,
-        status: 'active',
-        metadata,
-        createdAt: now,
-        updatedAt: now,
-      })
+      await upsertEntitlement(db, 'storage', input)
+    },
+    async grantTraffic(input) {
+      await upsertEntitlement(db, 'traffic', input)
     },
     async revokeStorage(source, sourceId) {
+      // Revoke every resource granted under this source (storage + traffic).
       await db
         .update(orgQuotaEntitlements)
         .set({ status: 'revoked', updatedAt: new Date() })
-        .where(
-          and(
-            eq(orgQuotaEntitlements.source, source),
-            eq(orgQuotaEntitlements.sourceId, sourceId),
-            eq(orgQuotaEntitlements.resourceType, 'storage'),
-          ),
-        )
+        .where(and(eq(orgQuotaEntitlements.source, source), eq(orgQuotaEntitlements.sourceId, sourceId)))
     },
 
     async beginStripeWebhookEvent(input) {

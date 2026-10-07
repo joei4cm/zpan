@@ -395,6 +395,11 @@
   "admin.store.noGiftCards": "还没有礼品卡。",
   "admin.store.colName": "名称",
   "admin.store.colStorage": "容量",
+  "admin.store.colTraffic": "流量",
+  "admin.store.fieldTraffic": "每月流量",
+  "admin.store.quotaRequired": "请填写大于 0 的存储和/或流量",
+  "admin.store.storageOrTrafficHelp": "可只填存储、只填流量，或两者都填。填 0 表示不包含该资源。",
+
   "admin.store.colPrice": "价格",
   "admin.store.colInterval": "计费",
   "admin.store.colStatus": "状态",

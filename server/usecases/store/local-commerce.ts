@@ -39,7 +39,12 @@ function toStoreProductDto(product: StoreProduct) {
     name: product.name,
     description: product.description,
     metadata: {
-      deliverable: { type: 'zpan.plan' as const, storageBytes: product.storageBytes, includedCredits: 0 },
+      deliverable: {
+        type: 'zpan.plan' as const,
+        storageBytes: product.storageBytes,
+        trafficBytes: product.trafficBytes,
+        includedCredits: 0,
+      },
     },
     prices: [
       {
@@ -108,6 +113,40 @@ function missingStripeSecret(): AppError {
   return new AppError(503, 'Stripe is not configured', { reason: 'STRIPE_NOT_CONFIGURED' })
 }
 
+async function grantOrderEntitlements(
+  deps: LocalCommerceDeps,
+  input: {
+    orgId: string
+    storageBytes: number
+    trafficBytes: number
+    entitlementType: 'plan' | 'grant'
+    source: string
+    sourceId: string
+    packageName: string
+  },
+): Promise<void> {
+  if (input.storageBytes > 0) {
+    await deps.localStore.grantStorage({
+      orgId: input.orgId,
+      bytes: input.storageBytes,
+      entitlementType: input.entitlementType,
+      source: input.source,
+      sourceId: input.sourceId,
+      packageName: input.packageName,
+    })
+  }
+  if (input.trafficBytes > 0) {
+    await deps.localStore.grantTraffic({
+      orgId: input.orgId,
+      bytes: input.trafficBytes,
+      entitlementType: input.entitlementType,
+      source: input.source,
+      sourceId: input.sourceId,
+      packageName: input.packageName,
+    })
+  }
+}
+
 async function openStripeCheckout(
   deps: LocalCommerceDeps,
   params: {
@@ -139,6 +178,7 @@ async function openStripeCheckout(
     orderId: order.id,
     productId: order.productId,
     storageBytes: String(order.storageBytes),
+    trafficBytes: String(order.trafficBytes),
   }
   try {
     const session = await deps.stripe.createCheckoutSession(params.secretKey, {
@@ -208,12 +248,16 @@ export async function createLocalCheckout(
     }
   }
   if (!params.stripe.secretKey) return { ok: false, error: missingStripeSecret() }
+  if (product.storageBytes <= 0 && product.trafficBytes <= 0) {
+    return { ok: false, error: badRequest('Package has no deliverable quota', 'PACKAGE_EMPTY') }
+  }
   const order = await deps.localStore.createOrder({
     orgId: params.orgId,
     userId: params.userId,
     productId: product.id,
     productName: product.name,
     storageBytes: product.storageBytes,
+    trafficBytes: product.trafficBytes,
     amountCents: product.amountCents,
     currency: product.currency,
     interval: product.interval,
@@ -326,9 +370,10 @@ export async function redeemLocalGiftCard(
       },
     }
   }
-  await deps.localStore.grantStorage({
+  await grantOrderEntitlements(deps, {
     orgId: params.orgId,
-    bytes: card.storageBytes,
+    storageBytes: card.storageBytes,
+    trafficBytes: card.trafficBytes,
     entitlementType: 'grant',
     source: 'gift_card',
     sourceId: `gift_card:${card.id}`,
@@ -339,6 +384,7 @@ export async function redeemLocalGiftCard(
     value: {
       redeemedCredits: 0,
       redeemedStorageBytes: card.storageBytes,
+      redeemedTrafficBytes: card.trafficBytes,
       entries: [],
       failures: [],
     },
@@ -408,9 +454,10 @@ export async function processStripeWebhook(
         stripeCustomerId: typeof session.customer === 'string' ? session.customer : order.stripeCustomerId,
       })
       const sourceId = subscriptionId ? `stripe_subscription:${subscriptionId}:${order.orgId}` : `stripe:${order.id}`
-      await deps.localStore.grantStorage({
+      await grantOrderEntitlements(deps, {
         orgId: order.orgId,
-        bytes: order.storageBytes,
+        storageBytes: order.storageBytes,
+        trafficBytes: order.trafficBytes,
         entitlementType: subscriptionId ? 'plan' : 'grant',
         source: 'stripe',
         sourceId,
@@ -443,9 +490,10 @@ export async function processStripeWebhook(
       } else if (status === 'active' || status === 'trialing') {
         // Re-grant after recovery from past_due / incomplete so temporary delinquency is not permanent.
         await deps.localStore.updateOrder(order.id, { status: 'paid', stripeSubscriptionId: subscriptionId })
-        await deps.localStore.grantStorage({
+        await grantOrderEntitlements(deps, {
           orgId: order.orgId,
-          bytes: order.storageBytes,
+          storageBytes: order.storageBytes,
+          trafficBytes: order.trafficBytes,
           entitlementType: 'plan',
           source: 'stripe',
           sourceId,
@@ -473,16 +521,23 @@ export async function createAdminStoreProduct(
     name: string
     description?: string
     storageBytes: number
+    trafficBytes?: number
     amountCents: number
     currency?: string
     interval?: 'month' | 'year' | null
     active?: boolean
   },
 ) {
+  const storageBytes = input.storageBytes
+  const trafficBytes = input.trafficBytes ?? 0
+  if (storageBytes <= 0 && trafficBytes <= 0) {
+    throw badRequest('At least one of storage or traffic must be greater than zero', 'PACKAGE_EMPTY')
+  }
   return deps.localStore.createProduct({
     name: input.name,
     description: input.description ?? '',
-    storageBytes: input.storageBytes,
+    storageBytes,
+    trafficBytes,
     amountCents: input.amountCents,
     currency: input.currency ?? 'usd',
     interval: input.interval ?? null,
@@ -498,6 +553,7 @@ export async function updateAdminStoreProduct(
     name: string
     description: string
     storageBytes: number
+    trafficBytes: number
     amountCents: number
     interval: 'month' | 'year' | null
     active: boolean
@@ -519,8 +575,20 @@ export async function listAdminGiftCards(deps: LocalCommerceDeps) {
 
 export async function createAdminGiftCards(
   deps: LocalCommerceDeps,
-  input: { storageBytes: number; count: number; expiresAt?: string | null; note?: string | null; createdBy: string },
+  input: {
+    storageBytes: number
+    trafficBytes?: number
+    count: number
+    expiresAt?: string | null
+    note?: string | null
+    createdBy: string
+  },
 ) {
+  const storageBytes = input.storageBytes
+  const trafficBytes = input.trafficBytes ?? 0
+  if (storageBytes <= 0 && trafficBytes <= 0) {
+    throw badRequest('At least one of storage or traffic must be greater than zero', 'PACKAGE_EMPTY')
+  }
   const count = Math.min(Math.max(input.count, 1), 100)
   const codes = Array.from({ length: count }, () => randomGiftCode())
   const hashed = await Promise.all(
@@ -531,7 +599,8 @@ export async function createAdminGiftCards(
     })),
   )
   const cards = await deps.localStore.createGiftCards({
-    storageBytes: input.storageBytes,
+    storageBytes,
+    trafficBytes,
     count,
     expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
     note: input.note ?? null,

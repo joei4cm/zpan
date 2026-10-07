@@ -11,6 +11,7 @@ function product(overrides: Partial<StoreProduct> = {}): StoreProduct {
     description: '',
     kind: 'plan',
     storageBytes: 10 * 1024 ** 3,
+    trafficBytes: 0,
     amountCents: 999,
     currency: 'usd',
     interval: 'month',
@@ -31,6 +32,7 @@ function order(overrides: Partial<StoreOrder> = {}): StoreOrder {
     productId: 'pkg-1',
     productName: 'Pro',
     storageBytes: 10 * 1024 ** 3,
+    trafficBytes: 0,
     amountCents: 999,
     currency: 'usd',
     interval: 'month',
@@ -48,7 +50,7 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
   const products = options.products ?? [product()]
   const orders = options.orders ?? []
   const giftCards = options.giftCards ?? []
-  const grants: Array<{ orgId: string; bytes: number; source: string; sourceId: string }> = []
+  const grants: Array<{ orgId: string; bytes: number; source: string; sourceId: string; resource: string }> = []
   const revokes: Array<{ source: string; sourceId: string }> = []
   const webhookEvents = new Map<string, { id: string; status: string; payloadHash: string }>()
   const localStore: LocalStoreRepo = {
@@ -88,7 +90,22 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     getCustomer: async () => ({ orgId: 'org-1', stripeCustomerId: 'cus_1' }),
     upsertCustomer: async () => undefined,
     grantStorage: async (input) => {
-      grants.push({ orgId: input.orgId, bytes: input.bytes, source: input.source, sourceId: input.sourceId })
+      grants.push({
+        orgId: input.orgId,
+        bytes: input.bytes,
+        source: input.source,
+        sourceId: input.sourceId,
+        resource: 'storage',
+      })
+    },
+    grantTraffic: async (input) => {
+      grants.push({
+        orgId: input.orgId,
+        bytes: input.bytes,
+        source: input.source,
+        sourceId: input.sourceId,
+        resource: 'traffic',
+      })
     },
     revokeStorage: async (source, sourceId) => {
       revokes.push({ source, sourceId })
@@ -168,6 +185,7 @@ describe('local commerce', () => {
           codeHash,
           codeLast4: 'EFGH',
           storageBytes: 5 * 1024 ** 3,
+          trafficBytes: 0,
           status: 'active',
           expiresAt: null,
           redeemedOrgId: null,
@@ -183,7 +201,47 @@ describe('local commerce', () => {
     expect(result.ok).toBe(true)
     if (!result.ok) return
     expect(result.value).toMatchObject({ redeemedStorageBytes: 5 * 1024 ** 3, failures: [] })
-    expect(grants).toEqual([{ orgId: 'org-1', bytes: 5 * 1024 ** 3, source: 'gift_card', sourceId: 'gift_card:gc-1' }])
+    expect(grants).toEqual([
+      {
+        orgId: 'org-1',
+        bytes: 5 * 1024 ** 3,
+        source: 'gift_card',
+        sourceId: 'gift_card:gc-1',
+        resource: 'storage',
+      },
+    ])
+  })
+
+  it('grants traffic when Stripe checkout completes for a traffic package', async () => {
+    const pending = order({ storageBytes: 0, trafficBytes: 100 * 1024 ** 3 })
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_traffic',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_traffic' })
+    expect(grants).toEqual([
+      {
+        orgId: 'org-1',
+        bytes: 100 * 1024 ** 3,
+        source: 'stripe',
+        sourceId: 'stripe:ord-1',
+        resource: 'traffic',
+      },
+    ])
   })
 
   it('grants storage when Stripe checkout completes [spec: local-commerce/stripe-webhook-grants-storage]', async () => {
@@ -379,6 +437,7 @@ describe('local commerce', () => {
         bytes: paid.storageBytes,
         source: 'stripe',
         sourceId: 'stripe_subscription:sub_1:org-1',
+        resource: 'storage',
       },
     ])
   })

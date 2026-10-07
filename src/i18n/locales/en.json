@@ -395,6 +395,11 @@
   "admin.store.noGiftCards": "No gift cards yet.",
   "admin.store.colName": "Name",
   "admin.store.colStorage": "Storage",
+  "admin.store.colTraffic": "Traffic",
+  "admin.store.fieldTraffic": "Monthly traffic",
+  "admin.store.quotaRequired": "Enter storage and/or traffic greater than zero",
+  "admin.store.storageOrTrafficHelp": "Set storage, traffic, or both. Zero means that resource is not included.",
+
   "admin.store.colPrice": "Price",
   "admin.store.colInterval": "Billing",
   "admin.store.colStatus": "Status",
