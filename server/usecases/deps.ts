@@ -33,6 +33,7 @@ import type {
   MatterRepo,
   MediaLibraryRepo,
   MemberCountRepo,
+  MusicAppCredentialRepo,
   NotificationRepo,
   OAuthGateway,
   ObjectUploadSessionRepo,
@@ -96,6 +97,7 @@ export interface Deps {
   matter: MatterRepo
   mediaLibraries: MediaLibraryRepo
   memberCount: MemberCountRepo
+  musicCredentials: MusicAppCredentialRepo
   notifications: NotificationRepo
   objectUploadSessions: ObjectUploadSessionRepo
   org: OrgRepo

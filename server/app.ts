@@ -24,6 +24,7 @@ import ihostConfig from './http/image-hosting/config'
 import ihost from './http/image-hosting/images'
 import internal from './http/internal'
 import { mediaLibraries } from './http/media-libraries'
+import { musicCredentialsApi } from './http/music-credentials'
 import { notifications } from './http/notifications'
 import { oauthAuthorizationDetails } from './http/oauth-authorization-details'
 import { oauthGrants } from './http/oauth-grants'
@@ -31,6 +32,7 @@ import objects from './http/objects'
 import { addRequestIdOpenApi } from './http/openapi'
 import { adminQuotas, userQuotas } from './http/quotas'
 import redirect from './http/redirect'
+import { subsonicRest } from './http/rest/subsonic'
 import { authedShares, publicShares } from './http/shares'
 import { announcements } from './http/site/announcements'
 import { adminAudit } from './http/site/audit'
@@ -139,6 +141,8 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.use('/api/*', accessLog)
   app.use('/dav', accessLog)
   app.use('/dav/*', accessLog)
+  app.use('/rest', accessLog)
+  app.use('/rest/*', accessLog)
 
   app.use(
     '/api/*',
@@ -315,6 +319,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.get('/api/docs', Scalar({ url: '/api/openapi.json', title: 'ZPan API' }))
 
   app.route('/dav', webdav)
+  app.route('/rest', subsonicRest)
 
   // Resolve the caller's principal for API routes that can use it. Public,
   // identity-independent health/config responses skip session resolution so
@@ -359,6 +364,7 @@ export function createApp(platform: Platform, auth: Auth, deps: Deps = createDep
   app.route('/api/site/announcements', announcements)
   app.route('/api/site/outbound-webhooks', outboundWebhooks)
   app.route('/api/sync', syncApi)
+  app.route('/api/music/credentials', musicCredentialsApi)
   app.route('/api/site/licensing', licensing)
 
   // Mount routes separately to avoid deep type chain accumulation.

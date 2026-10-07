@@ -38,6 +38,7 @@ import { createLocalStoreRepo } from './adapters/repos/local-store'
 import { createMatterRepo } from './adapters/repos/matter'
 import { createMediaLibraryRepo } from './adapters/repos/media-library'
 import { createMemberCountRepo } from './adapters/repos/member-count'
+import { createMusicAppCredentialRepo } from './adapters/repos/music-credentials'
 import { createNotificationRepo } from './adapters/repos/notification'
 import { createOAuthGateway } from './adapters/repos/oauth'
 import { createObjectUploadSessionRepo } from './adapters/repos/object-upload-session'
@@ -121,6 +122,7 @@ export function createDeps(platform: Platform, options: CreateDepsOptions = {}):
     matter: createMatterRepo(db),
     mediaLibraries: createMediaLibraryRepo(db),
     memberCount: createMemberCountRepo(db),
+    musicCredentials: createMusicAppCredentialRepo(db),
     notifications: createNotificationRepo(db),
     objectUploadSessions: createObjectUploadSessionRepo(db),
     org: createOrgRepo(db),
