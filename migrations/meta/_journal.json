@@ -663,8 +663,36 @@
     {
       "idx": 95,
       "version": "6",
-      "when": 1791386146414,
-      "tag": "0095_sync-devices-cursor",
+      "when": 1791384425516,
+      "tag": "0095_upload-policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "6",
+      "when": 1791392851377,
+      "tag": "0096_local-store-traffic-bytes",
+      "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "6",
+      "when": 1791392955934,
+      "tag": "0097_local-store-credits",
+      "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "6",
+      "when": 1791393301316,
+      "tag": "0098_outbound-webhooks",
+      "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "6",
+      "when": 1791393807179,
+      "tag": "0099_sync-devices-cursor",
       "breakpoints": true
     }
   ]
