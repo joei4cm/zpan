@@ -42,13 +42,13 @@ import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsPasswordRouteImport } from './routes/_authenticated/settings/password'
 import { Route as AuthenticatedSettingsOauthAppsRouteImport } from './routes/_authenticated/settings/oauth-apps'
 import { Route as AuthenticatedSettingsApiKeysRouteImport } from './routes/_authenticated/settings/api-keys'
-import { Route as AuthenticatedAdminLicensingRouteImport } from './routes/_authenticated/admin/licensing'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin/webhooks'
 import { Route as AuthenticatedAdminStoreRouteImport } from './routes/_authenticated/admin/store'
+import { Route as AuthenticatedAdminLicensingRouteImport } from './routes/_authenticated/admin/licensing'
 import { Route as AuthenticatedAdminDownloadersRouteImport } from './routes/_authenticated/admin/downloaders'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 import { Route as AuthenticatedAdminAnnouncementRouteImport } from './routes/_authenticated/admin/announcement'
-import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin/webhooks'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin/analytics'
 import { Route as AuthenticatedAdminAboutRouteImport } from './routes/_authenticated/admin/about'
 import { Route as AuthenticatedTeamsTeamIdRouteRouteImport } from './routes/_authenticated/teams/$teamId/route'
@@ -243,10 +243,10 @@ const AuthenticatedSettingsApiKeysRoute =
     path: '/api-keys',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedAdminLicensingRoute =
-  AuthenticatedAdminLicensingRouteImport.update({
-    id: '/licensing',
-    path: '/licensing',
+const AuthenticatedAdminWebhooksRoute =
+  AuthenticatedAdminWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminStoreRoute = AuthenticatedAdminStoreRouteImport.update({
@@ -254,6 +254,12 @@ const AuthenticatedAdminStoreRoute = AuthenticatedAdminStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminLicensingRoute =
+  AuthenticatedAdminLicensingRouteImport.update({
+    id: '/licensing',
+    path: '/licensing',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminDownloadersRoute =
   AuthenticatedAdminDownloadersRouteImport.update({
     id: '/downloaders',
@@ -275,12 +281,6 @@ const AuthenticatedAdminAnnouncementRoute =
   AuthenticatedAdminAnnouncementRouteImport.update({
     id: '/announcement',
     path: '/announcement',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminWebhooksRoute =
-  AuthenticatedAdminWebhooksRouteImport.update({
-    id: '/webhooks',
-    path: '/webhooks',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminAnalyticsRoute =
@@ -406,12 +406,12 @@ export interface FileRoutesByFullPath {
   '/admin/about': typeof AuthenticatedAdminAboutRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/announcement': typeof AuthenticatedAdminAnnouncementRoute
-  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
   '/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -461,12 +461,12 @@ export interface FileRoutesByTo {
   '/admin/about': typeof AuthenticatedAdminAboutRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/announcement': typeof AuthenticatedAdminAnnouncementRoute
-  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
   '/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -521,12 +521,12 @@ export interface FileRoutesById {
   '/_authenticated/admin/about': typeof AuthenticatedAdminAboutRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/announcement': typeof AuthenticatedAdminAnnouncementRoute
-  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/_authenticated/admin/licensing': typeof AuthenticatedAdminLicensingRoute
   '/_authenticated/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/_authenticated/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/_authenticated/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -581,12 +581,12 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/analytics'
     | '/admin/announcement'
-    | '/admin/webhooks'
     | '/admin/audit'
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
     | '/admin/store'
+    | '/admin/webhooks'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -636,12 +636,12 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/analytics'
     | '/admin/announcement'
-    | '/admin/webhooks'
     | '/admin/audit'
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
     | '/admin/store'
+    | '/admin/webhooks'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -695,12 +695,12 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/about'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/announcement'
-    | '/_authenticated/admin/webhooks'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/downloaders'
     | '/_authenticated/admin/licensing'
     | '/_authenticated/admin/store'
+    | '/_authenticated/admin/webhooks'
     | '/_authenticated/settings/api-keys'
     | '/_authenticated/settings/oauth-apps'
     | '/_authenticated/settings/password'
@@ -979,11 +979,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsApiKeysRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/admin/licensing': {
-      id: '/_authenticated/admin/licensing'
-      path: '/licensing'
-      fullPath: '/admin/licensing'
-      preLoaderRoute: typeof AuthenticatedAdminLicensingRouteImport
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/store': {
@@ -991,6 +991,13 @@ declare module '@tanstack/react-router' {
       path: '/store'
       fullPath: '/admin/store'
       preLoaderRoute: typeof AuthenticatedAdminStoreRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/licensing': {
+      id: '/_authenticated/admin/licensing'
+      path: '/licensing'
+      fullPath: '/admin/licensing'
+      preLoaderRoute: typeof AuthenticatedAdminLicensingRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/downloaders': {
@@ -1019,13 +1026,6 @@ declare module '@tanstack/react-router' {
       path: '/announcement'
       fullPath: '/admin/announcement'
       preLoaderRoute: typeof AuthenticatedAdminAnnouncementRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/webhooks': {
-      id: '/_authenticated/admin/webhooks'
-      path: '/webhooks'
-      fullPath: '/admin/webhooks'
-      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/analytics': {
@@ -1154,12 +1154,12 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAboutRoute: typeof AuthenticatedAdminAboutRoute
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminAnnouncementRoute: typeof AuthenticatedAdminAnnouncementRoute
-  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminDownloadersRoute: typeof AuthenticatedAdminDownloadersRoute
   AuthenticatedAdminLicensingRoute: typeof AuthenticatedAdminLicensingRoute
   AuthenticatedAdminStoreRoute: typeof AuthenticatedAdminStoreRoute
+  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminSettingsEmailRoute: typeof AuthenticatedAdminSettingsEmailRoute
   AuthenticatedAdminSettingsOauthRoute: typeof AuthenticatedAdminSettingsOauthRoute
@@ -1176,12 +1176,12 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminAboutRoute: AuthenticatedAdminAboutRoute,
     AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
     AuthenticatedAdminAnnouncementRoute: AuthenticatedAdminAnnouncementRoute,
-    AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
     AuthenticatedAdminDownloadersRoute: AuthenticatedAdminDownloadersRoute,
     AuthenticatedAdminLicensingRoute: AuthenticatedAdminLicensingRoute,
     AuthenticatedAdminStoreRoute: AuthenticatedAdminStoreRoute,
+    AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminSettingsEmailRoute: AuthenticatedAdminSettingsEmailRoute,
     AuthenticatedAdminSettingsOauthRoute: AuthenticatedAdminSettingsOauthRoute,
