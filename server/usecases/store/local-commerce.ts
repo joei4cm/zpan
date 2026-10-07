@@ -429,8 +429,28 @@ export async function processStripeWebhook(
       }
       const sourceId = `stripe_subscription:${subscriptionId}:${order.orgId}`
       const status = String(subscription.status ?? '')
-      if (event.type === 'customer.subscription.deleted' || status === 'canceled' || status === 'unpaid') {
+      const shouldRevoke =
+        event.type === 'customer.subscription.deleted' ||
+        status === 'canceled' ||
+        status === 'unpaid' ||
+        status === 'past_due' ||
+        status === 'incomplete_expired'
+      if (shouldRevoke) {
         await deps.localStore.revokeStorage('stripe', sourceId)
+        if (status === 'canceled' || event.type === 'customer.subscription.deleted') {
+          await deps.localStore.updateOrder(order.id, { status: 'canceled' })
+        }
+      } else if (status === 'active' || status === 'trialing') {
+        // Re-grant after recovery from past_due / incomplete so temporary delinquency is not permanent.
+        await deps.localStore.updateOrder(order.id, { status: 'paid', stripeSubscriptionId: subscriptionId })
+        await deps.localStore.grantStorage({
+          orgId: order.orgId,
+          bytes: order.storageBytes,
+          entitlementType: 'plan',
+          source: 'stripe',
+          sourceId,
+          packageName: order.productName,
+        })
       }
       await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
       return { ok: true, duplicate: false, eventId: event.id }
