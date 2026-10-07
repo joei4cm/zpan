@@ -1959,13 +1959,13 @@ func (e LocalStoreProductInterval) Valid() bool {
 
 // Defines values for LocalStoreProductKind.
 const (
-	Plan LocalStoreProductKind = "plan"
+	LocalStoreProductKindPlan LocalStoreProductKind = "plan"
 )
 
 // Valid indicates whether the value is a known member of the LocalStoreProductKind enum.
 func (e LocalStoreProductKind) Valid() bool {
 	switch e {
-	case Plan:
+	case LocalStoreProductKindPlan:
 		return true
 	default:
 		return false
@@ -4269,16 +4269,16 @@ func (e RestoreObjectJSONBodyOnConflict) Valid() bool {
 
 // Defines values for GrantUserEntitlementJSONBodyKind.
 const (
-	GrantUserEntitlementJSONBodyKindGrant GrantUserEntitlementJSONBodyKind = "grant"
-	GrantUserEntitlementJSONBodyKindPlan  GrantUserEntitlementJSONBodyKind = "plan"
+	Grant GrantUserEntitlementJSONBodyKind = "grant"
+	Plan  GrantUserEntitlementJSONBodyKind = "plan"
 )
 
 // Valid indicates whether the value is a known member of the GrantUserEntitlementJSONBodyKind enum.
 func (e GrantUserEntitlementJSONBodyKind) Valid() bool {
 	switch e {
-	case GrantUserEntitlementJSONBodyKindGrant:
+	case Grant:
 		return true
-	case GrantUserEntitlementJSONBodyKindPlan:
+	case Plan:
 		return true
 	default:
 		return false
