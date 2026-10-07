@@ -49,6 +49,7 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
   const orders = options.orders ?? []
   const giftCards = options.giftCards ?? []
   const grants: Array<{ orgId: string; bytes: number; source: string; sourceId: string }> = []
+  const revokes: Array<{ source: string; sourceId: string }> = []
   const webhookEvents = new Map<string, { id: string; status: string; payloadHash: string }>()
   const localStore: LocalStoreRepo = {
     listProducts: async ({ activeOnly } = {}) => products.filter((item) => (activeOnly ? item.active : true)),
@@ -89,7 +90,9 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     grantStorage: async (input) => {
       grants.push({ orgId: input.orgId, bytes: input.bytes, source: input.source, sourceId: input.sourceId })
     },
-    revokeStorage: async () => undefined,
+    revokeStorage: async (source, sourceId) => {
+      revokes.push({ source, sourceId })
+    },
     beginStripeWebhookEvent: async (input) => {
       const existing = webhookEvents.get(input.eventId)
       if (!existing) {
@@ -120,7 +123,7 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     expireCheckoutSession: vi.fn(),
     verifySignature: vi.fn(async () => true),
   } as unknown as StripeGateway
-  return { deps: { localStore, quota, stripe }, grants, orders, stripe, webhookEvents }
+  return { deps: { localStore, quota, stripe }, grants, revokes, orders, stripe, webhookEvents }
 }
 
 describe('local commerce', () => {
@@ -314,6 +317,70 @@ describe('local commerce', () => {
     })
     expect(third).toEqual({ ok: true, duplicate: true, eventId: 'evt_retry' })
     expect(grants).toHaveLength(1)
+  })
+
+  it('revokes storage when subscription becomes past_due', async () => {
+    const paid = order({
+      status: 'paid',
+      stripeSubscriptionId: 'sub_1',
+    })
+    const { deps, revokes } = makeStore({ orders: [paid] })
+    const payload = JSON.stringify({
+      id: 'evt_past_due',
+      type: 'customer.subscription.updated',
+      data: {
+        object: {
+          id: 'sub_1',
+          status: 'past_due',
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_past_due' })
+    expect(revokes).toEqual([{ source: 'stripe', sourceId: 'stripe_subscription:sub_1:org-1' }])
+    expect(paid.status).toBe('paid')
+  })
+
+  it('re-grants storage when a past_due subscription becomes active again', async () => {
+    const paid = order({
+      status: 'paid',
+      stripeSubscriptionId: 'sub_1',
+    })
+    const { deps, grants, revokes } = makeStore({ orders: [paid] })
+    const pastDue = JSON.stringify({
+      id: 'evt_past_due_2',
+      type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'past_due' } },
+    })
+    const active = JSON.stringify({
+      id: 'evt_active_again',
+      type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'active' } },
+    })
+    await processStripeWebhook(deps, {
+      rawPayload: pastDue,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: active,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_active_again' })
+    expect(revokes).toHaveLength(1)
+    expect(grants).toEqual([
+      {
+        orgId: 'org-1',
+        bytes: paid.storageBytes,
+        source: 'stripe',
+        sourceId: 'stripe_subscription:sub_1:org-1',
+      },
+    ])
   })
 
   it('dedupes Stripe webhook redelivery by event.id', async () => {
