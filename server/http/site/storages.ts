@@ -9,7 +9,7 @@ import {
   updateStorageEgressBillingSchema,
 } from '@shared/schemas'
 import type { Env } from '../../middleware/platform'
-import { type StorageRecord, storageNotFound } from '../../usecases/ports'
+import { badRequest, type StorageRecord, storageNotFound, unauthorized } from '../../usecases/ports'
 import {
   createStorage,
   deleteStorage,
@@ -19,6 +19,7 @@ import {
   replaceStorage,
   updateStorageEgressBilling,
 } from '../../usecases/site/storage'
+import { importBucketObjects } from '../../usecases/site/storage-object-import'
 import { authRoute, errorResponse, jsonBody, jsonContent } from '../openapi'
 
 // The access key identifies the configured credential for administrators. The
@@ -158,6 +159,49 @@ const updateStorageEgressBillingRoute = authRoute(
   },
 )
 
+const importObjectsBodySchema = z
+  .object({
+    prefix: z.string().optional(),
+    stripPrefix: z.string().optional(),
+    dryRun: z.boolean().optional().default(true),
+    limit: z.number().int().min(1).max(2000).optional(),
+  })
+  .openapi('ImportStorageObjectsRequest')
+
+const importObjectsResultSchema = z
+  .object({
+    dryRun: z.boolean(),
+    scanned: z.number().int(),
+    imported: z.number().int(),
+    skipped: z.number().int(),
+    samples: z.array(
+      z.object({
+        key: z.string(),
+        parent: z.string(),
+        name: z.string(),
+        action: z.enum(['import', 'skip']),
+      }),
+    ),
+  })
+  .openapi('ImportStorageObjectsResult')
+
+const importObjectsRoute = authRoute(
+  { scopes: [AuthorizationScope.STORAGES_UPDATE], siteRole: 'admin' },
+  {
+    operationId: 'importStorageObjects',
+    summary: 'Import existing bucket objects into the file tree',
+    tags: ['Storages'],
+    method: 'post',
+    path: '/{id}/import-objects',
+    request: { params: z.object({ id: opaqueIdSchema }), ...jsonBody(importObjectsBodySchema) },
+    responses: {
+      200: jsonContent(importObjectsResultSchema, 'Import result'),
+      400: errorResponse('Invalid import request'),
+      404: errorResponse('Storage not found'),
+    },
+  },
+)
+
 const deleteStorageRoute = authRoute(
   { scopes: [AuthorizationScope.STORAGES_DELETE], siteRole: 'admin' },
   {
@@ -222,6 +266,23 @@ const storages = new OpenAPIHono<Env>()
     const result = await deleteStorage(c.get('deps'), { id })
     if (!result.ok) throw result.error
     return c.body(null, 204)
+  })
+  .openapi(importObjectsRoute, async (c) => {
+    const userId = c.get('userId')
+    if (!userId) throw unauthorized()
+    const orgId = c.get('orgId')
+    if (!orgId) throw badRequest('No active organization')
+    const body = c.req.valid('json')
+    const result = await importBucketObjects(c.get('deps'), {
+      storageId: c.req.valid('param').id,
+      orgId,
+      actorRef: userId,
+      prefix: body.prefix,
+      stripPrefix: body.stripPrefix,
+      dryRun: body.dryRun,
+      limit: body.limit,
+    })
+    return c.json(result, 200)
   })
 
 export default storages

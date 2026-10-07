@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
   UploadPartCommand,
@@ -410,6 +411,31 @@ export class S3Service implements S3Gateway {
     // DeleteObjectsCommand returns XML which requires DOMParser to parse.
     // Cloudflare Workers doesn't have DOMParser, so we delete one-by-one.
     await Promise.all(keys.map((key) => this.deleteObject(storage, key)))
+  }
+
+  async listObjects(
+    storage: S3StorageCredentials,
+    params: { prefix?: string; continuationToken?: string; maxKeys?: number },
+  ) {
+    const client = this.createClient(storage)
+    const result = await client.send(
+      new ListObjectsV2Command({
+        Bucket: storage.bucket,
+        Prefix: params.prefix || undefined,
+        ContinuationToken: params.continuationToken || undefined,
+        MaxKeys: params.maxKeys ?? 1000,
+      }),
+    )
+    return {
+      objects: (result.Contents ?? [])
+        .filter((item): item is { Key: string; Size?: number } => Boolean(item.Key) && !item.Key!.endsWith('/'))
+        .map((item) => ({
+          key: item.Key!,
+          size: item.Size ?? 0,
+        })),
+      nextContinuationToken: result.NextContinuationToken,
+      isTruncated: Boolean(result.IsTruncated),
+    }
   }
 }
 
