@@ -6373,6 +6373,7 @@ type LocalStoreGiftCard struct {
 	RedeemedOrgId *string `json:"redeemedOrgId"`
 	Status        string  `json:"status"`
 	StorageBytes  int     `json:"storageBytes"`
+	TrafficBytes  int     `json:"trafficBytes"`
 	UpdatedAt     string  `json:"updatedAt"`
 }
 
@@ -6389,6 +6390,7 @@ type LocalStoreProduct struct {
 	Name         string                     `json:"name"`
 	SortOrder    int                        `json:"sortOrder"`
 	StorageBytes int                        `json:"storageBytes"`
+	TrafficBytes int                        `json:"trafficBytes"`
 	UpdatedAt    string                     `json:"updatedAt"`
 }
 
@@ -8141,7 +8143,8 @@ type CreateLocalStoreGiftCardsJSONBody struct {
 	Count        int        `json:"count"`
 	ExpiresAt    *time.Time `json:"expiresAt,omitempty"`
 	Note         *string    `json:"note,omitempty"`
-	StorageBytes int        `json:"storageBytes"`
+	StorageBytes *int       `json:"storageBytes,omitempty"`
+	TrafficBytes *int       `json:"trafficBytes,omitempty"`
 }
 
 // CreateLocalStoreProductJSONBody defines parameters for CreateLocalStoreProduct.
@@ -8152,7 +8155,8 @@ type CreateLocalStoreProductJSONBody struct {
 	Description  *string                                  `json:"description,omitempty"`
 	Interval     *CreateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
 	Name         string                                   `json:"name"`
-	StorageBytes int                                      `json:"storageBytes"`
+	StorageBytes *int                                     `json:"storageBytes,omitempty"`
+	TrafficBytes *int                                     `json:"trafficBytes,omitempty"`
 }
 
 // CreateLocalStoreProductJSONBodyCurrency defines parameters for CreateLocalStoreProduct.
@@ -8169,6 +8173,7 @@ type UpdateLocalStoreProductJSONBody struct {
 	Interval     *UpdateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
 	Name         *string                                  `json:"name,omitempty"`
 	StorageBytes *int                                     `json:"storageBytes,omitempty"`
+	TrafficBytes *int                                     `json:"trafficBytes,omitempty"`
 }
 
 // UpdateLocalStoreProductJSONBodyInterval defines parameters for UpdateLocalStoreProduct.

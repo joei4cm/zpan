@@ -9,6 +9,7 @@ export interface StoreProduct {
   description: string
   kind: StoreProductKind
   storageBytes: number
+  trafficBytes: number
   amountCents: number
   currency: string
   interval: StoreBillingInterval | null
@@ -23,6 +24,7 @@ export interface StoreGiftCard {
   codeHash: string
   codeLast4: string
   storageBytes: number
+  trafficBytes: number
   status: StoreGiftCardStatus
   expiresAt: Date | null
   redeemedOrgId: string | null
@@ -40,6 +42,7 @@ export interface StoreOrder {
   productId: string
   productName: string
   storageBytes: number
+  trafficBytes: number
   amountCents: number
   currency: string
   interval: StoreBillingInterval | null
@@ -51,6 +54,16 @@ export interface StoreOrder {
   updatedAt: Date
 }
 
+export type LocalEntitlementGrant = {
+  orgId: string
+  bytes: number
+  entitlementType: 'plan' | 'grant'
+  source: string
+  sourceId: string
+  packageName: string
+  expiresAt?: Date | null
+}
+
 export interface LocalStoreRepo {
   listProducts(opts?: { activeOnly?: boolean }): Promise<StoreProduct[]>
   getProduct(id: string): Promise<StoreProduct | null>
@@ -58,6 +71,7 @@ export interface LocalStoreRepo {
     name: string
     description: string
     storageBytes: number
+    trafficBytes: number
     amountCents: number
     currency: string
     interval: StoreBillingInterval | null
@@ -70,6 +84,7 @@ export interface LocalStoreRepo {
       name: string
       description: string
       storageBytes: number
+      trafficBytes: number
       amountCents: number
       currency: string
       interval: StoreBillingInterval | null
@@ -81,6 +96,7 @@ export interface LocalStoreRepo {
 
   createGiftCards(input: {
     storageBytes: number
+    trafficBytes: number
     count: number
     expiresAt: Date | null
     note: string | null
@@ -98,6 +114,7 @@ export interface LocalStoreRepo {
     productId: string
     productName: string
     storageBytes: number
+    trafficBytes: number
     amountCents: number
     currency: string
     interval: StoreBillingInterval | null
@@ -121,15 +138,8 @@ export interface LocalStoreRepo {
   getCustomer(orgId: string): Promise<{ orgId: string; stripeCustomerId: string } | null>
   upsertCustomer(orgId: string, stripeCustomerId: string): Promise<void>
 
-  grantStorage(input: {
-    orgId: string
-    bytes: number
-    entitlementType: 'plan' | 'grant'
-    source: string
-    sourceId: string
-    packageName: string
-    expiresAt?: Date | null
-  }): Promise<void>
+  grantStorage(input: LocalEntitlementGrant): Promise<void>
+  grantTraffic(input: LocalEntitlementGrant): Promise<void>
   revokeStorage(source: string, sourceId: string): Promise<void>
 
   beginStripeWebhookEvent(input: {
