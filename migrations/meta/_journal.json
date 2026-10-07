@@ -673,6 +673,13 @@
       "when": 1791392851377,
       "tag": "0096_local-store-traffic-bytes",
       "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "6",
+      "when": 1791392955934,
+      "tag": "0097_local-store-credits",
+      "breakpoints": true
     }
   ]
 }

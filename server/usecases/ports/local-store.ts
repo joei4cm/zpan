@@ -10,6 +10,7 @@ export interface StoreProduct {
   kind: StoreProductKind
   storageBytes: number
   trafficBytes: number
+  creditAmount: number
   amountCents: number
   currency: string
   interval: StoreBillingInterval | null
@@ -25,6 +26,7 @@ export interface StoreGiftCard {
   codeLast4: string
   storageBytes: number
   trafficBytes: number
+  creditAmount: number
   status: StoreGiftCardStatus
   expiresAt: Date | null
   redeemedOrgId: string | null
@@ -43,6 +45,7 @@ export interface StoreOrder {
   productName: string
   storageBytes: number
   trafficBytes: number
+  creditAmount: number
   amountCents: number
   currency: string
   interval: StoreBillingInterval | null
@@ -72,6 +75,7 @@ export interface LocalStoreRepo {
     description: string
     storageBytes: number
     trafficBytes: number
+    creditAmount: number
     amountCents: number
     currency: string
     interval: StoreBillingInterval | null
@@ -85,6 +89,7 @@ export interface LocalStoreRepo {
       description: string
       storageBytes: number
       trafficBytes: number
+      creditAmount: number
       amountCents: number
       currency: string
       interval: StoreBillingInterval | null
@@ -97,6 +102,7 @@ export interface LocalStoreRepo {
   createGiftCards(input: {
     storageBytes: number
     trafficBytes: number
+    creditAmount: number
     count: number
     expiresAt: Date | null
     note: string | null
@@ -115,6 +121,7 @@ export interface LocalStoreRepo {
     productName: string
     storageBytes: number
     trafficBytes: number
+    creditAmount: number
     amountCents: number
     currency: string
     interval: StoreBillingInterval | null
@@ -141,6 +148,31 @@ export interface LocalStoreRepo {
   grantStorage(input: LocalEntitlementGrant): Promise<void>
   grantTraffic(input: LocalEntitlementGrant): Promise<void>
   revokeStorage(source: string, sourceId: string): Promise<void>
+
+  getCreditBalance(orgId: string): Promise<number>
+  listCreditLedger(
+    orgId: string,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<{
+    items: Array<{
+      id: string
+      orgId: string
+      delta: number
+      balanceAfter: number
+      reason: string
+      source: string
+      sourceId: string
+      createdAt: Date
+    }>
+    total: number
+  }>
+  adjustCredits(input: {
+    orgId: string
+    delta: number
+    reason: string
+    source: string
+    sourceId: string
+  }): Promise<{ balance: number; duplicate: boolean }>
 
   beginStripeWebhookEvent(input: {
     eventId: string
