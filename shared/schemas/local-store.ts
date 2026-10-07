@@ -8,6 +8,7 @@ export const localStoreProductInputSchema = z
     description: z.string().max(1000).optional().default(''),
     storageBytes: z.number().int().min(0).default(0),
     trafficBytes: z.number().int().min(0).optional().default(0),
+    creditAmount: z.number().int().min(0).optional().default(0),
     amountCents: z.number().int().positive(),
     currency: z.literal('usd').optional().default('usd'),
     interval: localStoreBillingIntervalSchema.nullable().optional(),
@@ -15,11 +16,11 @@ export const localStoreProductInputSchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
-    if ((value.storageBytes ?? 0) <= 0 && (value.trafficBytes ?? 0) <= 0) {
+    if ((value.storageBytes ?? 0) <= 0 && (value.trafficBytes ?? 0) <= 0 && (value.creditAmount ?? 0) <= 0) {
       ctx.addIssue({
         code: 'custom',
         path: ['storageBytes'],
-        message: 'At least one of storageBytes or trafficBytes must be greater than 0',
+        message: 'At least one deliverable must be greater than 0',
       })
     }
   })
@@ -30,6 +31,7 @@ export const localStoreProductPatchSchema = z
     description: z.string().max(1000).optional(),
     storageBytes: z.number().int().min(0).optional(),
     trafficBytes: z.number().int().min(0).optional(),
+    creditAmount: z.number().int().min(0).optional(),
     amountCents: z.number().int().positive().optional(),
     interval: localStoreBillingIntervalSchema.nullable().optional(),
     active: z.boolean().optional(),
@@ -40,17 +42,18 @@ export const localStoreGiftCardCreateSchema = z
   .object({
     storageBytes: z.number().int().min(0).default(0),
     trafficBytes: z.number().int().min(0).optional().default(0),
+    creditAmount: z.number().int().min(0).optional().default(0),
     count: z.number().int().min(1).max(100),
     expiresAt: z.string().datetime().nullable().optional(),
     note: z.string().max(500).nullable().optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
-    if ((value.storageBytes ?? 0) <= 0 && (value.trafficBytes ?? 0) <= 0) {
+    if ((value.storageBytes ?? 0) <= 0 && (value.trafficBytes ?? 0) <= 0 && (value.creditAmount ?? 0) <= 0) {
       ctx.addIssue({
         code: 'custom',
         path: ['storageBytes'],
-        message: 'At least one of storageBytes or trafficBytes must be greater than 0',
+        message: 'At least one deliverable must be greater than 0',
       })
     }
   })

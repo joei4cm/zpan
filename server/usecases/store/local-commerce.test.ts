@@ -12,6 +12,7 @@ function product(overrides: Partial<StoreProduct> = {}): StoreProduct {
     kind: 'plan',
     storageBytes: 10 * 1024 ** 3,
     trafficBytes: 0,
+    creditAmount: 0,
     amountCents: 999,
     currency: 'usd',
     interval: 'month',
@@ -33,6 +34,7 @@ function order(overrides: Partial<StoreOrder> = {}): StoreOrder {
     productName: 'Pro',
     storageBytes: 10 * 1024 ** 3,
     trafficBytes: 0,
+    creditAmount: 0,
     amountCents: 999,
     currency: 'usd',
     interval: 'month',
@@ -52,6 +54,17 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
   const giftCards = options.giftCards ?? []
   const grants: Array<{ orgId: string; bytes: number; source: string; sourceId: string; resource: string }> = []
   const revokes: Array<{ source: string; sourceId: string }> = []
+  let creditBalance = 0
+  const creditLedger: Array<{
+    id: string
+    orgId: string
+    delta: number
+    balanceAfter: number
+    reason: string
+    source: string
+    sourceId: string
+    createdAt: Date
+  }> = []
   const webhookEvents = new Map<string, { id: string; status: string; payloadHash: string }>()
   const localStore: LocalStoreRepo = {
     listProducts: async ({ activeOnly } = {}) => products.filter((item) => (activeOnly ? item.active : true)),
@@ -107,6 +120,29 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
         resource: 'traffic',
       })
     },
+    getCreditBalance: async () => creditBalance,
+    listCreditLedger: async () => ({ items: creditLedger, total: creditLedger.length }),
+    adjustCredits: async (input) => {
+      if (creditLedger.some((item) => item.source === input.source && item.sourceId === input.sourceId)) {
+        return { balance: creditBalance, duplicate: true }
+      }
+      creditBalance += input.delta
+      if (creditBalance < 0) {
+        creditBalance -= input.delta
+        throw new Error('insufficient_credits')
+      }
+      creditLedger.push({
+        id: `cl_${creditLedger.length + 1}`,
+        orgId: input.orgId,
+        delta: input.delta,
+        balanceAfter: creditBalance,
+        reason: input.reason,
+        source: input.source,
+        sourceId: input.sourceId,
+        createdAt: new Date(),
+      })
+      return { balance: creditBalance, duplicate: false }
+    },
     revokeStorage: async (source, sourceId) => {
       revokes.push({ source, sourceId })
     },
@@ -140,7 +176,15 @@ function makeStore(options: { products?: StoreProduct[]; orders?: StoreOrder[]; 
     expireCheckoutSession: vi.fn(),
     verifySignature: vi.fn(async () => true),
   } as unknown as StripeGateway
-  return { deps: { localStore, quota, stripe }, grants, revokes, orders, stripe, webhookEvents }
+  return {
+    deps: { localStore, quota, stripe },
+    grants,
+    revokes,
+    orders,
+    stripe,
+    webhookEvents,
+    getCreditBalance: () => creditBalance,
+  }
 }
 
 describe('local commerce', () => {
@@ -186,6 +230,7 @@ describe('local commerce', () => {
           codeLast4: 'EFGH',
           storageBytes: 5 * 1024 ** 3,
           trafficBytes: 0,
+          creditAmount: 0,
           status: 'active',
           expiresAt: null,
           redeemedOrgId: null,
@@ -440,6 +485,30 @@ describe('local commerce', () => {
         resource: 'storage',
       },
     ])
+  })
+
+  it('grants credits when Stripe checkout completes for a credit package', async () => {
+    const pending = order({ storageBytes: 0, trafficBytes: 0, creditAmount: 500 })
+    const store = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_credits',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(store.deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_credits' })
+    expect(store.getCreditBalance()).toBe(500)
   })
 
   it('dedupes Stripe webhook redelivery by event.id', async () => {
