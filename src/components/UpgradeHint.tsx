@@ -12,6 +12,7 @@ const FEATURE_LABELS: Record<ProFeature, string> = {
   audit_log: 'audit logs',
   quota_store: 'storage quota store',
   site_announcements: 'site announcements',
+  outbound_webhooks: 'event webhooks',
   analytics: 'analytics',
   image_custom_domains: 'image custom domains',
 }

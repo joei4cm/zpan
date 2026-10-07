@@ -903,6 +903,38 @@ const APP_SCHEMA_SQL = `
   );
   CREATE INDEX IF NOT EXISTS announcements_status_priority_idx ON announcements(status, priority);
   CREATE INDEX IF NOT EXISTS announcements_published_idx ON announcements(published_at);
+  CREATE TABLE IF NOT EXISTS outbound_webhook_endpoints (
+    id TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    secret TEXT NOT NULL,
+    enabled INTEGER NOT NULL DEFAULT 1,
+    event_types TEXT NOT NULL,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS outbound_webhook_endpoints_enabled_idx ON outbound_webhook_endpoints(enabled);
+  CREATE TABLE IF NOT EXISTS outbound_webhook_deliveries (
+    id TEXT PRIMARY KEY,
+    endpoint_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at INTEGER,
+    last_status_code INTEGER,
+    last_error TEXT,
+    created_at INTEGER NOT NULL,
+    delivered_at INTEGER
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS outbound_webhook_deliveries_endpoint_key_uniq
+    ON outbound_webhook_deliveries(endpoint_id, idempotency_key);
+  CREATE INDEX IF NOT EXISTS outbound_webhook_deliveries_status_next_idx
+    ON outbound_webhook_deliveries(status, next_attempt_at);
+  CREATE INDEX IF NOT EXISTS outbound_webhook_deliveries_endpoint_created_idx
+    ON outbound_webhook_deliveries(endpoint_id, created_at);
   CREATE TABLE IF NOT EXISTS apikey (
     id TEXT PRIMARY KEY,
     config_id TEXT NOT NULL DEFAULT 'default',
