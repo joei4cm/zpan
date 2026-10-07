@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { AdminFormDrawer, AdminFormField, AdminSwitchField } from '@/components/admin/admin-form-drawer'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
+import { StripeConfigSection } from '@/components/admin/stripe-config-section'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,6 +66,8 @@ export function AdminStorePage() {
   return (
     <div className="space-y-8">
       <AdminPageHeader title={t('admin.store.title')} description={t('admin.store.description')} />
+
+      <StripeConfigSection />
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">

@@ -13,7 +13,10 @@ import {
 } from 'zpan-cloud-sdk'
 import { ZPAN_CLOUD_URL_DEFAULT } from '../../../shared/constants'
 import type { Env } from '../../middleware/platform'
+import type { Platform } from '../../platform/interface'
+import type { SystemOptionsRepo } from '../../usecases/ports'
 import { buildBoundCloudClient } from '../../usecases/store/store'
+import { resolveStripeSecrets } from '../../usecases/store/stripe-config'
 
 // The cloud-proxy plumbing (bound client, timeout, response unwrapping) and all
 // CloudStoreRepo / LicensingCloudGateway access live in the cloud-store usecase.
@@ -92,11 +95,11 @@ export function getCloudBaseUrl(c: { get(key: 'platform'): { getEnv(k: string): 
   return c.get('platform').getEnv('ZPAN_CLOUD_URL') ?? ZPAN_CLOUD_URL_DEFAULT
 }
 
-export function getStripeConfig(c: { get(key: 'platform'): { getEnv(k: string): string | undefined } }) {
-  return {
-    secretKey: c.get('platform').getEnv('STRIPE_SECRET_KEY')?.trim() || null,
-    webhookSecret: c.get('platform').getEnv('STRIPE_WEBHOOK_SECRET')?.trim() || null,
-  }
+export async function getStripeConfig(c: {
+  get(key: 'platform'): Platform
+  get(key: 'deps'): { systemOptions: SystemOptionsRepo }
+}) {
+  return resolveStripeSecrets(c.get('deps'), c.get('platform'))
 }
 
 function hex(buffer: ArrayBuffer): string {

@@ -156,11 +156,15 @@ export type {
   LocalStoreGiftCardCreate,
   LocalStoreProductInput,
   LocalStoreProductPatch,
+  StripeConfigSettings,
+  UpdateStripeConfigInput,
 } from './local-store'
 export {
   localStoreGiftCardCreateSchema,
   localStoreProductInputSchema,
   localStoreProductPatchSchema,
+  stripeConfigSettingsSchema,
+  updateStripeConfigSchema,
 } from './local-store'
 export type { ListNotificationsQuery } from './notification'
 export { listNotificationsQuerySchema } from './notification'

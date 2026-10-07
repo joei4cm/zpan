@@ -17,9 +17,10 @@ ZPAN_CLOUD_URL=http://localhost:5186
 # Open local Pro/Business feature gates without a Cloud certificate.
 ZPAN_UNLOCK_FEATURES=true
 
-# Local-only Stripe keys for `pnpm dev`. Production uses GitHub Actions secrets
-# STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET, which deploy-cloudflare syncs into
-# Worker secrets via `wrangler secret put`. Do not commit real keys here.
+# Optional local Stripe keys for `pnpm dev`. You can also set them in
+# Admin → Storage Plans (system_options). Env values override the admin UI.
+# Production may use GitHub Actions secrets synced via `wrangler secret put`.
+# Do not commit real keys here.
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 

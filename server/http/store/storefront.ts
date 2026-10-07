@@ -367,7 +367,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       origin: await getInstanceOrigin(c),
       input: c.req.valid('json'),
-      stripe: getStripeConfig(c),
+      stripe: await getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -405,7 +405,7 @@ export const cloudStore = app
     const result = await createBillingPortalSession(c.get('deps'), getCloudBaseUrl(c), {
       orgId: targetOrgId,
       origin: await getInstanceOrigin(c),
-      stripe: getStripeConfig(c),
+      stripe: await getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -434,7 +434,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       orderId: c.req.valid('param').orderId,
       origin: await getInstanceOrigin(c),
-      stripe: getStripeConfig(c),
+      stripe: await getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
@@ -448,7 +448,7 @@ export const cloudStore = app
       orgId: targetOrgId,
       orderId: c.req.valid('param').orderId,
       status: c.req.valid('json').status,
-      stripe: getStripeConfig(c),
+      stripe: await getStripeConfig(c),
     })
     if (!result.ok) throw result.error
     return c.json(result.value, 200)
