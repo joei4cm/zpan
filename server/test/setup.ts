@@ -967,6 +967,21 @@ const APP_SCHEMA_SQL = `
     ON outbound_webhook_deliveries(status, next_attempt_at);
   CREATE INDEX IF NOT EXISTS outbound_webhook_deliveries_endpoint_created_idx
     ON outbound_webhook_deliveries(endpoint_id, created_at);
+  CREATE TABLE IF NOT EXISTS music_app_credentials (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    org_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    token TEXT NOT NULL,
+    label TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'active',
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    last_used_at INTEGER
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS music_app_credentials_username_uniq ON music_app_credentials(username);
+  CREATE INDEX IF NOT EXISTS music_app_credentials_user_idx ON music_app_credentials(user_id);
+  CREATE INDEX IF NOT EXISTS music_app_credentials_status_idx ON music_app_credentials(status);
   CREATE TABLE IF NOT EXISTS apikey (
     id TEXT PRIMARY KEY,
     config_id TEXT NOT NULL DEFAULT 'default',
