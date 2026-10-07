@@ -1035,6 +1035,48 @@ describe('Admin Team Entitlements API', () => {
     expect(afterBody.items[0].status).toBe('revoked')
   })
 
+  it('grants a local plan that replaces the default team quota [spec: teams-admin/grant-local-plan]', async () => {
+    const { app, db } = await createTestApp()
+    const headers = await adminHeaders(app)
+    await seedTeam(db, { id: 'TeamPlan1', name: 'Plan Team', quota: 10485760 })
+
+    const before = await app.request('/api/quotas', { headers })
+    const beforeBody = (await before.json()) as { items: Array<{ orgId: string; quota: number }> }
+    expect(beforeBody.items.find((item) => item.orgId === 'TeamPlan1')?.quota).toBe(10485760)
+
+    const grant = await app.request('/api/teams/TeamPlan1/entitlements', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resourceType: 'storage', bytes: 52428800, kind: 'plan', note: 'team plan' }),
+    })
+    expect(grant.status).toBe(201)
+    const granted = (await grant.json()) as {
+      entitlement: { id: string; source: string; entitlementType: string; bytes: number }
+    }
+    expect(granted.entitlement).toMatchObject({
+      entitlementType: 'plan',
+      source: 'local_plan',
+      bytes: 52428800,
+    })
+
+    const after = await app.request('/api/quotas', { headers })
+    const afterBody = (await after.json()) as {
+      items: Array<{ orgId: string; quota: number; storagePlanName?: string | null }>
+    }
+    const row = afterBody.items.find((item) => item.orgId === 'TeamPlan1')
+    expect(row?.quota).toBe(52428800)
+    expect(row?.storagePlanName).toBe('team plan')
+
+    const upsert = await app.request('/api/teams/TeamPlan1/entitlements', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resourceType: 'storage', bytes: 104857600, kind: 'plan' }),
+    })
+    expect(upsert.status).toBe(201)
+    const upserted = (await upsert.json()) as { entitlement: { id: string } }
+    expect(upserted.entitlement.id).toBe(granted.entitlement.id)
+  })
+
   it('updates an admin grant bytes [spec: teams-admin/update-entitlement]', async () => {
     const { app, db } = await createTestApp()
     const headers = await adminHeaders(app)

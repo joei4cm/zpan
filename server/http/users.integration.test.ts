@@ -113,6 +113,61 @@ describe('User entitlements API (admin)', () => {
     expect(entitlements).toEqual([{ bytes: 123456, entitlementType: 'grant', source: 'admin_grant' }])
   })
 
+  it('POST /api/users/:id/entitlements kind=plan replaces the default quota and upserts [spec: users/grant-local-plan]', async () => {
+    const { app, db } = await createTestApp()
+    const headers = await adminHeaders(app)
+    await signUpUser(app, 'grant-plan@example.com')
+    const users = await db.all<{ id: string }>(sql`SELECT id FROM user WHERE email = 'grant-plan@example.com'`)
+    const userId = users[0].id
+    const orgId = await personalOrgId(db, userId)
+
+    const before = await app.request(`/api/users/${userId}/quota`, { headers })
+    expect(await before.json()).toMatchObject({ total: 10485760, hasPersonalOrg: true })
+
+    const grant = await app.request(`/api/users/${userId}/entitlements`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resourceType: 'storage', bytes: 52428800, kind: 'plan', note: 'staff' }),
+    })
+    expect(grant.status).toBe(201)
+    const granted = (await grant.json()) as { entitlement: { id: string; source: string; entitlementType: string } }
+    expect(granted.entitlement).toMatchObject({
+      entitlementType: 'plan',
+      source: 'local_plan',
+      bytes: 52428800,
+      status: 'active',
+    })
+
+    const after = await app.request(`/api/users/${userId}/quota`, { headers })
+    expect(await after.json()).toMatchObject({ total: 52428800, hasPersonalOrg: true })
+
+    const extra = await app.request(`/api/users/${userId}/entitlements`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resourceType: 'storage', bytes: 1048576, note: 'bonus' }),
+    })
+    expect(extra.status).toBe(201)
+    const stacked = await app.request(`/api/users/${userId}/quota`, { headers })
+    expect(await stacked.json()).toMatchObject({ total: 53477376, hasPersonalOrg: true })
+
+    const upsert = await app.request(`/api/users/${userId}/entitlements`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resourceType: 'storage', bytes: 104857600, kind: 'plan', note: 'staff+' }),
+    })
+    expect(upsert.status).toBe(201)
+    const upserted = (await upsert.json()) as { entitlement: { id: string } }
+    expect(upserted.entitlement.id).toBe(granted.entitlement.id)
+
+    const rows = await db.all<{ id: string; bytes: number; source: string }>(
+      sql`SELECT id, bytes, source FROM org_quota_entitlements WHERE org_id = ${orgId} AND source = 'local_plan'`,
+    )
+    expect(rows).toEqual([{ id: granted.entitlement.id, bytes: 104857600, source: 'local_plan' }])
+
+    const replaced = await app.request(`/api/users/${userId}/quota`, { headers })
+    expect(await replaced.json()).toMatchObject({ total: 105906176, hasPersonalOrg: true })
+  })
+
   it('PATCH /api/users/:id/entitlements/:eid updates an admin grant [spec: users/update-entitlement]', async () => {
     const { app, db } = await createTestApp()
     const headers = await adminHeaders(app)

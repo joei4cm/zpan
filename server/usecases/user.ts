@@ -59,9 +59,10 @@ export async function grantUserEntitlement(
     bytes: number
     expiresAt?: Date | null
     note?: string | null
+    kind?: 'grant' | 'plan'
   },
 ): Promise<EntitlementOutcome> {
-  const { adminUserId, targetUserId, resourceType, bytes, expiresAt, note } = params
+  const { adminUserId, targetUserId, resourceType, bytes, expiresAt, note, kind } = params
   const result = await deps.userAdmin.grantUserPersonalEntitlement({
     adminUserId,
     targetUserId,
@@ -69,6 +70,7 @@ export async function grantUserEntitlement(
     bytes,
     expiresAt,
     note,
+    ...(kind ? { kind } : {}),
   })
   if ('error' in result) return { ok: false, failure: result }
   return { ok: true, result }
