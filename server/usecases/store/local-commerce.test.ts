@@ -169,7 +169,15 @@ describe('local commerce', () => {
     const payload = JSON.stringify({
       id: 'evt_1',
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_test_1', subscription: 'sub_1', customer: 'cus_1', metadata: { orderId: 'ord-1' } } },
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
     })
     const result = await processStripeWebhook(deps, {
       rawPayload: payload,
@@ -183,5 +191,56 @@ describe('local commerce', () => {
       source: 'stripe',
       sourceId: 'stripe_subscription:sub_1:org-1',
     })
+  })
+
+  it('does not grant storage when checkout.session.completed is unpaid', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_unpaid',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'unpaid',
+          subscription: 'sub_1',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: true, eventId: 'evt_unpaid' })
+    expect(pending.status).toBe('pending')
+    expect(grants).toEqual([])
+  })
+
+  it('grants storage on async_payment_succeeded when payment_status is paid', async () => {
+    const pending = order()
+    const { deps, grants } = makeStore({ orders: [pending] })
+    const payload = JSON.stringify({
+      id: 'evt_async',
+      type: 'checkout.session.async_payment_succeeded',
+      data: {
+        object: {
+          id: 'cs_test_1',
+          payment_status: 'paid',
+          customer: 'cus_1',
+          metadata: { orderId: 'ord-1' },
+        },
+      },
+    })
+    const result = await processStripeWebhook(deps, {
+      rawPayload: payload,
+      signature: 't=1,v1=abc',
+      webhookSecret: 'whsec_test',
+    })
+    expect(result).toEqual({ ok: true, duplicate: false, eventId: 'evt_async' })
+    expect(pending.status).toBe('paid')
+    expect(grants).toHaveLength(1)
   })
 })
