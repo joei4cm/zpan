@@ -694,6 +694,13 @@
       "when": 1791393807179,
       "tag": "0099_sync-devices-cursor",
       "breakpoints": true
+    },
+    {
+      "idx": 100,
+      "version": "6",
+      "when": 1791394051440,
+      "tag": "0100_music-app-credentials",
+      "breakpoints": true
     }
   ]
 }
