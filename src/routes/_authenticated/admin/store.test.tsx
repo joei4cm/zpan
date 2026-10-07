@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { listLocalStoreGiftCards, listLocalStoreProducts } from '@/lib/api'
+import { getLocalStoreStripeConfig, listLocalStoreGiftCards, listLocalStoreProducts } from '@/lib/api'
 import { AdminStorePage } from './store'
 
 vi.mock('react-i18next', () => ({
@@ -23,6 +23,8 @@ vi.mock('@/lib/api', () => ({
   deleteLocalStoreProduct: vi.fn(),
   createLocalStoreGiftCards: vi.fn(),
   disableLocalStoreGiftCard: vi.fn(),
+  getLocalStoreStripeConfig: vi.fn(),
+  saveLocalStoreStripeConfig: vi.fn(),
 }))
 
 function renderPage() {
@@ -56,6 +58,14 @@ describe('AdminStorePage', () => {
       total: 1,
     })
     vi.mocked(listLocalStoreGiftCards).mockResolvedValue({ items: [], total: 0 })
+    vi.mocked(getLocalStoreStripeConfig).mockResolvedValue({
+      secretKey: '',
+      webhookSecret: '',
+      secretKeyConfigured: false,
+      webhookSecretConfigured: false,
+      secretKeySource: 'none',
+      webhookSecretSource: 'none',
+    })
   })
 
   afterEach(() => cleanup())
@@ -65,5 +75,6 @@ describe('AdminStorePage', () => {
     expect(await screen.findByText('Pro')).toBeTruthy()
     expect(screen.getByText('admin.store.addProduct')).toBeTruthy()
     expect(screen.getByText('admin.store.issueGiftCards')).toBeTruthy()
+    expect(screen.getByText('admin.store.stripeTitle')).toBeTruthy()
   })
 })

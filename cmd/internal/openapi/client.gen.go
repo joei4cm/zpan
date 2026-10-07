@@ -2179,6 +2179,27 @@ func (e StorageUsageBreakdownsCategory) Valid() bool {
 	}
 }
 
+// Defines values for StripeConfigSource.
+const (
+	Database StripeConfigSource = "database"
+	Env      StripeConfigSource = "env"
+	None     StripeConfigSource = "none"
+)
+
+// Valid indicates whether the value is a known member of the StripeConfigSource enum.
+func (e StripeConfigSource) Valid() bool {
+	switch e {
+	case Database:
+		return true
+	case Env:
+		return true
+	case None:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for WebDavVerificationStatus.
 const (
 	WebDavVerificationStatusDisabled   WebDavVerificationStatus = "disabled"
@@ -6570,6 +6591,19 @@ type StorageUsage struct {
 // StorageUsageBreakdownsCategory defines model for StorageUsage.Breakdowns.Category.
 type StorageUsageBreakdownsCategory string
 
+// StripeConfigSettings defines model for StripeConfigSettings.
+type StripeConfigSettings struct {
+	SecretKey               string             `json:"secretKey"`
+	SecretKeyConfigured     bool               `json:"secretKeyConfigured"`
+	SecretKeySource         StripeConfigSource `json:"secretKeySource"`
+	WebhookSecret           string             `json:"webhookSecret"`
+	WebhookSecretConfigured bool               `json:"webhookSecretConfigured"`
+	WebhookSecretSource     StripeConfigSource `json:"webhookSecretSource"`
+}
+
+// StripeConfigSource defines model for StripeConfigSource.
+type StripeConfigSource string
+
 // TeamInvitationList defines model for TeamInvitationList.
 type TeamInvitationList struct {
 	Items    []PendingInvitation `json:"items"`
@@ -6675,6 +6709,12 @@ type UpdateSiteRegistration struct {
 type UpdateSiteWebDav struct {
 	Domain  string `json:"domain"`
 	Enabled bool   `json:"enabled"`
+}
+
+// UpdateStripeConfig defines model for UpdateStripeConfig.
+type UpdateStripeConfig struct {
+	SecretKey     string `json:"secretKey"`
+	WebhookSecret string `json:"webhookSecret"`
 }
 
 // WebDavVerificationStatus defines model for WebDavVerificationStatus.
@@ -7983,6 +8023,9 @@ type CreateLocalStoreProductJSONRequestBody CreateLocalStoreProductJSONBody
 
 // UpdateLocalStoreProductJSONRequestBody defines body for UpdateLocalStoreProduct for application/json ContentType.
 type UpdateLocalStoreProductJSONRequestBody UpdateLocalStoreProductJSONBody
+
+// SaveLocalStoreStripeConfigJSONRequestBody defines body for SaveLocalStoreStripeConfig for application/json ContentType.
+type SaveLocalStoreStripeConfigJSONRequestBody = UpdateStripeConfig
 
 // PurchaseStorageCapacityJSONRequestBody defines body for PurchaseStorageCapacity for application/json ContentType.
 type PurchaseStorageCapacityJSONRequestBody PurchaseStorageCapacityJSONBody
@@ -11667,6 +11710,14 @@ type ClientInterface interface {
 
 	UpdateLocalStoreProduct(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetLocalStoreStripeConfig request
+	GetLocalStoreStripeConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SaveLocalStoreStripeConfigWithBody request with any body
+	SaveLocalStoreStripeConfigWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SaveLocalStoreStripeConfig(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateBillingPortalSession request
 	CreateBillingPortalSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13968,6 +14019,42 @@ func (c *Client) UpdateLocalStoreProductWithBody(ctx context.Context, id string,
 
 func (c *Client) UpdateLocalStoreProduct(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateLocalStoreProductRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLocalStoreStripeConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLocalStoreStripeConfigRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SaveLocalStoreStripeConfigWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSaveLocalStoreStripeConfigRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SaveLocalStoreStripeConfig(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSaveLocalStoreStripeConfigRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -20458,6 +20545,73 @@ func NewUpdateLocalStoreProductRequestWithBody(server string, id string, content
 	return req, nil
 }
 
+// NewGetLocalStoreStripeConfigRequest generates requests for GetLocalStoreStripeConfig
+func NewGetLocalStoreStripeConfigRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/store/admin/settings/stripe")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewSaveLocalStoreStripeConfigRequest calls the generic SaveLocalStoreStripeConfig builder with application/json body
+func NewSaveLocalStoreStripeConfigRequest(server string, body SaveLocalStoreStripeConfigJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSaveLocalStoreStripeConfigRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewSaveLocalStoreStripeConfigRequestWithBody generates requests for SaveLocalStoreStripeConfig with any type of body
+func NewSaveLocalStoreStripeConfigRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/store/admin/settings/stripe")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateBillingPortalSessionRequest generates requests for CreateBillingPortalSession
 func NewCreateBillingPortalSessionRequest(server string) (*http.Request, error) {
 	var err error
@@ -22504,6 +22658,14 @@ type ClientWithResponsesInterface interface {
 	UpdateLocalStoreProductWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateLocalStoreProductResponse, error)
 
 	UpdateLocalStoreProductWithResponse(ctx context.Context, id string, body UpdateLocalStoreProductJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateLocalStoreProductResponse, error)
+
+	// GetLocalStoreStripeConfigWithResponse request
+	GetLocalStoreStripeConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLocalStoreStripeConfigResponse, error)
+
+	// SaveLocalStoreStripeConfigWithBodyWithResponse request with any body
+	SaveLocalStoreStripeConfigWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error)
+
+	SaveLocalStoreStripeConfigWithResponse(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error)
 
 	// CreateBillingPortalSessionWithResponse request
 	CreateBillingPortalSessionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateBillingPortalSessionResponse, error)
@@ -27032,6 +27194,70 @@ func (r UpdateLocalStoreProductResponse) ContentType() string {
 	return ""
 }
 
+type GetLocalStoreStripeConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StripeConfigSettings
+	JSON403      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLocalStoreStripeConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLocalStoreStripeConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetLocalStoreStripeConfigResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type SaveLocalStoreStripeConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Success bool `json:"success"`
+	}
+	JSON403 *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r SaveLocalStoreStripeConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SaveLocalStoreStripeConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r SaveLocalStoreStripeConfigResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type CreateBillingPortalSessionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -29869,6 +30095,32 @@ func (c *ClientWithResponses) UpdateLocalStoreProductWithResponse(ctx context.Co
 		return nil, err
 	}
 	return ParseUpdateLocalStoreProductResponse(rsp)
+}
+
+// GetLocalStoreStripeConfigWithResponse request returning *GetLocalStoreStripeConfigResponse
+func (c *ClientWithResponses) GetLocalStoreStripeConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLocalStoreStripeConfigResponse, error) {
+	rsp, err := c.GetLocalStoreStripeConfig(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLocalStoreStripeConfigResponse(rsp)
+}
+
+// SaveLocalStoreStripeConfigWithBodyWithResponse request with arbitrary body returning *SaveLocalStoreStripeConfigResponse
+func (c *ClientWithResponses) SaveLocalStoreStripeConfigWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error) {
+	rsp, err := c.SaveLocalStoreStripeConfigWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSaveLocalStoreStripeConfigResponse(rsp)
+}
+
+func (c *ClientWithResponses) SaveLocalStoreStripeConfigWithResponse(ctx context.Context, body SaveLocalStoreStripeConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*SaveLocalStoreStripeConfigResponse, error) {
+	rsp, err := c.SaveLocalStoreStripeConfig(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSaveLocalStoreStripeConfigResponse(rsp)
 }
 
 // CreateBillingPortalSessionWithResponse request returning *CreateBillingPortalSessionResponse
@@ -35336,6 +35588,74 @@ func ParseUpdateLocalStoreProductResponse(rsp *http.Response) (*UpdateLocalStore
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLocalStoreStripeConfigResponse parses an HTTP response from a GetLocalStoreStripeConfigWithResponse call
+func ParseGetLocalStoreStripeConfigResponse(rsp *http.Response) (*GetLocalStoreStripeConfigResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLocalStoreStripeConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StripeConfigSettings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSaveLocalStoreStripeConfigResponse parses an HTTP response from a SaveLocalStoreStripeConfigWithResponse call
+func ParseSaveLocalStoreStripeConfigResponse(rsp *http.Response) (*SaveLocalStoreStripeConfigResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SaveLocalStoreStripeConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Success bool `json:"success"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	}
 
