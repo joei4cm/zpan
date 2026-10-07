@@ -680,6 +680,35 @@ export interface OutboundWebhookDelivery {
   deliveredAt: string | null
 }
 
+export type SyncDeviceStatus = 'active' | 'revoked'
+
+export interface SyncDevice {
+  id: string
+  userId: string
+  orgId: string
+  name: string
+  platform: string
+  appVersion: string
+  status: SyncDeviceStatus
+  lastSeenAt: string | null
+  createdAt: string
+  updatedAt: string
+  /** Present only immediately after registration. */
+  token?: string
+}
+
+export interface SyncObjectChange {
+  cursor: string
+  orgId: string
+  objectId: string
+  parent: string
+  name: string
+  action: string
+  changeType: 'upsert' | 'delete'
+  actorDeviceId: string | null
+  occurredAt: string
+}
+
 export type AuditActorType = 'user' | 'api_key' | 'oauth' | 'agent' | 'anonymous' | 'system' | 'device' | 'task-upload'
 
 export interface AuditEvent {
