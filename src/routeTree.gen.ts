@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminDownloadersRouteImport } from './routes/_authenticated/admin/downloaders'
 import { Route as AuthenticatedAdminLicensingRouteImport } from './routes/_authenticated/admin/licensing'
 import { Route as AuthenticatedAdminStoreRouteImport } from './routes/_authenticated/admin/store'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin/webhooks'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedFilesIndexRouteImport } from './routes/_authenticated/files/index'
 import { Route as AuthenticatedImageHostIndexRouteImport } from './routes/_authenticated/image-host/index'
@@ -199,6 +200,11 @@ const AuthenticatedAdminLicensingRoute =
 const AuthenticatedAdminStoreRoute = AuthenticatedAdminStoreRouteImport.update({
   id: '/store',
   path: '/store',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminWebhooksRoute = AuthenticatedAdminWebhooksRouteImport.update({
+  id: '/webhooks',
+  path: '/webhooks',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedDownloadsIndexRoute =
@@ -403,7 +409,9 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -457,7 +465,9 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -516,7 +526,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/downloaders': typeof AuthenticatedAdminDownloadersRoute
   '/_authenticated/admin/licensing': typeof AuthenticatedAdminLicensingRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/admin/store': typeof AuthenticatedAdminStoreRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/settings/api-keys': typeof AuthenticatedSettingsApiKeysRoute
   '/_authenticated/settings/oauth-apps': typeof AuthenticatedSettingsOauthAppsRoute
   '/_authenticated/settings/password': typeof AuthenticatedSettingsPasswordRoute
@@ -575,7 +587,9 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
+    | '/admin/webhooks'
     | '/admin/store'
+    | '/admin/webhooks'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -629,7 +643,9 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/downloaders'
     | '/admin/licensing'
+    | '/admin/webhooks'
     | '/admin/store'
+    | '/admin/webhooks'
     | '/settings/api-keys'
     | '/settings/oauth-apps'
     | '/settings/password'
@@ -687,7 +703,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/downloaders'
     | '/_authenticated/admin/licensing'
+    | '/_authenticated/admin/webhooks'
     | '/_authenticated/admin/store'
+    | '/_authenticated/admin/webhooks'
     | '/_authenticated/settings/api-keys'
     | '/_authenticated/settings/oauth-apps'
     | '/_authenticated/settings/password'
@@ -917,6 +935,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoreRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/downloads/': {
       id: '/_authenticated/downloads/'
       path: '/downloads'
@@ -1139,6 +1164,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminDownloadersRoute: typeof AuthenticatedAdminDownloadersRoute
   AuthenticatedAdminLicensingRoute: typeof AuthenticatedAdminLicensingRoute
   AuthenticatedAdminStoreRoute: typeof AuthenticatedAdminStoreRoute
+  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminSettingsEmailRoute: typeof AuthenticatedAdminSettingsEmailRoute
   AuthenticatedAdminSettingsOauthRoute: typeof AuthenticatedAdminSettingsOauthRoute
@@ -1160,6 +1186,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminDownloadersRoute: AuthenticatedAdminDownloadersRoute,
     AuthenticatedAdminLicensingRoute: AuthenticatedAdminLicensingRoute,
     AuthenticatedAdminStoreRoute: AuthenticatedAdminStoreRoute,
+    AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminSettingsEmailRoute: AuthenticatedAdminSettingsEmailRoute,
     AuthenticatedAdminSettingsOauthRoute: AuthenticatedAdminSettingsOauthRoute,

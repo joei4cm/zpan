@@ -37,6 +37,7 @@ import type {
   OAuthGateway,
   ObjectUploadSessionRepo,
   OrgRepo,
+  OutboundWebhookRepo,
   ProfileRepo,
   QuotaRepo,
   RemoteDownloadUsageRepo,
@@ -97,6 +98,7 @@ export interface Deps {
   notifications: NotificationRepo
   objectUploadSessions: ObjectUploadSessionRepo
   org: OrgRepo
+  outboundWebhooks: OutboundWebhookRepo
   profiles: ProfileRepo
   quota: QuotaRepo
   remoteDownloadUsage: RemoteDownloadUsageRepo

@@ -26,6 +26,7 @@ import { resolveActorProfiles } from './audit-actors'
 import type { Deps } from './deps'
 import { assertFolderNotUsedByDownload, ensureDownloadFolderPath } from './downloads/download-folders'
 import { assertTaskUploadAllowed } from './downloads/downloads'
+import { emitOutboundEvent } from './outbound-webhooks'
 import {
   type ActorIdentity,
   type AppError,
@@ -599,7 +600,8 @@ export async function completeUpload(
   deps: Pick<
     Deps,
     'matter' | 'storages' | 's3' | 'objectUploadSessions' | 'quota' | 'storageUsage' | 'audit' | 'share'
-  >,
+  > &
+    Partial<Pick<Deps, 'outboundWebhooks'>>,
   params: {
     orgId: string
     objectId: string
@@ -671,6 +673,24 @@ export async function completeUpload(
   }
   if (record.uploadId == null) {
     await deps.objectUploadSessions.setStatus(record.id, 'completed')
+  }
+  if (deps.outboundWebhooks) {
+    emitOutboundEvent(
+      { outboundWebhooks: deps.outboundWebhooks },
+      {
+        eventType: 'object.upload.confirmed',
+        idempotencyKey: `object.upload.confirmed:${matter.id}`,
+        data: {
+          objectId: matter.id,
+          orgId: params.orgId,
+          name: matter.name,
+          bytes: matter.size ?? 0,
+          storageId: matter.storageId,
+          parent: matter.parent,
+          actorId: params.actorId,
+        },
+      },
+    ).catch((err) => console.error('[webhooks] object.upload.confirmed emit failed:', err))
   }
   return { ok: true, matter }
 }

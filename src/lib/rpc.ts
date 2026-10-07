@@ -28,6 +28,7 @@ import type {
   NotificationsRoute,
   OAuthGrantsRoute,
   ObjectsRoute,
+  OutboundWebhooksRoute,
   PublicSharesRoute,
   PublicSiteInvitationsRoute,
   PublicTeamsRoute,
@@ -79,6 +80,7 @@ export const publicTeamsApi = hc<PublicTeamsRoute>('/api/teams')
 export const notificationsApi = hc<NotificationsRoute>('/api/notifications', opts)
 // One announcements resource (user feed + admin management, gated per-route).
 export const announcementsApi = hc<AnnouncementsRoute>('/api/site/announcements', opts)
+export const outboundWebhooksApi = hc<OutboundWebhooksRoute>('/api/site/outbound-webhooks', opts)
 export const backgroundJobsApi = hc<BackgroundJobsRoute>('/api/background-jobs', opts)
 export const mediaLibrariesApi = hc<MediaLibrariesRoute>('/api/media-libraries', opts)
 export const eventsUrlApi = hc<EventsRoute>(absoluteUrlBase('/api/events'), opts)
