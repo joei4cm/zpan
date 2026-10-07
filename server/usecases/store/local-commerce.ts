@@ -1,4 +1,5 @@
 import { isFeatureUnlockEnabled } from '../../domain/licensing'
+import { emitOutboundEvent } from '../outbound-webhooks'
 import {
   AppError,
   badGateway,
@@ -7,6 +8,7 @@ import {
   forbidden,
   type LocalStoreRepo,
   notFound,
+  type OutboundWebhookRepo,
   type QuotaRepo,
   type StoreOrder,
   type StoreProduct,
@@ -17,6 +19,7 @@ export type LocalCommerceDeps = {
   localStore: LocalStoreRepo
   quota: QuotaRepo
   stripe: StripeGateway
+  outboundWebhooks?: OutboundWebhookRepo
 }
 
 type StorefrontReadOutcome<T> = { ok: true; value: T } | { ok: false; error: AppError }
@@ -542,6 +545,24 @@ export async function processStripeWebhook(
         sourceId,
         packageName: order.productName,
       })
+      if (deps.outboundWebhooks) {
+        emitOutboundEvent(
+          { outboundWebhooks: deps.outboundWebhooks },
+          {
+            eventType: 'store.order.paid',
+            idempotencyKey: `store.order.paid:${order.id}:${event.id}`,
+            data: {
+              orderId: order.id,
+              orgId: order.orgId,
+              productId: order.productId,
+              productName: order.productName,
+              storageBytes: order.storageBytes,
+              stripeSessionId: sessionId || null,
+              subscriptionId: subscriptionId || null,
+            },
+          },
+        ).catch((err) => console.error('[webhooks] store.order.paid emit failed:', err))
+      }
       await deps.localStore.markStripeWebhookEvent(claim.id, 'processed')
       return { ok: true, duplicate: false, eventId: event.id }
     }

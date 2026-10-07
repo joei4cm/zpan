@@ -17,6 +17,7 @@ import { escapeHtml } from '../lib/html'
 import { verifyPassword as verifyPasswordHash } from '../lib/password'
 import type { Platform } from '../platform/interface'
 import { type SaveToDriveDeps, saveShareToDrive } from './object'
+import { emitOutboundEvent } from './outbound-webhooks'
 import {
   type ActorIdentity,
   AppError,
@@ -31,6 +32,7 @@ import {
   type NotificationRepo,
   notFound,
   type OrgRepo,
+  type OutboundWebhookRepo,
   passwordRequired,
   type QuotaRepo,
   quotaExceeded,
@@ -61,6 +63,7 @@ export type ShareDeps = SaveToDriveDeps &
     s3: S3Gateway
     quota: QuotaRepo
     org: OrgRepo
+    outboundWebhooks?: OutboundWebhookRepo
   }
 
 // ─── GET /:token — view a share (creator vs viewer DTO) ──────────────────────
@@ -547,6 +550,27 @@ export async function createShare(
       creatorName,
       resolvedMatterName,
     ).catch((err) => console.error('[shares] dispatchShareCreated failed:', err))
+  }
+
+  if (deps.outboundWebhooks) {
+    emitOutboundEvent(
+      { outboundWebhooks: deps.outboundWebhooks },
+      {
+        eventType: 'share.created',
+        idempotencyKey: `share.created:${share.id}`,
+        data: {
+          shareId: share.id,
+          token: share.token,
+          kind: share.kind,
+          orgId,
+          matterId: input.matterId,
+          matterName: resolvedMatterName,
+          creatorId: userId,
+          expiresAt: share.expiresAt ? share.expiresAt.toISOString() : null,
+          private: share.private,
+        },
+      },
+    ).catch((err) => console.error('[webhooks] share.created emit failed:', err))
   }
 
   return {
