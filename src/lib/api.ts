@@ -647,6 +647,19 @@ export function deleteUploadPolicy(id: string) {
   return discard(uploadPoliciesApi[':id'].$delete({ param: { id } }))
 }
 
+export function importStorageObjects(
+  id: string,
+  data: { prefix?: string; stripPrefix?: string; dryRun?: boolean; limit?: number },
+) {
+  return unwrap<{
+    dryRun: boolean
+    scanned: number
+    imported: number
+    skipped: number
+    samples: Array<{ key: string; parent: string; name: string; action: 'import' | 'skip' }>
+  }>(storages[':id']['import-objects'].$post({ param: { id }, json: data }))
+}
+
 // User entitlements API (admin). User identity, listing, disable/enable and
 // delete are served directly by better-auth's /api/auth/admin/* endpoints (see
 // the admin client in auth-client.ts). Only the personal-org storage

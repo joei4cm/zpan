@@ -209,10 +209,11 @@ ZPan's file tree lives in D1 (`matters` rows with `object` keys and
 `storage_id`). Attaching an R2/S3 bucket that already contains files does
 **not** list those objects into the Files UI.
 
-There is no built-in Cloudreve v3/v4 importer. A future importer would need to
-map Cloudreve database records (or, less faithfully, `ListObjects`) onto
-`storages` + `matters`. Local-disk Cloudreve policies would also need the bytes
-copied into the S3/R2 bucket first.
+Admin can import existing S3/R2 object keys into the file tree via
+`POST /api/site/storages/{id}/import-objects` (dry-run by default). This covers
+Cloudreve (and other) buckets that already store bytes in S3-compatible storage.
+A full Cloudreve v3/v4 database importer (users/metadata mapping) is still future
+work. Local-disk Cloudreve policies still need the bytes copied into S3/R2 first.
 
 ## Related
 
