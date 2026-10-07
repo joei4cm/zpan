@@ -852,6 +852,38 @@ const APP_SCHEMA_SQL = `
   CREATE INDEX IF NOT EXISTS resource_changes_resource_sequence_idx
     ON resource_changes(resource_type, resource_id, sequence);
   CREATE INDEX IF NOT EXISTS resource_changes_occurred_idx ON resource_changes(occurred_at);
+  CREATE TABLE IF NOT EXISTS sync_devices (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    org_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    platform TEXT NOT NULL DEFAULT 'unknown',
+    app_version TEXT NOT NULL DEFAULT 'unknown',
+    token_hash TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'active',
+    last_seen_at INTEGER,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS sync_devices_user_idx ON sync_devices(user_id);
+  CREATE INDEX IF NOT EXISTS sync_devices_org_idx ON sync_devices(org_id);
+  CREATE INDEX IF NOT EXISTS sync_devices_token_hash_idx ON sync_devices(token_hash);
+  CREATE INDEX IF NOT EXISTS sync_devices_status_idx ON sync_devices(status);
+  CREATE TABLE IF NOT EXISTS sync_object_changes (
+    sequence INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    org_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    parent TEXT NOT NULL DEFAULT '',
+    name TEXT NOT NULL DEFAULT '',
+    action TEXT NOT NULL,
+    change_type TEXT NOT NULL,
+    actor_device_id TEXT,
+    metadata TEXT,
+    occurred_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS sync_object_changes_org_sequence_idx ON sync_object_changes(org_id, sequence);
+  CREATE INDEX IF NOT EXISTS sync_object_changes_object_idx ON sync_object_changes(object_id);
+  CREATE INDEX IF NOT EXISTS sync_object_changes_occurred_idx ON sync_object_changes(occurred_at);
   CREATE TABLE IF NOT EXISTS object_upload_sessions (
     id TEXT PRIMARY KEY,
     org_id TEXT NOT NULL,

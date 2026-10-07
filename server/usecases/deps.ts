@@ -49,6 +49,7 @@ import type {
   StorageUsageBreakdownRepo,
   StorageUsageRepo,
   StripeGateway,
+  SyncRepo,
   SystemOptionsRepo,
   TeamInviteRepo,
   TeamRepo,
@@ -105,6 +106,7 @@ export interface Deps {
   share: ShareRepo
   siteInvitations: SiteInvitationRepo
   stripe: StripeGateway
+  sync: SyncRepo
   storages: StorageRepo
   storageUsage: StorageUsageRepo
   storageUsageBreakdowns: StorageUsageBreakdownRepo
