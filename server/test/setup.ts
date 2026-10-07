@@ -486,6 +486,7 @@ const APP_SCHEMA_SQL = `
     kind TEXT NOT NULL DEFAULT 'plan',
     storage_bytes INTEGER NOT NULL,
     traffic_bytes INTEGER NOT NULL DEFAULT 0,
+    credit_amount INTEGER NOT NULL DEFAULT 0,
     amount_cents INTEGER NOT NULL,
     currency TEXT NOT NULL DEFAULT 'usd',
     interval TEXT,
@@ -501,6 +502,7 @@ const APP_SCHEMA_SQL = `
     code_last4 TEXT NOT NULL,
     storage_bytes INTEGER NOT NULL,
     traffic_bytes INTEGER NOT NULL DEFAULT 0,
+    credit_amount INTEGER NOT NULL DEFAULT 0,
     status TEXT NOT NULL DEFAULT 'active',
     expires_at INTEGER,
     redeemed_org_id TEXT,
@@ -520,6 +522,7 @@ const APP_SCHEMA_SQL = `
     product_name TEXT NOT NULL,
     storage_bytes INTEGER NOT NULL,
     traffic_bytes INTEGER NOT NULL DEFAULT 0,
+    credit_amount INTEGER NOT NULL DEFAULT 0,
     amount_cents INTEGER NOT NULL,
     currency TEXT NOT NULL DEFAULT 'usd',
     interval TEXT,
@@ -532,6 +535,23 @@ const APP_SCHEMA_SQL = `
   );
   CREATE INDEX IF NOT EXISTS store_orders_org_created_idx ON store_orders(org_id, created_at);
   CREATE UNIQUE INDEX IF NOT EXISTS store_orders_stripe_session_uniq ON store_orders(stripe_session_id) WHERE stripe_session_id IS NOT NULL;
+  CREATE TABLE IF NOT EXISTS store_credit_balances (
+    org_id TEXT PRIMARY KEY,
+    balance INTEGER NOT NULL DEFAULT 0,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS store_credit_ledger (
+    id TEXT PRIMARY KEY,
+    org_id TEXT NOT NULL,
+    delta INTEGER NOT NULL,
+    balance_after INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    source TEXT NOT NULL,
+    source_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS store_credit_ledger_org_created_idx ON store_credit_ledger(org_id, created_at);
+  CREATE UNIQUE INDEX IF NOT EXISTS store_credit_ledger_source_uniq ON store_credit_ledger(source, source_id);
   CREATE TABLE IF NOT EXISTS store_customers (
     org_id TEXT PRIMARY KEY,
     stripe_customer_id TEXT NOT NULL,

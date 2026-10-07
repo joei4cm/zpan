@@ -243,6 +243,7 @@ export const storeProducts = sqliteTable(
     kind: text('kind').notNull().default('plan'),
     storageBytes: integer('storage_bytes').notNull(),
     trafficBytes: integer('traffic_bytes').notNull().default(0),
+    creditAmount: integer('credit_amount').notNull().default(0),
     amountCents: integer('amount_cents').notNull(),
     currency: text('currency').notNull().default('usd'),
     interval: text('interval'),
@@ -262,6 +263,7 @@ export const storeGiftCards = sqliteTable(
     codeLast4: text('code_last4').notNull(),
     storageBytes: integer('storage_bytes').notNull(),
     trafficBytes: integer('traffic_bytes').notNull().default(0),
+    creditAmount: integer('credit_amount').notNull().default(0),
     status: text('status').notNull().default('active'),
     expiresAt: integer('expires_at', { mode: 'timestamp_ms' }),
     redeemedOrgId: text('redeemed_org_id'),
@@ -287,6 +289,7 @@ export const storeOrders = sqliteTable(
     productName: text('product_name').notNull(),
     storageBytes: integer('storage_bytes').notNull(),
     trafficBytes: integer('traffic_bytes').notNull().default(0),
+    creditAmount: integer('credit_amount').notNull().default(0),
     amountCents: integer('amount_cents').notNull(),
     currency: text('currency').notNull().default('usd'),
     interval: text('interval'),
@@ -300,6 +303,30 @@ export const storeOrders = sqliteTable(
   (t) => [
     index('store_orders_org_created_idx').on(t.orgId, t.createdAt),
     uniqueIndex('store_orders_stripe_session_uniq').on(t.stripeSessionId).where(sql`${t.stripeSessionId} IS NOT NULL`),
+  ],
+)
+
+export const storeCreditBalances = sqliteTable('store_credit_balances', {
+  orgId: text('org_id').primaryKey(),
+  balance: integer('balance').notNull().default(0),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+})
+
+export const storeCreditLedger = sqliteTable(
+  'store_credit_ledger',
+  {
+    id: text('id').primaryKey(),
+    orgId: text('org_id').notNull(),
+    delta: integer('delta').notNull(),
+    balanceAfter: integer('balance_after').notNull(),
+    reason: text('reason').notNull(),
+    source: text('source').notNull(),
+    sourceId: text('source_id').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    index('store_credit_ledger_org_created_idx').on(t.orgId, t.createdAt),
+    uniqueIndex('store_credit_ledger_source_uniq').on(t.source, t.sourceId),
   ],
 )
 

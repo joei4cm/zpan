@@ -849,6 +849,7 @@ export type LocalStoreProduct = {
   kind: 'plan'
   storageBytes: number
   trafficBytes: number
+  creditAmount: number
   amountCents: number
   currency: string
   interval: 'month' | 'year' | null
@@ -864,6 +865,7 @@ export type LocalStoreGiftCard = {
   codeLast4: string
   storageBytes: number
   trafficBytes: number
+  creditAmount: number
   status: string
   expiresAt: string | null
   redeemedOrgId: string | null

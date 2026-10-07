@@ -1,7 +1,9 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq } from 'drizzle-orm'
 import { generateId } from '../../../shared/ids'
 import {
   orgQuotaEntitlements,
+  storeCreditBalances,
+  storeCreditLedger,
   storeCustomers,
   storeGiftCards,
   storeOrders,
@@ -23,6 +25,7 @@ function toProduct(row: typeof storeProducts.$inferSelect): StoreProduct {
     ...row,
     kind: 'plan',
     trafficBytes: row.trafficBytes ?? 0,
+    creditAmount: row.creditAmount ?? 0,
     interval: (row.interval as StoreBillingInterval | null) ?? null,
   }
 }
@@ -31,6 +34,7 @@ function toGiftCard(row: typeof storeGiftCards.$inferSelect): StoreGiftCard {
   return {
     ...row,
     trafficBytes: row.trafficBytes ?? 0,
+    creditAmount: row.creditAmount ?? 0,
     status: row.status as StoreGiftCard['status'],
   }
 }
@@ -39,6 +43,7 @@ function toOrder(row: typeof storeOrders.$inferSelect): StoreOrder {
   return {
     ...row,
     trafficBytes: row.trafficBytes ?? 0,
+    creditAmount: row.creditAmount ?? 0,
     interval: (row.interval as StoreBillingInterval | null) ?? null,
     status: row.status as StoreOrder['status'],
   }
@@ -115,6 +120,7 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
           kind: 'plan',
           storageBytes: input.storageBytes,
           trafficBytes: input.trafficBytes,
+          creditAmount: input.creditAmount,
           amountCents: input.amountCents,
           currency: input.currency,
           interval: input.interval,
@@ -150,6 +156,7 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
             codeLast4: code.codeLast4,
             storageBytes: input.storageBytes,
             trafficBytes: input.trafficBytes,
+            creditAmount: input.creditAmount,
             status: 'active',
             expiresAt: input.expiresAt,
             note: input.note,
@@ -269,6 +276,83 @@ export function createLocalStoreRepo(db: Database): LocalStoreRepo {
         .update(orgQuotaEntitlements)
         .set({ status: 'revoked', updatedAt: new Date() })
         .where(and(eq(orgQuotaEntitlements.source, source), eq(orgQuotaEntitlements.sourceId, sourceId)))
+    },
+
+    async getCreditBalance(orgId) {
+      const rows = await db
+        .select({ balance: storeCreditBalances.balance })
+        .from(storeCreditBalances)
+        .where(eq(storeCreditBalances.orgId, orgId))
+        .limit(1)
+      return rows[0]?.balance ?? 0
+    },
+    async listCreditLedger(orgId, opts = {}) {
+      const limit = opts.limit ?? 50
+      const offset = opts.offset ?? 0
+      const [items, totals] = await Promise.all([
+        db
+          .select()
+          .from(storeCreditLedger)
+          .where(eq(storeCreditLedger.orgId, orgId))
+          .orderBy(desc(storeCreditLedger.createdAt))
+          .limit(limit)
+          .offset(offset),
+        db.select({ total: count() }).from(storeCreditLedger).where(eq(storeCreditLedger.orgId, orgId)),
+      ])
+      return {
+        items: items.map((row) => ({
+          id: row.id,
+          orgId: row.orgId,
+          delta: row.delta,
+          balanceAfter: row.balanceAfter,
+          reason: row.reason,
+          source: row.source,
+          sourceId: row.sourceId,
+          createdAt: row.createdAt,
+        })),
+        total: Number(totals[0]?.total ?? 0),
+      }
+    },
+    async adjustCredits(input) {
+      const readBalance = async () => {
+        const rows = await db
+          .select({ balance: storeCreditBalances.balance })
+          .from(storeCreditBalances)
+          .where(eq(storeCreditBalances.orgId, input.orgId))
+          .limit(1)
+        return rows[0]?.balance ?? 0
+      }
+      if (input.delta === 0) return { balance: await readBalance(), duplicate: true }
+      const existing = await db
+        .select({ id: storeCreditLedger.id, balanceAfter: storeCreditLedger.balanceAfter })
+        .from(storeCreditLedger)
+        .where(and(eq(storeCreditLedger.source, input.source), eq(storeCreditLedger.sourceId, input.sourceId)))
+        .limit(1)
+      if (existing[0]) return { balance: existing[0].balanceAfter, duplicate: true }
+
+      const now = new Date()
+      const current = await readBalance()
+      const next = current + input.delta
+      if (next < 0) throw new Error('insufficient_credits')
+
+      await db
+        .insert(storeCreditBalances)
+        .values({ orgId: input.orgId, balance: next, updatedAt: now })
+        .onConflictDoUpdate({
+          target: storeCreditBalances.orgId,
+          set: { balance: next, updatedAt: now },
+        })
+      await db.insert(storeCreditLedger).values({
+        id: generateId(),
+        orgId: input.orgId,
+        delta: input.delta,
+        balanceAfter: next,
+        reason: input.reason,
+        source: input.source,
+        sourceId: input.sourceId,
+        createdAt: now,
+      })
+      return { balance: next, duplicate: false }
     },
 
     async beginStripeWebhookEvent(input) {

@@ -6366,6 +6366,7 @@ type LocalStoreGiftCard struct {
 	CodeLast4     string  `json:"codeLast4"`
 	CreatedAt     string  `json:"createdAt"`
 	CreatedBy     string  `json:"createdBy"`
+	CreditAmount  int     `json:"creditAmount"`
 	ExpiresAt     *string `json:"expiresAt"`
 	Id            string  `json:"id"`
 	Note          *string `json:"note"`
@@ -6382,6 +6383,7 @@ type LocalStoreProduct struct {
 	Active       bool                       `json:"active"`
 	AmountCents  int                        `json:"amountCents"`
 	CreatedAt    string                     `json:"createdAt"`
+	CreditAmount int                        `json:"creditAmount"`
 	Currency     string                     `json:"currency"`
 	Description  string                     `json:"description"`
 	Id           string                     `json:"id"`
@@ -8141,6 +8143,7 @@ type ListStorageUsageItems200JSONResponseBodyItemsSource string
 // CreateLocalStoreGiftCardsJSONBody defines parameters for CreateLocalStoreGiftCards.
 type CreateLocalStoreGiftCardsJSONBody struct {
 	Count        int        `json:"count"`
+	CreditAmount *int       `json:"creditAmount,omitempty"`
 	ExpiresAt    *time.Time `json:"expiresAt,omitempty"`
 	Note         *string    `json:"note,omitempty"`
 	StorageBytes *int       `json:"storageBytes,omitempty"`
@@ -8151,6 +8154,7 @@ type CreateLocalStoreGiftCardsJSONBody struct {
 type CreateLocalStoreProductJSONBody struct {
 	Active       *bool                                    `json:"active,omitempty"`
 	AmountCents  int                                      `json:"amountCents"`
+	CreditAmount *int                                     `json:"creditAmount,omitempty"`
 	Currency     *CreateLocalStoreProductJSONBodyCurrency `json:"currency,omitempty"`
 	Description  *string                                  `json:"description,omitempty"`
 	Interval     *CreateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
@@ -8169,6 +8173,7 @@ type CreateLocalStoreProductJSONBodyInterval string
 type UpdateLocalStoreProductJSONBody struct {
 	Active       *bool                                    `json:"active,omitempty"`
 	AmountCents  *int                                     `json:"amountCents,omitempty"`
+	CreditAmount *int                                     `json:"creditAmount,omitempty"`
 	Description  *string                                  `json:"description,omitempty"`
 	Interval     *UpdateLocalStoreProductJSONBodyInterval `json:"interval,omitempty"`
 	Name         *string                                  `json:"name,omitempty"`

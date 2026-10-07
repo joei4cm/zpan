@@ -43,7 +43,7 @@ function toStoreProductDto(product: StoreProduct) {
         type: 'zpan.plan' as const,
         storageBytes: product.storageBytes,
         trafficBytes: product.trafficBytes,
-        includedCredits: 0,
+        includedCredits: product.creditAmount,
       },
     },
     prices: [
@@ -119,6 +119,7 @@ async function grantOrderEntitlements(
     orgId: string
     storageBytes: number
     trafficBytes: number
+    creditAmount: number
     entitlementType: 'plan' | 'grant'
     source: string
     sourceId: string
@@ -143,6 +144,15 @@ async function grantOrderEntitlements(
       source: input.source,
       sourceId: input.sourceId,
       packageName: input.packageName,
+    })
+  }
+  if (input.creditAmount > 0) {
+    await deps.localStore.adjustCredits({
+      orgId: input.orgId,
+      delta: input.creditAmount,
+      reason: 'purchase',
+      source: input.source,
+      sourceId: input.sourceId,
     })
   }
 }
@@ -179,6 +189,7 @@ async function openStripeCheckout(
     productId: order.productId,
     storageBytes: String(order.storageBytes),
     trafficBytes: String(order.trafficBytes),
+    creditAmount: String(order.creditAmount),
   }
   try {
     const session = await deps.stripe.createCheckoutSession(params.secretKey, {
@@ -212,8 +223,73 @@ async function openStripeCheckout(
 export async function listLocalPackages(
   deps: LocalCommerceDeps,
 ): Promise<StorefrontReadOutcome<{ items: unknown[]; total: number }>> {
-  const items = (await deps.localStore.listProducts({ activeOnly: true })).map(toStoreProductDto)
+  const items = (await deps.localStore.listProducts({ activeOnly: true }))
+    .filter((product) => product.storageBytes > 0 || product.trafficBytes > 0)
+    .map(toStoreProductDto)
   return { ok: true, value: { items, total: items.length } }
+}
+
+function toCreditProductDto(product: StoreProduct) {
+  return {
+    id: product.id,
+    storeId: 'local',
+    type: 'store_item',
+    name: product.name,
+    description: product.description,
+    metadata: {
+      deliverable: { type: 'zpan.credits' as const, includedCredits: product.creditAmount },
+    },
+    prices: [
+      {
+        id: priceIdFor(product),
+        currency: product.currency,
+        amount: product.amountCents,
+      },
+    ],
+    active: product.active,
+    sortOrder: product.sortOrder,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+  }
+}
+
+export async function listLocalCreditProducts(
+  deps: LocalCommerceDeps,
+): Promise<StorefrontReadOutcome<{ items: unknown[]; total: number }>> {
+  const items = (await deps.localStore.listProducts({ activeOnly: true }))
+    .filter((product) => product.creditAmount > 0)
+    .map(toCreditProductDto)
+  return { ok: true, value: { items, total: items.length } }
+}
+
+export async function getLocalCredits(deps: Pick<LocalCommerceDeps, 'localStore'>, orgId: string) {
+  const balance = await deps.localStore.getCreditBalance(orgId)
+  return { ok: true as const, value: { balance } }
+}
+
+export async function getLocalCreditLedger(
+  deps: Pick<LocalCommerceDeps, 'localStore'>,
+  orgId: string,
+  opts: { limit?: number; offset?: number } = {},
+) {
+  const page = await deps.localStore.listCreditLedger(orgId, opts)
+  return {
+    ok: true as const,
+    value: {
+      items: page.items.map((item) => ({
+        id: item.id,
+        delta: item.delta,
+        balanceAfter: item.balanceAfter,
+        reason: item.reason,
+        source: item.source,
+        sourceId: item.sourceId,
+        createdAt: item.createdAt.toISOString(),
+      })),
+      total: page.total,
+      limit: opts.limit ?? 50,
+      offset: opts.offset ?? 0,
+    },
+  }
 }
 
 export async function listLocalOrders(
@@ -248,8 +324,8 @@ export async function createLocalCheckout(
     }
   }
   if (!params.stripe.secretKey) return { ok: false, error: missingStripeSecret() }
-  if (product.storageBytes <= 0 && product.trafficBytes <= 0) {
-    return { ok: false, error: badRequest('Package has no deliverable quota', 'PACKAGE_EMPTY') }
+  if (product.storageBytes <= 0 && product.trafficBytes <= 0 && product.creditAmount <= 0) {
+    return { ok: false, error: badRequest('Package has no deliverable', 'PACKAGE_EMPTY') }
   }
   const order = await deps.localStore.createOrder({
     orgId: params.orgId,
@@ -258,6 +334,7 @@ export async function createLocalCheckout(
     productName: product.name,
     storageBytes: product.storageBytes,
     trafficBytes: product.trafficBytes,
+    creditAmount: product.creditAmount,
     amountCents: product.amountCents,
     currency: product.currency,
     interval: product.interval,
@@ -374,6 +451,7 @@ export async function redeemLocalGiftCard(
     orgId: params.orgId,
     storageBytes: card.storageBytes,
     trafficBytes: card.trafficBytes,
+    creditAmount: card.creditAmount,
     entitlementType: 'grant',
     source: 'gift_card',
     sourceId: `gift_card:${card.id}`,
@@ -382,7 +460,7 @@ export async function redeemLocalGiftCard(
   return {
     ok: true,
     value: {
-      redeemedCredits: 0,
+      redeemedCredits: card.creditAmount,
       redeemedStorageBytes: card.storageBytes,
       redeemedTrafficBytes: card.trafficBytes,
       entries: [],
@@ -458,6 +536,7 @@ export async function processStripeWebhook(
         orgId: order.orgId,
         storageBytes: order.storageBytes,
         trafficBytes: order.trafficBytes,
+        creditAmount: order.creditAmount,
         entitlementType: subscriptionId ? 'plan' : 'grant',
         source: 'stripe',
         sourceId,
@@ -494,6 +573,7 @@ export async function processStripeWebhook(
           orgId: order.orgId,
           storageBytes: order.storageBytes,
           trafficBytes: order.trafficBytes,
+          creditAmount: order.creditAmount,
           entitlementType: 'plan',
           source: 'stripe',
           sourceId,
@@ -522,6 +602,7 @@ export async function createAdminStoreProduct(
     description?: string
     storageBytes: number
     trafficBytes?: number
+    creditAmount?: number
     amountCents: number
     currency?: string
     interval?: 'month' | 'year' | null
@@ -530,14 +611,16 @@ export async function createAdminStoreProduct(
 ) {
   const storageBytes = input.storageBytes
   const trafficBytes = input.trafficBytes ?? 0
-  if (storageBytes <= 0 && trafficBytes <= 0) {
-    throw badRequest('At least one of storage or traffic must be greater than zero', 'PACKAGE_EMPTY')
+  const creditAmount = input.creditAmount ?? 0
+  if (storageBytes <= 0 && trafficBytes <= 0 && creditAmount <= 0) {
+    throw badRequest('At least one deliverable must be greater than zero', 'PACKAGE_EMPTY')
   }
   return deps.localStore.createProduct({
     name: input.name,
     description: input.description ?? '',
     storageBytes,
     trafficBytes,
+    creditAmount,
     amountCents: input.amountCents,
     currency: input.currency ?? 'usd',
     interval: input.interval ?? null,
@@ -554,6 +637,7 @@ export async function updateAdminStoreProduct(
     description: string
     storageBytes: number
     trafficBytes: number
+    creditAmount: number
     amountCents: number
     interval: 'month' | 'year' | null
     active: boolean
@@ -578,6 +662,7 @@ export async function createAdminGiftCards(
   input: {
     storageBytes: number
     trafficBytes?: number
+    creditAmount?: number
     count: number
     expiresAt?: string | null
     note?: string | null
@@ -586,8 +671,9 @@ export async function createAdminGiftCards(
 ) {
   const storageBytes = input.storageBytes
   const trafficBytes = input.trafficBytes ?? 0
-  if (storageBytes <= 0 && trafficBytes <= 0) {
-    throw badRequest('At least one of storage or traffic must be greater than zero', 'PACKAGE_EMPTY')
+  const creditAmount = input.creditAmount ?? 0
+  if (storageBytes <= 0 && trafficBytes <= 0 && creditAmount <= 0) {
+    throw badRequest('At least one deliverable must be greater than zero', 'PACKAGE_EMPTY')
   }
   const count = Math.min(Math.max(input.count, 1), 100)
   const codes = Array.from({ length: count }, () => randomGiftCode())
@@ -601,6 +687,7 @@ export async function createAdminGiftCards(
   const cards = await deps.localStore.createGiftCards({
     storageBytes,
     trafficBytes,
+    creditAmount,
     count,
     expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
     note: input.note ?? null,

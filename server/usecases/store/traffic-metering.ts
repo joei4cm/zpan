@@ -8,6 +8,7 @@ import type {
   CloudTrafficReportStatus,
   LicenseBindingRepo,
   LicensingCloudGateway,
+  LocalStoreRepo,
   QuotaRepo,
   TrafficReportSource,
 } from '../ports'
@@ -19,6 +20,7 @@ export type CloudTrafficMeteringDeps = {
   licenseBinding: LicenseBindingRepo
   licensingCloud: LicensingCloudGateway
   cloudTrafficReports: CloudTrafficReportRepo
+  localStore?: LocalStoreRepo
 }
 
 export class CloudTrafficBlockedError extends Error {
@@ -56,12 +58,17 @@ export async function reportTrafficEgress(
 ): Promise<{ status: CloudTrafficReportStatus; eventId: string; duplicate: boolean }> {
   const { orgId, bytes, source, sourceId, now = new Date() } = params
   if (bytes < 0) throw new Error('traffic_bytes_invalid')
+  const localBillingEnabled =
+    bytes > 0 && Boolean(params.egressCreditBillingEnabled) && isFeatureUnlockEnabled() && Boolean(deps.localStore)
   const cloudBillingEnabled =
     bytes > 0 &&
     Boolean(params.egressCreditBillingEnabled) &&
     !isFeatureUnlockEnabled() &&
     hasFeature('quota_store', await loadBindingState(deps))
-  if (cloudBillingEnabled && (!params.storageId || !params.egressCreditUnitBytes || !params.egressCreditPerUnit)) {
+  if (
+    (cloudBillingEnabled || localBillingEnabled) &&
+    (!params.storageId || !params.egressCreditUnitBytes || !params.egressCreditPerUnit)
+  ) {
     throw new Error('storage_egress_pricing_missing')
   }
 
@@ -95,9 +102,34 @@ export async function reportTrafficEgress(
       storageId: params.storageId ?? null,
       unitBytes: params.egressCreditUnitBytes ?? null,
       creditsPerUnit: params.egressCreditPerUnit ?? null,
-      status: cloudBillingEnabled ? 'pending' : 'not_required',
+      status: cloudBillingEnabled || localBillingEnabled ? 'pending' : 'not_required',
       now,
     })
+  }
+
+  if (localBillingEnabled && deps.localStore) {
+    const unitBytes = params.egressCreditUnitBytes!
+    const creditsPerUnit = params.egressCreditPerUnit!
+    const credits = Math.ceil(bytes / unitBytes) * creditsPerUnit
+    try {
+      await deps.localStore.adjustCredits({
+        orgId,
+        delta: -credits,
+        reason: 'storage_egress',
+        source: 'local_traffic',
+        sourceId: eventId,
+      })
+      await deps.cloudTrafficReports.updateStatus(eventId, 'reported', null, now)
+      return { status: 'reported', eventId, duplicate: false }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'local_credit_debit_failed'
+      if (message === 'insufficient_credits') {
+        await deps.cloudTrafficReports.updateStatus(eventId, 'blocked', message, now)
+        throw new CloudTrafficBlockedError()
+      }
+      await deps.cloudTrafficReports.updateStatus(eventId, 'failed', message, now)
+      throw error
+    }
   }
 
   if (!cloudBillingEnabled) return { status: 'not_required', eventId, duplicate: false }

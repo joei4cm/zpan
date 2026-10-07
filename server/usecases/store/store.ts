@@ -68,9 +68,9 @@ import {
   continueLocalOrderPayment,
   createLocalBillingPortalSession,
   createLocalCheckout,
-  emptyLocalCreditLedger,
-  emptyLocalCreditProducts,
-  emptyLocalCredits,
+  getLocalCreditLedger,
+  getLocalCredits,
+  listLocalCreditProducts,
   listLocalOrders,
   listLocalPackages,
   processStripeWebhook,
@@ -666,7 +666,7 @@ export function listPackages(deps: CloudStoreDeps, cloudBaseUrl: string) {
 }
 
 export function listCreditProducts(deps: CloudStoreDeps, cloudBaseUrl: string) {
-  if (usesLocalCommerce()) return Promise.resolve(emptyLocalCreditProducts())
+  if (usesLocalCommerce()) return listLocalCreditProducts(deps)
   return listDeliverables(deps, cloudBaseUrl, 'zpan.credits')
 }
 
@@ -696,11 +696,11 @@ export async function listStoreOrders(
 // enforced by the handler before calling. They share the binding→cloud shape.
 
 export async function getCreditBalance(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud' | 'localStore'>,
   cloudBaseUrl: string,
   orgId: string,
 ): Promise<StorefrontReadOutcome<unknown>> {
-  if (usesLocalCommerce()) return emptyLocalCredits()
+  if (usesLocalCommerce()) return getLocalCredits(deps, orgId)
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
@@ -716,11 +716,11 @@ export async function getCreditBalance(
 }
 
 export async function getCreditLedger(
-  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud'>,
+  deps: Pick<CloudStoreDeps, 'cloudStore' | 'licensingCloud' | 'localStore'>,
   cloudBaseUrl: string,
   orgId: string,
 ): Promise<StorefrontReadOutcome<unknown>> {
-  if (usesLocalCommerce()) return emptyLocalCreditLedger()
+  if (usesLocalCommerce()) return getLocalCreditLedger(deps, orgId)
   const ready = await getStoreReadiness(deps)
   if (!ready.ready) return { ok: false, error: forbidden(ready.error) }
   const result = await cloudRequest(deps, cloudBaseUrl, async ({ client, storeId }) =>
