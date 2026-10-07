@@ -50,11 +50,8 @@ import type {
   UpdateSiteRegistrationInput,
   UpdateSiteWebDavInput,
   UpdateStorageEgressBillingInput,
-<<<<<<< HEAD
   UpdateStripeConfigInput,
-=======
   UpdateUploadPolicyInput,
->>>>>>> 0be15069 (feat(storage): add upload policies admin API and Storages UI)
 } from '@shared/schemas'
 import type {
   AdminAuditEvent,

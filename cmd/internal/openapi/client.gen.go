@@ -2200,6 +2200,78 @@ func (e StripeConfigSource) Valid() bool {
 	}
 }
 
+// Defines values for UploadPolicySelectionMode.
+const (
+	UploadPolicySelectionModeBalanced UploadPolicySelectionMode = "balanced"
+	UploadPolicySelectionModeOrdered  UploadPolicySelectionMode = "ordered"
+)
+
+// Valid indicates whether the value is a known member of the UploadPolicySelectionMode enum.
+func (e UploadPolicySelectionMode) Valid() bool {
+	switch e {
+	case UploadPolicySelectionModeBalanced:
+		return true
+	case UploadPolicySelectionModeOrdered:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UploadPolicySelectorMatchExpressionsKey.
+const (
+	UploadPolicySelectorMatchExpressionsKeyFileCategory  UploadPolicySelectorMatchExpressionsKey = "file.category"
+	UploadPolicySelectorMatchExpressionsKeyFileExtension UploadPolicySelectorMatchExpressionsKey = "file.extension"
+	UploadPolicySelectorMatchExpressionsKeyFileMime      UploadPolicySelectorMatchExpressionsKey = "file.mime"
+	UploadPolicySelectorMatchExpressionsKeySpaceId       UploadPolicySelectorMatchExpressionsKey = "space.id"
+	UploadPolicySelectorMatchExpressionsKeySpaceType     UploadPolicySelectorMatchExpressionsKey = "space.type"
+	UploadPolicySelectorMatchExpressionsKeyUploadSource  UploadPolicySelectorMatchExpressionsKey = "upload.source"
+)
+
+// Valid indicates whether the value is a known member of the UploadPolicySelectorMatchExpressionsKey enum.
+func (e UploadPolicySelectorMatchExpressionsKey) Valid() bool {
+	switch e {
+	case UploadPolicySelectorMatchExpressionsKeyFileCategory:
+		return true
+	case UploadPolicySelectorMatchExpressionsKeyFileExtension:
+		return true
+	case UploadPolicySelectorMatchExpressionsKeyFileMime:
+		return true
+	case UploadPolicySelectorMatchExpressionsKeySpaceId:
+		return true
+	case UploadPolicySelectorMatchExpressionsKeySpaceType:
+		return true
+	case UploadPolicySelectorMatchExpressionsKeyUploadSource:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UploadPolicySelectorMatchExpressionsOperator.
+const (
+	UploadPolicySelectorMatchExpressionsOperatorDoesNotExist UploadPolicySelectorMatchExpressionsOperator = "DoesNotExist"
+	UploadPolicySelectorMatchExpressionsOperatorExists       UploadPolicySelectorMatchExpressionsOperator = "Exists"
+	UploadPolicySelectorMatchExpressionsOperatorIn           UploadPolicySelectorMatchExpressionsOperator = "In"
+	UploadPolicySelectorMatchExpressionsOperatorNotIn        UploadPolicySelectorMatchExpressionsOperator = "NotIn"
+)
+
+// Valid indicates whether the value is a known member of the UploadPolicySelectorMatchExpressionsOperator enum.
+func (e UploadPolicySelectorMatchExpressionsOperator) Valid() bool {
+	switch e {
+	case UploadPolicySelectorMatchExpressionsOperatorDoesNotExist:
+		return true
+	case UploadPolicySelectorMatchExpressionsOperatorExists:
+		return true
+	case UploadPolicySelectorMatchExpressionsOperatorIn:
+		return true
+	case UploadPolicySelectorMatchExpressionsOperatorNotIn:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for WebDavVerificationStatus.
 const (
 	WebDavVerificationStatusDisabled   WebDavVerificationStatus = "disabled"
@@ -2817,6 +2889,10 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsCreate               GetOAuthConsentContext200JSONResponseBodyScopes = "teams:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsRead                 GetOAuthConsentContext200JSONResponseBodyScopes = "teams:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesTeamsUpdate               GetOAuthConsentContext200JSONResponseBodyScopes = "teams:update"
+	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesCreate      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:create"
+	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesDelete      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:delete"
+	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesRead        GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:read"
+	GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesUpdate      GetOAuthConsentContext200JSONResponseBodyScopes = "upload-policies:update"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:create"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:delete"
 	GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsRead      GetOAuthConsentContext200JSONResponseBodyScopes = "user-entitlements:read"
@@ -2985,6 +3061,14 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesTeamsUpdate:
 		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesCreate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesDelete:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesRead:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesUploadPoliciesUpdate:
+		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsCreate:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesUserEntitlementsDelete:
@@ -3084,6 +3168,10 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsCreate               ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsRead                 ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesTeamsUpdate               ListOAuthGrants200JSONResponseBodyItemsScopes = "teams:update"
+	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesCreate      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:create"
+	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesDelete      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:delete"
+	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesRead        ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:read"
+	ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesUpdate      ListOAuthGrants200JSONResponseBodyItemsScopes = "upload-policies:update"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:create"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:delete"
 	ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsRead      ListOAuthGrants200JSONResponseBodyItemsScopes = "user-entitlements:read"
@@ -3251,6 +3339,14 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 	case ListOAuthGrants200JSONResponseBodyItemsScopesTeamsRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesTeamsUpdate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesCreate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesDelete:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesRead:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesUploadPoliciesUpdate:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesUserEntitlementsCreate:
 		return true
@@ -3997,6 +4093,222 @@ func (e PatchStorageJSONBodyStatusReason) Valid() bool {
 	case PatchStorageJSONBodyStatusReasonPermissionDenied:
 		return true
 	case PatchStorageJSONBodyStatusReasonUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateUploadPolicyJSONBodySelectionMode.
+const (
+	CreateUploadPolicyJSONBodySelectionModeBalanced CreateUploadPolicyJSONBodySelectionMode = "balanced"
+	CreateUploadPolicyJSONBodySelectionModeOrdered  CreateUploadPolicyJSONBodySelectionMode = "ordered"
+)
+
+// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectionMode enum.
+func (e CreateUploadPolicyJSONBodySelectionMode) Valid() bool {
+	switch e {
+	case CreateUploadPolicyJSONBodySelectionModeBalanced:
+		return true
+	case CreateUploadPolicyJSONBodySelectionModeOrdered:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateUploadPolicyJSONBodySelectorMatchExpressionsKey.
+const (
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  CreateUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
+)
+
+// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
+func (e CreateUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
+	switch e {
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator.
+const (
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
+	CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
+)
+
+// Valid indicates whether the value is a known member of the CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
+func (e CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
+	switch e {
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
+		return true
+	case CreateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PatchUploadPolicyJSONBodySelectionMode.
+const (
+	PatchUploadPolicyJSONBodySelectionModeBalanced PatchUploadPolicyJSONBodySelectionMode = "balanced"
+	PatchUploadPolicyJSONBodySelectionModeOrdered  PatchUploadPolicyJSONBodySelectionMode = "ordered"
+)
+
+// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectionMode enum.
+func (e PatchUploadPolicyJSONBodySelectionMode) Valid() bool {
+	switch e {
+	case PatchUploadPolicyJSONBodySelectionModeBalanced:
+		return true
+	case PatchUploadPolicyJSONBodySelectionModeOrdered:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PatchUploadPolicyJSONBodySelectorMatchExpressionsKey.
+const (
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  PatchUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
+)
+
+// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
+func (e PatchUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
+	switch e {
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator.
+const (
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
+	PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
+)
+
+// Valid indicates whether the value is a known member of the PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
+func (e PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
+	switch e {
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
+		return true
+	case PatchUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateUploadPolicyJSONBodySelectionMode.
+const (
+	UpdateUploadPolicyJSONBodySelectionModeBalanced UpdateUploadPolicyJSONBodySelectionMode = "balanced"
+	UpdateUploadPolicyJSONBodySelectionModeOrdered  UpdateUploadPolicyJSONBodySelectionMode = "ordered"
+)
+
+// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectionMode enum.
+func (e UpdateUploadPolicyJSONBodySelectionMode) Valid() bool {
+	switch e {
+	case UpdateUploadPolicyJSONBodySelectionModeBalanced:
+		return true
+	case UpdateUploadPolicyJSONBodySelectionModeOrdered:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey.
+const (
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory  UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.category"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.extension"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime      UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "file.mime"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId       UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.id"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType     UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "space.type"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource  UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey = "upload.source"
+)
+
+// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey enum.
+func (e UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey) Valid() bool {
+	switch e {
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileCategory:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileExtension:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyFileMime:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceId:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeySpaceType:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsKeyUploadSource:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator.
+const (
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "DoesNotExist"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists       UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "Exists"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn           UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "In"
+	UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn        UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator = "NotIn"
+)
+
+// Valid indicates whether the value is a known member of the UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator enum.
+func (e UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator) Valid() bool {
+	switch e {
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorDoesNotExist:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorExists:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorIn:
+		return true
+	case UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperatorNotIn:
 		return true
 	default:
 		return false
@@ -6717,6 +7029,44 @@ type UpdateStripeConfig struct {
 	WebhookSecret string `json:"webhookSecret"`
 }
 
+// UploadPolicy defines model for UploadPolicy.
+type UploadPolicy struct {
+	CreatedAt     string                    `json:"createdAt"`
+	Enabled       bool                      `json:"enabled"`
+	Id            string                    `json:"id"`
+	IsDefault     bool                      `json:"isDefault"`
+	Name          string                    `json:"name"`
+	Priority      int                       `json:"priority"`
+	SelectionMode UploadPolicySelectionMode `json:"selectionMode"`
+	Selector      *struct {
+		MatchExpressions *[]struct {
+			Key      UploadPolicySelectorMatchExpressionsKey      `json:"key"`
+			Operator UploadPolicySelectorMatchExpressionsOperator `json:"operator"`
+			Values   *[]string                                    `json:"values,omitempty"`
+		} `json:"matchExpressions,omitempty"`
+		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
+	} `json:"selector,omitempty"`
+	StorageIds []string `json:"storageIds"`
+	UpdatedAt  string   `json:"updatedAt"`
+}
+
+// UploadPolicySelectionMode defines model for UploadPolicy.SelectionMode.
+type UploadPolicySelectionMode string
+
+// UploadPolicySelectorMatchExpressionsKey defines model for UploadPolicy.Selector.MatchExpressions.Key.
+type UploadPolicySelectorMatchExpressionsKey string
+
+// UploadPolicySelectorMatchExpressionsOperator defines model for UploadPolicy.Selector.MatchExpressions.Operator.
+type UploadPolicySelectorMatchExpressionsOperator string
+
+// UploadPolicyList defines model for UploadPolicyList.
+type UploadPolicyList struct {
+	Items    []UploadPolicy `json:"items"`
+	Page     int            `json:"page"`
+	PageSize int            `json:"pageSize"`
+	Total    int            `json:"total"`
+}
+
 // WebDavVerificationStatus defines model for WebDavVerificationStatus.
 type WebDavVerificationStatus string
 
@@ -7687,6 +8037,84 @@ type UpdateStorageEgressBillingJSONBody struct {
 	UnitBytes      int  `json:"unitBytes"`
 }
 
+// CreateUploadPolicyJSONBody defines parameters for CreateUploadPolicy.
+type CreateUploadPolicyJSONBody struct {
+	Enabled       *bool                                    `json:"enabled,omitempty"`
+	Name          string                                   `json:"name"`
+	Priority      *int                                     `json:"priority,omitempty"`
+	SelectionMode *CreateUploadPolicyJSONBodySelectionMode `json:"selectionMode,omitempty"`
+	Selector      *struct {
+		MatchExpressions *[]struct {
+			Key      CreateUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
+			Operator CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
+			Values   *[]string                                                  `json:"values,omitempty"`
+		} `json:"matchExpressions,omitempty"`
+		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
+	} `json:"selector,omitempty"`
+	StorageIds []string `json:"storageIds"`
+}
+
+// CreateUploadPolicyJSONBodySelectionMode defines parameters for CreateUploadPolicy.
+type CreateUploadPolicyJSONBodySelectionMode string
+
+// CreateUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for CreateUploadPolicy.
+type CreateUploadPolicyJSONBodySelectorMatchExpressionsKey string
+
+// CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for CreateUploadPolicy.
+type CreateUploadPolicyJSONBodySelectorMatchExpressionsOperator string
+
+// PatchUploadPolicyJSONBody defines parameters for PatchUploadPolicy.
+type PatchUploadPolicyJSONBody struct {
+	Enabled       *bool                                   `json:"enabled,omitempty"`
+	Name          *string                                 `json:"name,omitempty"`
+	Priority      *int                                    `json:"priority,omitempty"`
+	SelectionMode *PatchUploadPolicyJSONBodySelectionMode `json:"selectionMode,omitempty"`
+	Selector      *struct {
+		MatchExpressions *[]struct {
+			Key      PatchUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
+			Operator PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
+			Values   *[]string                                                 `json:"values,omitempty"`
+		} `json:"matchExpressions,omitempty"`
+		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
+	} `json:"selector,omitempty"`
+	StorageIds *[]string `json:"storageIds,omitempty"`
+}
+
+// PatchUploadPolicyJSONBodySelectionMode defines parameters for PatchUploadPolicy.
+type PatchUploadPolicyJSONBodySelectionMode string
+
+// PatchUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for PatchUploadPolicy.
+type PatchUploadPolicyJSONBodySelectorMatchExpressionsKey string
+
+// PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for PatchUploadPolicy.
+type PatchUploadPolicyJSONBodySelectorMatchExpressionsOperator string
+
+// UpdateUploadPolicyJSONBody defines parameters for UpdateUploadPolicy.
+type UpdateUploadPolicyJSONBody struct {
+	Enabled       bool                                    `json:"enabled"`
+	Name          string                                  `json:"name"`
+	Priority      int                                     `json:"priority"`
+	SelectionMode UpdateUploadPolicyJSONBodySelectionMode `json:"selectionMode"`
+	Selector      *struct {
+		MatchExpressions *[]struct {
+			Key      UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey      `json:"key"`
+			Operator UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator `json:"operator"`
+			Values   *[]string                                                  `json:"values,omitempty"`
+		} `json:"matchExpressions,omitempty"`
+		MatchLabels *map[string]string `json:"matchLabels,omitempty"`
+	} `json:"selector,omitempty"`
+	StorageIds []string `json:"storageIds"`
+}
+
+// UpdateUploadPolicyJSONBodySelectionMode defines parameters for UpdateUploadPolicy.
+type UpdateUploadPolicyJSONBodySelectionMode string
+
+// UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey defines parameters for UpdateUploadPolicy.
+type UpdateUploadPolicyJSONBodySelectorMatchExpressionsKey string
+
+// UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator defines parameters for UpdateUploadPolicy.
+type UpdateUploadPolicyJSONBodySelectorMatchExpressionsOperator string
+
 // ListStorageUsageItemsParams defines parameters for ListStorageUsageItems.
 type ListStorageUsageItemsParams struct {
 	Category ListStorageUsageItemsParamsCategory `form:"category" json:"category"`
@@ -8014,6 +8442,15 @@ type ReplaceStorageJSONRequestBody ReplaceStorageJSONBody
 
 // UpdateStorageEgressBillingJSONRequestBody defines body for UpdateStorageEgressBilling for application/json ContentType.
 type UpdateStorageEgressBillingJSONRequestBody UpdateStorageEgressBillingJSONBody
+
+// CreateUploadPolicyJSONRequestBody defines body for CreateUploadPolicy for application/json ContentType.
+type CreateUploadPolicyJSONRequestBody CreateUploadPolicyJSONBody
+
+// PatchUploadPolicyJSONRequestBody defines body for PatchUploadPolicy for application/json ContentType.
+type PatchUploadPolicyJSONRequestBody PatchUploadPolicyJSONBody
+
+// UpdateUploadPolicyJSONRequestBody defines body for UpdateUploadPolicy for application/json ContentType.
+type UpdateUploadPolicyJSONRequestBody UpdateUploadPolicyJSONBody
 
 // CreateLocalStoreGiftCardsJSONRequestBody defines body for CreateLocalStoreGiftCards for application/json ContentType.
 type CreateLocalStoreGiftCardsJSONRequestBody CreateLocalStoreGiftCardsJSONBody
@@ -11677,6 +12114,30 @@ type ClientInterface interface {
 
 	UpdateStorageEgressBilling(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListUploadPolicies request
+	ListUploadPolicies(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateUploadPolicyWithBody request with any body
+	CreateUploadPolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateUploadPolicy(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteUploadPolicy request
+	DeleteUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUploadPolicy request
+	GetUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PatchUploadPolicyWithBody request with any body
+	PatchUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PatchUploadPolicy(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateUploadPolicyWithBody request with any body
+	UpdateUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateUploadPolicy(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetStorageUsage request
 	GetStorageUsage(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13875,6 +14336,114 @@ func (c *Client) UpdateStorageEgressBillingWithBody(ctx context.Context, id stri
 
 func (c *Client) UpdateStorageEgressBilling(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateStorageEgressBillingRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListUploadPolicies(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListUploadPoliciesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateUploadPolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateUploadPolicyRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateUploadPolicy(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateUploadPolicyRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteUploadPolicyRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUploadPolicy(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUploadPolicyRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchUploadPolicyRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchUploadPolicy(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchUploadPolicyRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateUploadPolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateUploadPolicyRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateUploadPolicy(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateUploadPolicyRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -20171,6 +20740,235 @@ func NewUpdateStorageEgressBillingRequestWithBody(server string, id string, cont
 	return req, nil
 }
 
+// NewListUploadPoliciesRequest generates requests for ListUploadPolicies
+func NewListUploadPoliciesRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateUploadPolicyRequest calls the generic CreateUploadPolicy builder with application/json body
+func NewCreateUploadPolicyRequest(server string, body CreateUploadPolicyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateUploadPolicyRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateUploadPolicyRequestWithBody generates requests for CreateUploadPolicy with any type of body
+func NewCreateUploadPolicyRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteUploadPolicyRequest generates requests for DeleteUploadPolicy
+func NewDeleteUploadPolicyRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUploadPolicyRequest generates requests for GetUploadPolicy
+func NewGetUploadPolicyRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPatchUploadPolicyRequest calls the generic PatchUploadPolicy builder with application/json body
+func NewPatchUploadPolicyRequest(server string, id string, body PatchUploadPolicyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPatchUploadPolicyRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewPatchUploadPolicyRequestWithBody generates requests for PatchUploadPolicy with any type of body
+func NewPatchUploadPolicyRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateUploadPolicyRequest calls the generic UpdateUploadPolicy builder with application/json body
+func NewUpdateUploadPolicyRequest(server string, id string, body UpdateUploadPolicyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateUploadPolicyRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateUploadPolicyRequestWithBody generates requests for UpdateUploadPolicy with any type of body
+func NewUpdateUploadPolicyRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/site/upload-policies/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewGetStorageUsageRequest generates requests for GetStorageUsage
 func NewGetStorageUsageRequest(server string) (*http.Request, error) {
 	var err error
@@ -22625,6 +23423,30 @@ type ClientWithResponsesInterface interface {
 	UpdateStorageEgressBillingWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateStorageEgressBillingResponse, error)
 
 	UpdateStorageEgressBillingWithResponse(ctx context.Context, id string, body UpdateStorageEgressBillingJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateStorageEgressBillingResponse, error)
+
+	// ListUploadPoliciesWithResponse request
+	ListUploadPoliciesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUploadPoliciesResponse, error)
+
+	// CreateUploadPolicyWithBodyWithResponse request with any body
+	CreateUploadPolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error)
+
+	CreateUploadPolicyWithResponse(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error)
+
+	// DeleteUploadPolicyWithResponse request
+	DeleteUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUploadPolicyResponse, error)
+
+	// GetUploadPolicyWithResponse request
+	GetUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetUploadPolicyResponse, error)
+
+	// PatchUploadPolicyWithBodyWithResponse request with any body
+	PatchUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error)
+
+	PatchUploadPolicyWithResponse(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error)
+
+	// UpdateUploadPolicyWithBodyWithResponse request with any body
+	UpdateUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error)
+
+	UpdateUploadPolicyWithResponse(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error)
 
 	// GetStorageUsageWithResponse request
 	GetStorageUsageWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStorageUsageResponse, error)
@@ -26893,6 +27715,197 @@ func (r UpdateStorageEgressBillingResponse) ContentType() string {
 	return ""
 }
 
+type ListUploadPoliciesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UploadPolicyList
+}
+
+// Status returns HTTPResponse.Status
+func (r ListUploadPoliciesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListUploadPoliciesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListUploadPoliciesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateUploadPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *UploadPolicy
+	JSON400      *Error
+	JSON402      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateUploadPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateUploadPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateUploadPolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteUploadPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON402      *Error
+	JSON404      *Error
+	JSON409      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteUploadPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteUploadPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteUploadPolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetUploadPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UploadPolicy
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUploadPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUploadPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetUploadPolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type PatchUploadPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UploadPolicy
+	JSON400      *Error
+	JSON402      *Error
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r PatchUploadPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PatchUploadPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PatchUploadPolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateUploadPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UploadPolicy
+	JSON400      *Error
+	JSON402      *Error
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateUploadPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateUploadPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateUploadPolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetStorageUsageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -29990,6 +31003,84 @@ func (c *ClientWithResponses) UpdateStorageEgressBillingWithResponse(ctx context
 		return nil, err
 	}
 	return ParseUpdateStorageEgressBillingResponse(rsp)
+}
+
+// ListUploadPoliciesWithResponse request returning *ListUploadPoliciesResponse
+func (c *ClientWithResponses) ListUploadPoliciesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUploadPoliciesResponse, error) {
+	rsp, err := c.ListUploadPolicies(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListUploadPoliciesResponse(rsp)
+}
+
+// CreateUploadPolicyWithBodyWithResponse request with arbitrary body returning *CreateUploadPolicyResponse
+func (c *ClientWithResponses) CreateUploadPolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error) {
+	rsp, err := c.CreateUploadPolicyWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateUploadPolicyResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateUploadPolicyWithResponse(ctx context.Context, body CreateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUploadPolicyResponse, error) {
+	rsp, err := c.CreateUploadPolicy(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateUploadPolicyResponse(rsp)
+}
+
+// DeleteUploadPolicyWithResponse request returning *DeleteUploadPolicyResponse
+func (c *ClientWithResponses) DeleteUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUploadPolicyResponse, error) {
+	rsp, err := c.DeleteUploadPolicy(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteUploadPolicyResponse(rsp)
+}
+
+// GetUploadPolicyWithResponse request returning *GetUploadPolicyResponse
+func (c *ClientWithResponses) GetUploadPolicyWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetUploadPolicyResponse, error) {
+	rsp, err := c.GetUploadPolicy(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUploadPolicyResponse(rsp)
+}
+
+// PatchUploadPolicyWithBodyWithResponse request with arbitrary body returning *PatchUploadPolicyResponse
+func (c *ClientWithResponses) PatchUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error) {
+	rsp, err := c.PatchUploadPolicyWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchUploadPolicyResponse(rsp)
+}
+
+func (c *ClientWithResponses) PatchUploadPolicyWithResponse(ctx context.Context, id string, body PatchUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchUploadPolicyResponse, error) {
+	rsp, err := c.PatchUploadPolicy(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchUploadPolicyResponse(rsp)
+}
+
+// UpdateUploadPolicyWithBodyWithResponse request with arbitrary body returning *UpdateUploadPolicyResponse
+func (c *ClientWithResponses) UpdateUploadPolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error) {
+	rsp, err := c.UpdateUploadPolicyWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateUploadPolicyResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateUploadPolicyWithResponse(ctx context.Context, id string, body UpdateUploadPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUploadPolicyResponse, error) {
+	rsp, err := c.UpdateUploadPolicy(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateUploadPolicyResponse(rsp)
 }
 
 // GetStorageUsageWithResponse request returning *GetStorageUsageResponse
@@ -35255,6 +36346,239 @@ func ParseUpdateStorageEgressBillingResponse(rsp *http.Response) (*UpdateStorage
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListUploadPoliciesResponse parses an HTTP response from a ListUploadPoliciesWithResponse call
+func ParseListUploadPoliciesResponse(rsp *http.Response) (*ListUploadPoliciesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListUploadPoliciesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UploadPolicyList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateUploadPolicyResponse parses an HTTP response from a CreateUploadPolicyWithResponse call
+func ParseCreateUploadPolicyResponse(rsp *http.Response) (*CreateUploadPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateUploadPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest UploadPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteUploadPolicyResponse parses an HTTP response from a DeleteUploadPolicyWithResponse call
+func ParseDeleteUploadPolicyResponse(rsp *http.Response) (*DeleteUploadPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteUploadPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUploadPolicyResponse parses an HTTP response from a GetUploadPolicyWithResponse call
+func ParseGetUploadPolicyResponse(rsp *http.Response) (*GetUploadPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUploadPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UploadPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePatchUploadPolicyResponse parses an HTTP response from a PatchUploadPolicyWithResponse call
+func ParsePatchUploadPolicyResponse(rsp *http.Response) (*PatchUploadPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PatchUploadPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UploadPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateUploadPolicyResponse parses an HTTP response from a UpdateUploadPolicyWithResponse call
+func ParseUpdateUploadPolicyResponse(rsp *http.Response) (*UpdateUploadPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateUploadPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UploadPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
 		var dest Error
