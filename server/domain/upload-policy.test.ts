@@ -6,6 +6,8 @@ import {
   type UploadPolicyRecord,
 } from './upload-policy'
 
+const now = new Date('2026-01-01T00:00:00.000Z')
+
 const basePolicy = (overrides: Partial<UploadPolicyRecord> = {}): UploadPolicyRecord => ({
   id: 'p1',
   name: 'policy',
@@ -14,6 +16,8 @@ const basePolicy = (overrides: Partial<UploadPolicyRecord> = {}): UploadPolicyRe
   selector: {},
   storageIds: ['s1', 's2'],
   selectionMode: 'ordered',
+  createdAt: now,
+  updatedAt: now,
   ...overrides,
 })
 

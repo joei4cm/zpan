@@ -1,7 +1,7 @@
 # Upload Placement Policies — Proposal
 
-> Status: Proposed (2026-07-23)
-> Implementation: Deferred
+> Status: Partial (2026-10-07)
+> Implementation: Engine + Admin API/UI shipped; capacity reservation and non-createObject path wiring remain
 > Proposed release: v2.8
 > Product surface: Admin → Storages → Upload Policies
 

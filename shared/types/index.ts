@@ -52,6 +52,32 @@ export interface Storage {
   updatedAt: string
 }
 
+export type UploadSelectionMode = 'ordered' | 'balanced'
+
+export type UploadSelectorExpression = {
+  key: string
+  operator: 'In' | 'NotIn' | 'Exists' | 'DoesNotExist'
+  values?: string[]
+}
+
+export type UploadSelector = {
+  matchLabels?: Record<string, string>
+  matchExpressions?: UploadSelectorExpression[]
+}
+
+export interface UploadPolicy {
+  id: string
+  name: string
+  enabled: boolean
+  priority: number
+  selector: UploadSelector
+  storageIds: string[]
+  selectionMode: UploadSelectionMode
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 export interface OrgQuota {
   id: string
   orgId: string

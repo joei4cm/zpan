@@ -132,6 +132,14 @@ export const FEATURE_REGISTRY = [
     gateKey: 'storages_unlimited',
   },
   {
+    i18nKey: 'features.uploadPolicies',
+    category: 'advanced',
+    community: { i18nKey: 'features.uploadPolicies.defaultOnly' },
+    pro: true,
+    business: true,
+    gateKey: 'upload_policies',
+  },
+  {
     i18nKey: 'features.downloaders',
     category: 'advanced',
     community: { i18nKey: 'features.downloaders.limit', params: { count: FREE_DOWNLOADER_LIMIT } },
