@@ -1,4 +1,5 @@
 import { PostHog } from 'posthog-node'
+import { isFeatureUnlockEnabled } from '../../domain/licensing'
 import { normalizePublicOrigin, SITE_PUBLIC_ORIGIN_KEY } from '../../domain/site-public-origin'
 import type { DeployPlatform } from '../../runtime-platform'
 import { getAppVersion } from '../../version'
@@ -38,13 +39,16 @@ export interface InstanceTelemetryParams {
 
 export interface InstanceTelemetryResult {
   reported: boolean
-  reason?: 'disabled'
+  reason?: 'disabled' | 'unlocked'
 }
 
 export async function reportInstanceTelemetry(
   deps: InstanceTelemetryDeps,
   params: InstanceTelemetryParams,
 ): Promise<InstanceTelemetryResult> {
+  // Local-commerce / fork unlocks disconnect from ZPan Cloud; do not phone home.
+  if (isFeatureUnlockEnabled()) return { reported: false, reason: 'unlocked' }
+
   const posthogHost = (params.config.posthogHost ?? INSTANCE_TELEMETRY_POSTHOG_HOST).trim()
   const posthogProjectToken = (params.config.posthogProjectToken ?? INSTANCE_TELEMETRY_POSTHOG_PROJECT_TOKEN).trim()
   if (!posthogHost || !posthogProjectToken) return { reported: false, reason: 'disabled' }
