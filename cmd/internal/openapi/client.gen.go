@@ -2945,6 +2945,9 @@ const (
 	GetOAuthConsentContext200JSONResponseBodyScopesInviteCodesRead           GetOAuthConsentContext200JSONResponseBodyScopes = "invite-codes:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesLicensingRead             GetOAuthConsentContext200JSONResponseBodyScopes = "licensing:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesLicensingUpdate           GetOAuthConsentContext200JSONResponseBodyScopes = "licensing:update"
+	GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsCreate    GetOAuthConsentContext200JSONResponseBodyScopes = "music-credentials:create"
+	GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsDelete    GetOAuthConsentContext200JSONResponseBodyScopes = "music-credentials:delete"
+	GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsRead      GetOAuthConsentContext200JSONResponseBodyScopes = "music-credentials:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesNotificationsRead         GetOAuthConsentContext200JSONResponseBodyScopes = "notifications:read"
 	GetOAuthConsentContext200JSONResponseBodyScopesNotificationsUpdate       GetOAuthConsentContext200JSONResponseBodyScopes = "notifications:update"
 	GetOAuthConsentContext200JSONResponseBodyScopesOauthGrantsCreate         GetOAuthConsentContext200JSONResponseBodyScopes = "oauth-grants:create"
@@ -3084,6 +3087,12 @@ func (e GetOAuthConsentContext200JSONResponseBodyScopes) Valid() bool {
 	case GetOAuthConsentContext200JSONResponseBodyScopesLicensingRead:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesLicensingUpdate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsCreate:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsDelete:
+		return true
+	case GetOAuthConsentContext200JSONResponseBodyScopesMusicCredentialsRead:
 		return true
 	case GetOAuthConsentContext200JSONResponseBodyScopesNotificationsRead:
 		return true
@@ -3248,6 +3257,9 @@ const (
 	ListOAuthGrants200JSONResponseBodyItemsScopesInviteCodesRead           ListOAuthGrants200JSONResponseBodyItemsScopes = "invite-codes:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesLicensingRead             ListOAuthGrants200JSONResponseBodyItemsScopes = "licensing:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesLicensingUpdate           ListOAuthGrants200JSONResponseBodyItemsScopes = "licensing:update"
+	ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsCreate    ListOAuthGrants200JSONResponseBodyItemsScopes = "music-credentials:create"
+	ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsDelete    ListOAuthGrants200JSONResponseBodyItemsScopes = "music-credentials:delete"
+	ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsRead      ListOAuthGrants200JSONResponseBodyItemsScopes = "music-credentials:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesNotificationsRead         ListOAuthGrants200JSONResponseBodyItemsScopes = "notifications:read"
 	ListOAuthGrants200JSONResponseBodyItemsScopesNotificationsUpdate       ListOAuthGrants200JSONResponseBodyItemsScopes = "notifications:update"
 	ListOAuthGrants200JSONResponseBodyItemsScopesOauthGrantsCreate         ListOAuthGrants200JSONResponseBodyItemsScopes = "oauth-grants:create"
@@ -3387,6 +3399,12 @@ func (e ListOAuthGrants200JSONResponseBodyItemsScopes) Valid() bool {
 	case ListOAuthGrants200JSONResponseBodyItemsScopesLicensingRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesLicensingUpdate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsCreate:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsDelete:
+		return true
+	case ListOAuthGrants200JSONResponseBodyItemsScopesMusicCredentialsRead:
 		return true
 	case ListOAuthGrants200JSONResponseBodyItemsScopesNotificationsRead:
 		return true
@@ -6679,6 +6697,26 @@ type Matter struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
+// MusicAppCredential defines model for MusicAppCredential.
+type MusicAppCredential struct {
+	CreatedAt  string  `json:"createdAt"`
+	Id         string  `json:"id"`
+	Label      string  `json:"label"`
+	LastUsedAt *string `json:"lastUsedAt"`
+	OrgId      string  `json:"orgId"`
+	Status     string  `json:"status"`
+	Token      *string `json:"token,omitempty"`
+	UpdatedAt  string  `json:"updatedAt"`
+	UserId     string  `json:"userId"`
+	Username   string  `json:"username"`
+}
+
+// MusicAppCredentialList defines model for MusicAppCredentialList.
+type MusicAppCredentialList struct {
+	Items []MusicAppCredential `json:"items"`
+	Total int                  `json:"total"`
+}
+
 // Notification defines model for Notification.
 type Notification struct {
 	Body      string  `json:"body"`
@@ -7943,6 +7981,13 @@ type PresignImageHostingUploadJSONBody struct {
 // PresignImageHostingUploadJSONBodyMime defines parameters for PresignImageHostingUpload.
 type PresignImageHostingUploadJSONBodyMime string
 
+// CreateMusicAppCredentialJSONBody defines parameters for CreateMusicAppCredential.
+type CreateMusicAppCredentialJSONBody struct {
+	Label    *string `json:"label,omitempty"`
+	OrgId    string  `json:"orgId"`
+	Username *string `json:"username,omitempty"`
+}
+
 // ListNotificationsParams defines parameters for ListNotifications.
 type ListNotificationsParams struct {
 	PageSize  *int    `form:"pageSize,omitempty" json:"pageSize,omitempty"`
@@ -8769,6 +8814,9 @@ type UpdateImageHostingConfigJSONRequestBody UpdateImageHostingConfigJSONBody
 
 // PresignImageHostingUploadJSONRequestBody defines body for PresignImageHostingUpload for application/json ContentType.
 type PresignImageHostingUploadJSONRequestBody PresignImageHostingUploadJSONBody
+
+// CreateMusicAppCredentialJSONRequestBody defines body for CreateMusicAppCredential for application/json ContentType.
+type CreateMusicAppCredentialJSONRequestBody CreateMusicAppCredentialJSONBody
 
 // SubmitOAuthConsentJSONRequestBody defines body for SubmitOAuthConsent for application/json ContentType.
 type SubmitOAuthConsentJSONRequestBody SubmitOAuthConsentJSONBody
@@ -12231,6 +12279,17 @@ type ClientInterface interface {
 	// ConfirmImageHosting request
 	ConfirmImageHosting(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListMusicAppCredentials request
+	ListMusicAppCredentials(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateMusicAppCredentialWithBody request with any body
+	CreateMusicAppCredentialWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateMusicAppCredential(ctx context.Context, body CreateMusicAppCredentialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RevokeMusicAppCredential request
+	RevokeMusicAppCredential(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListNotifications request
 	ListNotifications(ctx context.Context, params *ListNotificationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13440,6 +13499,54 @@ func (c *Client) GetImageHosting(ctx context.Context, id string, reqEditors ...R
 
 func (c *Client) ConfirmImageHosting(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewConfirmImageHostingRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListMusicAppCredentials(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMusicAppCredentialsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateMusicAppCredentialWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMusicAppCredentialRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateMusicAppCredential(ctx context.Context, body CreateMusicAppCredentialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMusicAppCredentialRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RevokeMusicAppCredential(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeMusicAppCredentialRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -17602,6 +17709,107 @@ func NewConfirmImageHostingRequest(server string, id string) (*http.Request, err
 	}
 
 	req, err := http.NewRequest(http.MethodPut, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListMusicAppCredentialsRequest generates requests for ListMusicAppCredentials
+func NewListMusicAppCredentialsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/music/credentials")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateMusicAppCredentialRequest calls the generic CreateMusicAppCredential builder with application/json body
+func NewCreateMusicAppCredentialRequest(server string, body CreateMusicAppCredentialJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateMusicAppCredentialRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateMusicAppCredentialRequestWithBody generates requests for CreateMusicAppCredential with any type of body
+func NewCreateMusicAppCredentialRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/music/credentials")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewRevokeMusicAppCredentialRequest generates requests for RevokeMusicAppCredential
+func NewRevokeMusicAppCredentialRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/music/credentials/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -24464,6 +24672,17 @@ type ClientWithResponsesInterface interface {
 	// ConfirmImageHostingWithResponse request
 	ConfirmImageHostingWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ConfirmImageHostingResponse, error)
 
+	// ListMusicAppCredentialsWithResponse request
+	ListMusicAppCredentialsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListMusicAppCredentialsResponse, error)
+
+	// CreateMusicAppCredentialWithBodyWithResponse request with any body
+	CreateMusicAppCredentialWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMusicAppCredentialResponse, error)
+
+	CreateMusicAppCredentialWithResponse(ctx context.Context, body CreateMusicAppCredentialJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMusicAppCredentialResponse, error)
+
+	// RevokeMusicAppCredentialWithResponse request
+	RevokeMusicAppCredentialWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeMusicAppCredentialResponse, error)
+
 	// ListNotificationsWithResponse request
 	ListNotificationsWithResponse(ctx context.Context, params *ListNotificationsParams, reqEditors ...RequestEditorFn) (*ListNotificationsResponse, error)
 
@@ -26306,6 +26525,97 @@ func (r ConfirmImageHostingResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r ConfirmImageHostingResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListMusicAppCredentialsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MusicAppCredentialList
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMusicAppCredentialsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMusicAppCredentialsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListMusicAppCredentialsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateMusicAppCredentialResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *MusicAppCredential
+	JSON409      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateMusicAppCredentialResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateMusicAppCredentialResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateMusicAppCredentialResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RevokeMusicAppCredentialResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON404      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r RevokeMusicAppCredentialResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RevokeMusicAppCredentialResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RevokeMusicAppCredentialResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -31838,6 +32148,41 @@ func (c *ClientWithResponses) ConfirmImageHostingWithResponse(ctx context.Contex
 	return ParseConfirmImageHostingResponse(rsp)
 }
 
+// ListMusicAppCredentialsWithResponse request returning *ListMusicAppCredentialsResponse
+func (c *ClientWithResponses) ListMusicAppCredentialsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListMusicAppCredentialsResponse, error) {
+	rsp, err := c.ListMusicAppCredentials(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMusicAppCredentialsResponse(rsp)
+}
+
+// CreateMusicAppCredentialWithBodyWithResponse request with arbitrary body returning *CreateMusicAppCredentialResponse
+func (c *ClientWithResponses) CreateMusicAppCredentialWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMusicAppCredentialResponse, error) {
+	rsp, err := c.CreateMusicAppCredentialWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMusicAppCredentialResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateMusicAppCredentialWithResponse(ctx context.Context, body CreateMusicAppCredentialJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMusicAppCredentialResponse, error) {
+	rsp, err := c.CreateMusicAppCredential(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMusicAppCredentialResponse(rsp)
+}
+
+// RevokeMusicAppCredentialWithResponse request returning *RevokeMusicAppCredentialResponse
+func (c *ClientWithResponses) RevokeMusicAppCredentialWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*RevokeMusicAppCredentialResponse, error) {
+	rsp, err := c.RevokeMusicAppCredential(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRevokeMusicAppCredentialResponse(rsp)
+}
+
 // ListNotificationsWithResponse request returning *ListNotificationsResponse
 func (c *ClientWithResponses) ListNotificationsWithResponse(ctx context.Context, params *ListNotificationsParams, reqEditors ...RequestEditorFn) (*ListNotificationsResponse, error) {
 	rsp, err := c.ListNotifications(ctx, params, reqEditors...)
@@ -35270,6 +35615,91 @@ func ParseConfirmImageHostingResponse(rsp *http.Response) (*ConfirmImageHostingR
 			return nil, err
 		}
 		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListMusicAppCredentialsResponse parses an HTTP response from a ListMusicAppCredentialsWithResponse call
+func ParseListMusicAppCredentialsResponse(rsp *http.Response) (*ListMusicAppCredentialsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMusicAppCredentialsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MusicAppCredentialList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateMusicAppCredentialResponse parses an HTTP response from a CreateMusicAppCredentialWithResponse call
+func ParseCreateMusicAppCredentialResponse(rsp *http.Response) (*CreateMusicAppCredentialResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateMusicAppCredentialResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest MusicAppCredential
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRevokeMusicAppCredentialResponse parses an HTTP response from a RevokeMusicAppCredentialWithResponse call
+func ParseRevokeMusicAppCredentialResponse(rsp *http.Response) (*RevokeMusicAppCredentialResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RevokeMusicAppCredentialResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 
