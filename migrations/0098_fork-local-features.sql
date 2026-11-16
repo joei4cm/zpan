@@ -1,4 +1,4 @@
-CREATE TABLE `music_app_credentials` (
+CREATE TABLE IF NOT EXISTS `music_app_credentials` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`org_id` text NOT NULL,
@@ -11,10 +11,10 @@ CREATE TABLE `music_app_credentials` (
 	`last_used_at` integer
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `music_app_credentials_username_uniq` ON `music_app_credentials` (`username`);--> statement-breakpoint
-CREATE INDEX `music_app_credentials_user_idx` ON `music_app_credentials` (`user_id`);--> statement-breakpoint
-CREATE INDEX `music_app_credentials_status_idx` ON `music_app_credentials` (`status`);--> statement-breakpoint
-CREATE TABLE `outbound_webhook_deliveries` (
+CREATE UNIQUE INDEX IF NOT EXISTS `music_app_credentials_username_uniq` ON `music_app_credentials` (`username`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `music_app_credentials_user_idx` ON `music_app_credentials` (`user_id`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `music_app_credentials_status_idx` ON `music_app_credentials` (`status`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `outbound_webhook_deliveries` (
 	`id` text PRIMARY KEY NOT NULL,
 	`endpoint_id` text NOT NULL,
 	`event_type` text NOT NULL,
@@ -29,10 +29,10 @@ CREATE TABLE `outbound_webhook_deliveries` (
 	`delivered_at` integer
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `outbound_webhook_deliveries_endpoint_key_uniq` ON `outbound_webhook_deliveries` (`endpoint_id`,`idempotency_key`);--> statement-breakpoint
-CREATE INDEX `outbound_webhook_deliveries_status_next_idx` ON `outbound_webhook_deliveries` (`status`,`next_attempt_at`);--> statement-breakpoint
-CREATE INDEX `outbound_webhook_deliveries_endpoint_created_idx` ON `outbound_webhook_deliveries` (`endpoint_id`,`created_at`);--> statement-breakpoint
-CREATE TABLE `outbound_webhook_endpoints` (
+CREATE UNIQUE INDEX IF NOT EXISTS `outbound_webhook_deliveries_endpoint_key_uniq` ON `outbound_webhook_deliveries` (`endpoint_id`,`idempotency_key`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `outbound_webhook_deliveries_status_next_idx` ON `outbound_webhook_deliveries` (`status`,`next_attempt_at`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `outbound_webhook_deliveries_endpoint_created_idx` ON `outbound_webhook_deliveries` (`endpoint_id`,`created_at`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `outbound_webhook_endpoints` (
 	`id` text PRIMARY KEY NOT NULL,
 	`url` text NOT NULL,
 	`description` text DEFAULT '' NOT NULL,
@@ -44,14 +44,14 @@ CREATE TABLE `outbound_webhook_endpoints` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `outbound_webhook_endpoints_enabled_idx` ON `outbound_webhook_endpoints` (`enabled`);--> statement-breakpoint
-CREATE TABLE `store_credit_balances` (
+CREATE INDEX IF NOT EXISTS `outbound_webhook_endpoints_enabled_idx` ON `outbound_webhook_endpoints` (`enabled`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `store_credit_balances` (
 	`org_id` text PRIMARY KEY NOT NULL,
 	`balance` integer DEFAULT 0 NOT NULL,
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `store_credit_ledger` (
+CREATE TABLE IF NOT EXISTS `store_credit_ledger` (
 	`id` text PRIMARY KEY NOT NULL,
 	`org_id` text NOT NULL,
 	`delta` integer NOT NULL,
@@ -62,16 +62,16 @@ CREATE TABLE `store_credit_ledger` (
 	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `store_credit_ledger_org_created_idx` ON `store_credit_ledger` (`org_id`,`created_at`);--> statement-breakpoint
-CREATE UNIQUE INDEX `store_credit_ledger_source_uniq` ON `store_credit_ledger` (`source`,`source_id`);--> statement-breakpoint
-CREATE TABLE `store_customers` (
+CREATE INDEX IF NOT EXISTS `store_credit_ledger_org_created_idx` ON `store_credit_ledger` (`org_id`,`created_at`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `store_credit_ledger_source_uniq` ON `store_credit_ledger` (`source`,`source_id`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `store_customers` (
 	`org_id` text PRIMARY KEY NOT NULL,
 	`stripe_customer_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `store_gift_cards` (
+CREATE TABLE IF NOT EXISTS `store_gift_cards` (
 	`id` text PRIMARY KEY NOT NULL,
 	`code_hash` text NOT NULL,
 	`code_last4` text NOT NULL,
@@ -88,9 +88,9 @@ CREATE TABLE `store_gift_cards` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `store_gift_cards_code_hash_uniq` ON `store_gift_cards` (`code_hash`);--> statement-breakpoint
-CREATE INDEX `store_gift_cards_status_idx` ON `store_gift_cards` (`status`,`created_at`);--> statement-breakpoint
-CREATE TABLE `store_orders` (
+CREATE UNIQUE INDEX IF NOT EXISTS `store_gift_cards_code_hash_uniq` ON `store_gift_cards` (`code_hash`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `store_gift_cards_status_idx` ON `store_gift_cards` (`status`,`created_at`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `store_orders` (
 	`id` text PRIMARY KEY NOT NULL,
 	`org_id` text NOT NULL,
 	`user_id` text NOT NULL,
@@ -110,9 +110,9 @@ CREATE TABLE `store_orders` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `store_orders_org_created_idx` ON `store_orders` (`org_id`,`created_at`);--> statement-breakpoint
-CREATE UNIQUE INDEX `store_orders_stripe_session_uniq` ON `store_orders` (`stripe_session_id`) WHERE "store_orders"."stripe_session_id" IS NOT NULL;--> statement-breakpoint
-CREATE TABLE `store_products` (
+CREATE INDEX IF NOT EXISTS `store_orders_org_created_idx` ON `store_orders` (`org_id`,`created_at`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `store_orders_stripe_session_uniq` ON `store_orders` (`stripe_session_id`) WHERE "store_orders"."stripe_session_id" IS NOT NULL;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `store_products` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`description` text DEFAULT '' NOT NULL,
@@ -129,8 +129,8 @@ CREATE TABLE `store_products` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `store_products_active_sort_idx` ON `store_products` (`active`,`sort_order`,`created_at`);--> statement-breakpoint
-CREATE TABLE `sync_devices` (
+CREATE INDEX IF NOT EXISTS `store_products_active_sort_idx` ON `store_products` (`active`,`sort_order`,`created_at`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `sync_devices` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`org_id` text NOT NULL,
@@ -144,11 +144,11 @@ CREATE TABLE `sync_devices` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `sync_devices_user_idx` ON `sync_devices` (`user_id`);--> statement-breakpoint
-CREATE INDEX `sync_devices_org_idx` ON `sync_devices` (`org_id`);--> statement-breakpoint
-CREATE INDEX `sync_devices_token_hash_idx` ON `sync_devices` (`token_hash`);--> statement-breakpoint
-CREATE INDEX `sync_devices_status_idx` ON `sync_devices` (`status`);--> statement-breakpoint
-CREATE TABLE `sync_object_changes` (
+CREATE INDEX IF NOT EXISTS `sync_devices_user_idx` ON `sync_devices` (`user_id`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `sync_devices_org_idx` ON `sync_devices` (`org_id`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `sync_devices_token_hash_idx` ON `sync_devices` (`token_hash`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `sync_devices_status_idx` ON `sync_devices` (`status`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `sync_object_changes` (
 	`sequence` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`org_id` text NOT NULL,
 	`object_id` text NOT NULL,
@@ -161,10 +161,10 @@ CREATE TABLE `sync_object_changes` (
 	`occurred_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `sync_object_changes_org_sequence_idx` ON `sync_object_changes` (`org_id`,`sequence`);--> statement-breakpoint
-CREATE INDEX `sync_object_changes_object_idx` ON `sync_object_changes` (`object_id`);--> statement-breakpoint
-CREATE INDEX `sync_object_changes_occurred_idx` ON `sync_object_changes` (`occurred_at`);--> statement-breakpoint
-CREATE TABLE `upload_policies` (
+CREATE INDEX IF NOT EXISTS `sync_object_changes_org_sequence_idx` ON `sync_object_changes` (`org_id`,`sequence`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `sync_object_changes_object_idx` ON `sync_object_changes` (`object_id`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `sync_object_changes_occurred_idx` ON `sync_object_changes` (`occurred_at`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `upload_policies` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`enabled` integer DEFAULT true NOT NULL,
@@ -176,5 +176,5 @@ CREATE TABLE `upload_policies` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `upload_policies_enabled_priority_idx` ON `upload_policies` (`enabled`,`priority`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `upload_policies_enabled_priority_idx` ON `upload_policies` (`enabled`,`priority`);--> statement-breakpoint
 ALTER TABLE `account` DROP COLUMN `issuer`;
